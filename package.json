@@ -1,0 +1,64 @@
+{
+  "name": "lyra-subgraph",
+  "license": "ISC",
+  "version": "0.0.1",
+  "scripts": {
+    "clean": "rimraf ./generated && rimraf ./dist && rimraf ./build && rimraf ./data",
+    "lint": "eslint .",
+    "lint:fix": "yarn lint --fix",
+    "prettier": "prettier --config --write --ignore-unknown \"**/*.{js,ts}\"",
+    "script": "env-cmd -f .env.local ts-node scripts/index.ts",
+    "sync": "ts-node scripts/sync.ts",
+    "build": "env-cmd -f .env.local ./build.sh",
+    "deploy": "env-cmd -f .env.local ./deploy.sh",
+    "graph-node": "./run-graph-node.sh",
+    "gen-types": "typechain --target ethers-v5 --out-dir typechain './abis/**/*.json'",
+    "sync-local": "yarn sync --network local --type mockSnx",
+    "create-local": "graph create lyra/lyra --node http://127.0.0.1:8020",
+    "build-local": "yarn build local mockSnx",
+    "deploy-local": "graph deploy lyra/lyra --debug --ipfs http://localhost:5001 --node http://127.0.0.1:8020 --network local --type mockSnx subgraph.js",
+    "watch-local": "graph deploy lyra/lyra --watch --debug --ipfs http://localhost:5001 --node http://127.0.0.1:8020 --network local --type mockSnx subgraph.js"
+  },
+  "dependencies": {
+    "@graphprotocol/graph-cli": "^0.26.0",
+    "@graphprotocol/graph-ts": "^0.26.0"
+  },
+  "devDependencies": {
+    "@graphql-codegen/typescript": "^2.4.7",
+    "@typechain/ethers-v5": "^9.0.0",
+    "@types/fs-extra": "^9.0.11",
+    "@types/mathjs": "^9.4.2",
+    "@typescript-eslint/eslint-plugin": "^4.26.1",
+    "@typescript-eslint/parser": "^4.26.1",
+    "axios": "^0.21.1",
+    "chalk": "^4.1.1",
+    "commander": "^7.2.0",
+    "env-cmd": "^10.1.0",
+    "eslint": "^7.28.0",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-import-resolver-typescript": "^2.4.0",
+    "eslint-plugin-import": "^2.23.4",
+    "eslint-plugin-prettier": "^3.4.0",
+    "ethers": "^5.4.1",
+    "fs-extra": "^10.0.0",
+    "husky": "4.3.8",
+    "lint-staged": "^11.0.0",
+    "mathjs": "^10.1.1",
+    "node-fetch": "^2.6.1",
+    "nullthrows": "^1.1.1",
+    "prettier": "^2.3.1",
+    "rimraf": "^3.0.2",
+    "ts-node": "^10.0.0",
+    "typechain": "^7.0.0",
+    "typescript": "^4.3.2",
+    "wait-port": "^0.2.9"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "**/*": "prettier --write --ignore-unknown"
+  }
+}

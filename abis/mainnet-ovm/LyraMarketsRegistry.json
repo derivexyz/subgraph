@@ -1,0 +1,343 @@
+[
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "optionMarket",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "liquidityPool",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "liquidityCertificate",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "optionGreekCache",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "optionMarketPricer",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "poolHedger",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "shortCollateral",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "quoteAsset",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "baseAsset",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "optionToken",
+        "type": "address"
+      }
+    ],
+    "name": "MarketAdded",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "optionMarket",
+        "type": "address"
+      }
+    ],
+    "name": "MarketRemoved",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "previousOwner",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "newOwner",
+        "type": "address"
+      }
+    ],
+    "name": "OwnershipTransferred",
+    "type": "event"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "optionMarket",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "liquidityPool",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "liquidityCertificate",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "optionGreekCache",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "optionMarketPricer",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "poolHedger",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "shortCollateral",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "quoteAsset",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "baseAsset",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "optionToken",
+        "type": "address"
+      }
+    ],
+    "name": "addMarket",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getOptionMarkets",
+    "outputs": [
+      {
+        "internalType": "address[]",
+        "name": "",
+        "type": "address[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address[]",
+        "name": "optionMarketList",
+        "type": "address[]"
+      }
+    ],
+    "name": "getOptionMarketsAddresses",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "address",
+            "name": "liquidityPool",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "liquidityCertificate",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "optionGreekCache",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "optionMarketPricer",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "poolHedger",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "shortCollateral",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "quoteAsset",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "baseAsset",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "optionToken",
+            "type": "address"
+          }
+        ],
+        "internalType": "struct LyraMarketsRegistry.MarketAddresses[]",
+        "name": "",
+        "type": "tuple[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "name": "optionMarketsAddresses",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "liquidityPool",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "liquidityCertificate",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "optionGreekCache",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "optionMarketPricer",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "poolHedger",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "shortCollateral",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "quoteAsset",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "baseAsset",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "optionToken",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "owner",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "optionMarket",
+        "type": "address"
+      }
+    ],
+    "name": "removeMarket",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "renounceOwnership",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "newOwner",
+        "type": "address"
+      }
+    ],
+    "name": "transferOwnership",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  }
+]

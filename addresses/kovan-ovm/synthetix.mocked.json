@@ -1,0 +1,86 @@
+{
+  "Synthetix": {
+    "contractName": "TestSynthetix",
+    "source": "TestSynthetix",
+    "address": "0xB26Cd518F103605cbb35124eb90585CAD5299Ce5",
+    "txn": "0x5d687934df8f5bbf633366b1f3687e052ac0b5a1401c8df7a8ab7fd6f3ba8b65",
+    "blockNumber": 1590860
+  },
+  "CollateralShort": {
+    "contractName": "TestCollateralShort",
+    "source": "TestCollateralShort",
+    "address": "0x0d7C5d2b12b4022Ab3D367C39E561f04935bC4C2",
+    "txn": "0x3cda2798753f846a50bc9139be453cb465b7ebc05df021f7b8120905c4e565ef",
+    "blockNumber": 1590862
+  },
+  "ProxyERC20sUSD": {
+    "contractName": "TestERC20",
+    "source": "TestERC20",
+    "address": "0x17018D9Da4C9aceaCCeCbA76B1C1364241a9f45d",
+    "txn": "0x018eacbf6a57810030bcfbfb90cebde9b4dffb9d08fd3f6279da395603f00ad5",
+    "blockNumber": 1590867
+  },
+  "ProxysETH": {
+    "contractName": "TestERC20",
+    "source": "TestERC20",
+    "address": "0x72353270D06aAF1cadd9654b3c93F1B4dAAcf8CA",
+    "txn": "0xb17b7da21ef495927114e7fb5782b4546e6f7d5370dd0ce06f7386e2b0c1b71f",
+    "blockNumber": 1590962
+  },
+  "ProxysBTC": {
+    "contractName": "TestERC20",
+    "source": "TestERC20",
+    "address": "0x0315Ae2B9C8Ce2dc71ED26Db676e67Cbd424D61E",
+    "txn": "0x0d6ebb4044bebcc23ff117d751b28400a4b73a99cf2dcd072a64626ed09e1a37",
+    "blockNumber": 1591175
+  },
+  "ProxysLINK": {
+    "contractName": "TestERC20",
+    "source": "TestERC20",
+    "address": "0x69C4606cB0ed774F3e94Ff704157B7CF97c55B41",
+    "txn": "0x9880c328fb463d6cd7624cd63ace126055c5546883b399b5e74f35ee6258694e",
+    "blockNumber": 1537606
+  },
+  "CurvePool": {
+    "contractName": "TestCurve",
+    "source": "TestCurve",
+    "address": "0xE3d6f082cEb166DB11d6243a6c9d79Bd6aCB2a04",
+    "txn": "0x31e5034998d1876d2275d32dd2e97b94746ebe09567835b1e9dd280aa123428b",
+    "blockNumber": 1590855
+  },
+  "DelegateApprovals": {
+    "contractName": "TestDelegateApprovals",
+    "source": "TestDelegateApprovals",
+    "address": "0x0058716eC1646Cef9e9Cfef0b5e95a1a86681769",
+    "txn": "0x3ffec3cf4c02a2c4522ba80dd727b73a9f160c836b16a2060b05829791bd716d",
+    "blockNumber": 1590869
+  },
+  "AddressResolver": {
+    "contractName": "TestAddressResolver",
+    "source": "TestAddressResolver",
+    "address": "0xe7f8842d54c7D718fE9B9177cB5D83210DB8e03D",
+    "txn": "0xbce39e89695ba4bc86fa81a878f26d3c82c90ac6480eacd7ced111f45b13bab4",
+    "blockNumber": 1590873
+  },
+  "Exchanger": {
+    "contractName": "TestExchanger",
+    "source": "TestExchanger",
+    "address": "0x92652a028075A4922E3D30381a31462AAaec02A6",
+    "txn": "0x7e3d07b3a6d558ee3a0001a57ee1d18baf08bb9cf35d0e4b54ff27c6a8509e1d",
+    "blockNumber": 1590848
+  },
+  "ExchangeRates": {
+    "contractName": "TestExchangeRates",
+    "source": "TestExchangeRates",
+    "address": "0x90c086d2ed2A764d6080018Ca874E70646532871",
+    "txn": "0xc5be6775f3a7c897757ae95ba78d7e9bc422cd70d7eb47fd047db97a2c7f0454",
+    "blockNumber": 1590851
+  },
+  "ProxysAAVE": {
+    "contractName": "TestERC20",
+    "source": "TestERC20",
+    "address": "0x36e2C63fdECA096783f9fCeECbdc4119e92cF34E",
+    "txn": "0x7e5746fb97f91636174340df11b33812bcd377ecdffe04836e7b0b440570e0dd",
+    "blockNumber": 1538314
+  }
+}

@@ -1,0 +1,86 @@
+[
+  {
+    "inputs": [],
+    "stateMutability": "nonpayable",
+    "type": "constructor"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "contract ISwapRouter",
+        "name": "_swapRouter",
+        "type": "address"
+      },
+      {
+        "internalType": "contract ISynthetix",
+        "name": "_synthetix",
+        "type": "address"
+      }
+    ],
+    "name": "init",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "contract IERC20",
+        "name": "tokenIn",
+        "type": "address"
+      },
+      {
+        "internalType": "bytes32",
+        "name": "tokenInCurrencyKey",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "uint256",
+        "name": "amountIn",
+        "type": "uint256"
+      },
+      {
+        "components": [
+          {
+            "internalType": "enum MultistepSwapper.SwapType",
+            "name": "swapType",
+            "type": "uint8"
+          },
+          {
+            "internalType": "address",
+            "name": "tokenOut",
+            "type": "address"
+          },
+          {
+            "internalType": "bytes32",
+            "name": "tokenOutCurrencyKey",
+            "type": "bytes32"
+          },
+          {
+            "internalType": "uint24",
+            "name": "poolFee",
+            "type": "uint24"
+          }
+        ],
+        "internalType": "struct MultistepSwapper.Swap[]",
+        "name": "swaps",
+        "type": "tuple[]"
+      },
+      {
+        "internalType": "uint256",
+        "name": "amountOutMinimum",
+        "type": "uint256"
+      }
+    ],
+    "name": "swap",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "amountOut",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "payable",
+    "type": "function"
+  }
+]

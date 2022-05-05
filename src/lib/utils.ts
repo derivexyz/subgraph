@@ -1,0 +1,482 @@
+import { Address, BigInt, ethereum, log, Bytes } from '@graphprotocol/graph-ts'
+import { GLOBAL_ID, Snapshot, ZERO_ADDRESS } from '.'
+import {
+  Market,
+  Pool,
+  GreekCache,
+  OptionMarketPricer,
+  ShortCollateral,
+  Board,
+  Option,
+  MarketVolumeAndFeesSnapshot,
+  Global,
+  BoardBaseIVSnapshot,
+  StrikeIVAndGreeksSnapshot,
+  OptionPriceAndGreeksSnapshot,
+  OptionVolumeSnapshot,
+  MarketGreeksSnapshot,
+  PoolHedgerExposureSnapshot,
+  Position,
+  OptionToken,
+  CollateralUpdate,
+  SpotPriceSnapshot,
+  Strike,
+  MarketTotalValueSnapshot,
+  MarketSNXFeesSnapshot,
+  MarketPendingLiquiditySnapshot,
+} from '../../generated/schema'
+
+export let ZERO = BigInt.fromI32(0)
+export let ONE = BigInt.fromI32(1)
+export let UNIT = BigInt.fromString('1' + '0'.repeat(18))
+
+export let FIVE_MINUTE_SECONDS: i32 = 300
+export let FIFTEEN_MINUTE_SECONDS: i32 = FIVE_MINUTE_SECONDS * 3
+export let HOUR_SECONDS: i32 = FIFTEEN_MINUTE_SECONDS * 4
+export let DAY_SECONDS: i32 = 86400
+
+//THESE MUST BE IN ASCENDING ORDER
+//LARGER PERIODS MUST BE A MULTIPLE OF SMALLER PERIODS
+export let PERIODS: i32[] = [FIFTEEN_MINUTE_SECONDS, HOUR_SECONDS, DAY_SECONDS]
+export let HOURLY_PERIODS: i32[] = [HOUR_SECONDS, DAY_SECONDS]
+
+export namespace Entity {
+  export function loadOrCreateGlobal(): Global {
+    let global = Global.load(GLOBAL_ID)
+    if (global == null) {
+      global = new Global(GLOBAL_ID)
+    }
+    return global as Global
+  }
+
+  export enum PositionState {
+    EMPTY,
+    ACTIVE,
+    CLOSED,
+    LIQUIDATED,
+    SETTLED,
+    MERGED,
+  }
+
+  enum TradeType {
+    LongCall,
+    LongPut,
+    ShortCallBase,
+    ShortCallQuote,
+    ShortPutQuote,
+  }
+
+  export function getIsCall(tradeType: TradeType): boolean {
+    return (
+      tradeType === TradeType.LongCall ||
+      tradeType === TradeType.ShortCallBase ||
+      tradeType === TradeType.ShortCallQuote
+    )
+  }
+
+  export function getIsLong(tradeType: TradeType): boolean {
+    return tradeType === TradeType.LongCall || tradeType === TradeType.LongPut
+  }
+
+  export function getIsBaseCollateralized(tradeType: TradeType): boolean {
+    return tradeType === TradeType.ShortCallBase
+  }
+
+  export function getIDFromAddress(optionMarketAddress: Address): string {
+    return optionMarketAddress.toHex()
+  }
+
+  export function loadMarket(optionMarketAddress: Address): Market {
+    return Market.load(getIDFromAddress(optionMarketAddress)) as Market
+  }
+
+  export function loadBoard(optionMarketId: string, boardId: BigInt): Board {
+    return Board.load(Entity.getBoardID(optionMarketId, boardId)) as Board
+  }
+
+  export function loadStrike(optionMarketId: string, strikeId: BigInt): Strike {
+    return Strike.load(Entity.getStrikeID(optionMarketId, strikeId)) as Strike
+  }
+
+  export function loadPosition(optionMarketId: string, positionId: i32): Position {
+    return Position.load(Entity.getPositionID(optionMarketId, positionId)) as Position
+  }
+
+  export function loadPool(liquidityPoolAddress: Address): Pool {
+    return Pool.load(getIDFromAddress(liquidityPoolAddress)) as Pool
+  }
+
+  export function loadGreekCache(greekCacheAddress: Address): GreekCache {
+    return GreekCache.load(getIDFromAddress(greekCacheAddress)) as GreekCache
+  }
+
+  export function loadOptionToken(optionTokenAddress: Address): OptionToken {
+    return OptionToken.load(getIDFromAddress(optionTokenAddress)) as OptionToken
+  }
+
+  export function loadOptionMarketPricer(optionMarketPricerAddress: Address): OptionMarketPricer {
+    return OptionMarketPricer.load(getIDFromAddress(optionMarketPricerAddress)) as OptionMarketPricer
+  }
+
+  export function loadShortCollateral(shortCollateralAddress: Address): ShortCollateral {
+    return ShortCollateral.load(getIDFromAddress(shortCollateralAddress)) as ShortCollateral
+  }
+
+  // export function getSnapshotID(baseId: string, timestamp: i32): string {
+  //   return baseId + '-' + timestamp.toString()
+  // }
+
+  export function getBoardID(optionMarketId: string, boardId: BigInt): string {
+    return optionMarketId + '-' + boardId.toString()
+  }
+
+  export function getStrikeID(optionMarketId: string, strikeId: BigInt): string {
+    return optionMarketId + '-' + strikeId.toString()
+  }
+
+  export function getOptionID(optionMarketId: string, strikeId: BigInt, isCall: boolean): string {
+    let suffix = (isCall ? 'call' : 'put') as string
+    return getStrikeID(optionMarketId, strikeId) + '-' + suffix
+  }
+
+  export function getOptionIDFromStrikeID(strikeId: string, isCall: boolean): string {
+    let suffix = (isCall ? 'call' : 'put') as string
+    return strikeId + '-' + suffix
+  }
+
+  export function loadOption(optionMarketId: string, strikeId: BigInt, isCall: boolean): Option | null {
+    return Option.load(getOptionID(optionMarketId, strikeId, isCall))
+  }
+
+  export function getPositionID(optionMarketId: string, positionId: i32): string {
+    return optionMarketId + '-' + positionId.toString()
+  }
+
+  export function getCollateralUpdateID(optionMarketId: string, positionId: i32, txHash: Bytes): string {
+    return optionMarketId + '-' + positionId.toString() + '-' + txHash.toHex()
+  }
+
+  export function getTradeIDFromPositionID(positionId: string, txHash: Bytes): string {
+    return positionId.toString() + '-' + txHash.toHex()
+  }
+
+  export function getPendingDepositOrWithdrawID(lpAddress: Address, positionId: BigInt, isDeposit: boolean): string {
+    let depOrWith = isDeposit ? 'deposit' : 'withdraw'
+    return lpAddress.toHex() + '-' + depOrWith + '-' + positionId.toString()
+  }
+
+  export function getDepositOrWithdrawalID(lpAddress: Address, userAddress: string, txHash: Bytes): string {
+    return lpAddress.toHex() + '-' + userAddress + '-' + txHash.toHex()
+  }
+
+  export function getLPUserLiquidityID(poolAddress: Address, userAddress: Address): string {
+    return poolAddress.toHex() + '-' + userAddress.toHex()
+  }
+
+  export function getCircuitBreakerID(poolAddress: Address, txHash: Bytes): string {
+    return poolAddress.toHex() + '-' + txHash.toHex()
+  }
+
+  export function getTransferID(optionMarketId: string, positionId: i32, txHash: Bytes): string {
+    return optionMarketId + '-' + positionId.toString() + '-' + txHash.toHex()
+  }
+
+  export function loadOrCreatePosition(
+    optionMarketId: string,
+    positionId_: i32,
+    timestamp: i32,
+    traderAddress: Address,
+  ): Position {
+    let positionId = Entity.getPositionID(optionMarketId, positionId_)
+    let position = Position.load(positionId) //as Position
+
+    if (position == null) {
+      position = new Position(positionId)
+      position.market = optionMarketId
+      position.positionId = positionId_
+      position.state = Entity.PositionState.ACTIVE
+      position.openTimestamp = timestamp
+      position.owner = traderAddress
+      position.size = ZERO
+      position.collateral = ZERO
+      position.averageCostPerOption = ZERO
+    }
+
+    return position as Position
+  }
+
+  export function loadOrCreatePositionCollateralUpdate(
+    optionMarketId: string,
+    positionId_: i32,
+    txHash: Bytes,
+    timestamp: i32,
+    blockNumber: i32,
+  ): CollateralUpdate {
+    let collateralUpdateId = Entity.getCollateralUpdateID(optionMarketId, positionId_, txHash)
+    let collateralUpdate = CollateralUpdate.load(collateralUpdateId)
+
+    if (collateralUpdate == null) {
+      collateralUpdate = new CollateralUpdate(collateralUpdateId)
+      collateralUpdate.position = Entity.getPositionID(optionMarketId, positionId_)
+      collateralUpdate.timestamp = timestamp
+      collateralUpdate.transactionHash = txHash
+      collateralUpdate.blockNumber = blockNumber
+    }
+
+    return collateralUpdate as CollateralUpdate
+  }
+
+  export function loadOrCreatePoolHedgerSnapshot(
+    poolHedgerAddress: Address,
+    period: i32,
+    timestamp: i32,
+  ): PoolHedgerExposureSnapshot {
+    let snapshotId = Snapshot.getSnapshotID(getIDFromAddress(poolHedgerAddress), period, timestamp)
+    let snapshot = PoolHedgerExposureSnapshot.load(snapshotId)
+
+    if (snapshot == null) {
+      // create snapshot
+      snapshot = new PoolHedgerExposureSnapshot(snapshotId)
+      let poolHedgerId = Entity.getIDFromAddress(poolHedgerAddress)
+      snapshot.poolHedger = poolHedgerId
+      snapshot.period = period
+      snapshot.timestamp = Snapshot.roundTimestamp(timestamp, period)
+      snapshot.currentNetDelta = ZERO
+    }
+
+    return snapshot as PoolHedgerExposureSnapshot
+  }
+
+  export function createSpotPriceSnapshot(optionMarketId_: string, period: i32, timestamp: i32): SpotPriceSnapshot {
+    let snapshotId = Snapshot.getSnapshotID(optionMarketId_, period, timestamp)
+    let snapshot = new SpotPriceSnapshot(snapshotId)
+    snapshot.market = optionMarketId_
+    snapshot.period = period
+    snapshot.timestamp = Snapshot.roundTimestamp(timestamp, period)
+
+    return snapshot as SpotPriceSnapshot
+  }
+
+  export function createMarketTotalValueSnapshot(
+    optionMarketId: string,
+    period: i32,
+    timestamp: i32,
+  ): MarketTotalValueSnapshot {
+    let snapshot = new MarketTotalValueSnapshot(Snapshot.getSnapshotID(optionMarketId, period, timestamp))
+    snapshot.market = optionMarketId
+    snapshot.period = period
+    snapshot.timestamp = Snapshot.roundTimestamp(timestamp, period)
+
+    return snapshot
+  }
+
+  export function loadOrCreateMarketPendingLiquiditySnapshot(
+    optionMarketId: string,
+    poolId: string,
+    period: i32,
+    timestamp: i32,
+  ): MarketPendingLiquiditySnapshot {
+    let snapshotId = Snapshot.getSnapshotID(poolId, period, timestamp)
+    let snapshot = MarketPendingLiquiditySnapshot.load(snapshotId)
+
+    if (snapshot == null) {
+      snapshot = new MarketPendingLiquiditySnapshot(snapshotId)
+
+      snapshot.market = optionMarketId
+      snapshot.pool = poolId
+      snapshot.period = period
+      snapshot.timestamp = Snapshot.roundTimestamp(timestamp, period)
+
+      let pool = Pool.load(poolId)
+      let lastSnapshot: MarketPendingLiquiditySnapshot | null =
+        pool == null ? null : MarketPendingLiquiditySnapshot.load(pool.latestPendingLiquidity)
+
+      if (lastSnapshot == null) {
+        snapshot.pendingDepositAmount = ZERO
+        snapshot.pendingWithdrawalAmount = ZERO
+      } else {
+        //Load previous snapshot
+        snapshot.pendingDepositAmount = lastSnapshot.pendingDepositAmount
+        snapshot.pendingWithdrawalAmount = lastSnapshot.pendingWithdrawalAmount
+      }
+    }
+    return snapshot as MarketPendingLiquiditySnapshot
+  }
+
+  export function loadOrCreateMarketVolumeAndFeesSnapshot(
+    optionMarketId: string,
+    period: i32,
+    timestamp: i32,
+  ): MarketVolumeAndFeesSnapshot {
+    let snapshotId = Snapshot.getSnapshotID(optionMarketId, period, timestamp)
+    let snapshot = MarketVolumeAndFeesSnapshot.load(snapshotId)
+
+    if (snapshot == null) {
+      // create snapshot
+      snapshot = new MarketVolumeAndFeesSnapshot(snapshotId)
+
+      snapshot.market = optionMarketId
+      snapshot.period = period
+      snapshot.timestamp = Snapshot.roundTimestamp(timestamp, period)
+
+      let market = Market.load(optionMarketId)
+      let lastSnapshot: MarketVolumeAndFeesSnapshot | null =
+        market == null ? null : MarketVolumeAndFeesSnapshot.load(market.latestVolumeAndFees)
+
+      //Per-period values (Reset to 0 every new snapshot)
+      snapshot.premiumVolume = ZERO
+      snapshot.notionalVolume = ZERO
+      snapshot.spotPriceFees = ZERO
+      snapshot.optionPriceFees = ZERO
+      snapshot.vegaFees = ZERO
+      snapshot.varianceFees = ZERO
+      snapshot.deltaCutoffFees = ZERO
+      snapshot.liquidatorFees = ZERO
+      snapshot.smLiquidationFees = ZERO
+      snapshot.lpLiquidationFees = ZERO
+
+      //Cumulative values load from previous snapshot if it exists, otherwise set to 0
+      if (lastSnapshot == null) {
+        snapshot.totalLongCallOpenInterest = ZERO
+        snapshot.totalShortCallOpenInterest = ZERO
+        snapshot.totalLongPutOpenInterest = ZERO
+        snapshot.totalShortPutOpenInterest = ZERO
+        snapshot.totalPremiumVolume = ZERO
+        snapshot.totalNotionalVolume = ZERO
+      } else {
+        //Load previous snapshot
+        snapshot.totalLongCallOpenInterest = lastSnapshot.totalLongCallOpenInterest
+        snapshot.totalShortCallOpenInterest = lastSnapshot.totalShortCallOpenInterest
+        snapshot.totalLongPutOpenInterest = lastSnapshot.totalLongPutOpenInterest
+        snapshot.totalShortPutOpenInterest = lastSnapshot.totalShortPutOpenInterest
+        snapshot.totalPremiumVolume = lastSnapshot.totalPremiumVolume
+        snapshot.totalNotionalVolume = lastSnapshot.totalNotionalVolume
+      }
+    }
+
+    return snapshot as MarketVolumeAndFeesSnapshot
+  }
+
+  export function loadOrCreateMarketSNXFeesSnapshot(
+    optionMarketId: string,
+    period: i32,
+    timestamp: i32,
+  ): MarketSNXFeesSnapshot {
+    let snapshotId = Snapshot.getSnapshotID(optionMarketId, period, timestamp)
+    let snapshot = MarketSNXFeesSnapshot.load(snapshotId)
+
+    if (snapshot == null) {
+      // create snapshot
+      snapshot = new MarketSNXFeesSnapshot(snapshotId)
+
+      snapshot.market = optionMarketId
+      snapshot.period = period
+      snapshot.timestamp = Snapshot.roundTimestamp(timestamp, period)
+
+      snapshot.poolHedgerFees = ZERO
+      snapshot.liquidityPoolFees = ZERO
+      snapshot.shortCollateralFees = ZERO
+      snapshot.otherFees = ZERO
+    }
+
+    return snapshot as MarketSNXFeesSnapshot
+  }
+
+  export function createMarketGreeksSnapshot(
+    optionMarketId: string,
+    period: i32,
+    timestamp: i32,
+  ): MarketGreeksSnapshot {
+    let snapshotId = Snapshot.getSnapshotID(optionMarketId, period, timestamp)
+    let snapshot = new MarketGreeksSnapshot(snapshotId)
+
+    snapshot.market = optionMarketId
+    snapshot.period = period
+    snapshot.timestamp = Snapshot.roundTimestamp(timestamp, period)
+
+    return snapshot as MarketGreeksSnapshot
+  }
+
+  export function createBoardBaseIVSnapshot(boardId: string, period: i32, timestamp: i32): BoardBaseIVSnapshot {
+    let snapshotId = Snapshot.getSnapshotID(boardId, period, timestamp)
+
+    let snapshot = new BoardBaseIVSnapshot(snapshotId)
+
+    snapshot.board = boardId
+    snapshot.period = period
+    snapshot.timestamp = Snapshot.roundTimestamp(timestamp, period)
+
+    return snapshot as BoardBaseIVSnapshot
+  }
+
+  //We will always overwrite a snapshot with the same ID, since no data needs to be carried over
+  export function createStrikeSnapshot(
+    optionMarketId: string,
+    strikeId_: BigInt,
+    period: i32,
+    timestamp: i32,
+  ): StrikeIVAndGreeksSnapshot {
+    let strikeId = getStrikeID(optionMarketId, strikeId_)
+    let snapshotId = Snapshot.getSnapshotID(strikeId, period, timestamp)
+
+    let snapshot = new StrikeIVAndGreeksSnapshot(snapshotId)
+    snapshot.strike = strikeId
+    snapshot.period = period
+    snapshot.timestamp = Snapshot.roundTimestamp(timestamp, period)
+
+    return snapshot as StrikeIVAndGreeksSnapshot
+  }
+
+  export function createOptionPriceAndGreeksSnapshot(
+    optionId: string,
+    period: i32,
+    timestamp: i32,
+  ): OptionPriceAndGreeksSnapshot {
+    let snapshotId = Snapshot.getSnapshotID(optionId, period, timestamp)
+
+    let snapshot = new OptionPriceAndGreeksSnapshot(snapshotId)
+    snapshot.option = optionId
+    snapshot.period = period
+    snapshot.timestamp = Snapshot.roundTimestamp(timestamp, period)
+
+    return snapshot as OptionPriceAndGreeksSnapshot
+  }
+
+  export function loadOrCreateOptionVolumeSnapshot(
+    optionId: string,
+    period: i32,
+    timestamp: i32,
+  ): OptionVolumeSnapshot {
+    let snapshotId = Snapshot.getSnapshotID(optionId, period, timestamp)
+    let snapshot = OptionVolumeSnapshot.load(snapshotId)
+
+    if (snapshot == null) {
+      // create snapshot
+      snapshot = new OptionVolumeSnapshot(snapshotId)
+      snapshot.option = optionId
+      snapshot.period = period
+      snapshot.timestamp = Snapshot.roundTimestamp(timestamp, period)
+
+      let option = Option.load(optionId)
+      let lastSnapshot: OptionVolumeSnapshot | null =
+        option == null ? null : (OptionVolumeSnapshot.load(option.latestOptionVolume as string) as OptionVolumeSnapshot)
+
+      snapshot.premiumVolume = ZERO
+      snapshot.notionalVolume = ZERO
+
+      //When creating an option, option is null here
+      if (lastSnapshot == null) {
+        snapshot.longOpenInterest = ZERO
+        snapshot.shortOpenInterest = ZERO
+        snapshot.totalPremiumVolume = ZERO
+        snapshot.totalNotionalVolume = ZERO
+      } else {
+        snapshot.longOpenInterest = lastSnapshot.longOpenInterest
+        snapshot.shortOpenInterest = lastSnapshot.shortOpenInterest
+        snapshot.totalPremiumVolume = lastSnapshot.totalPremiumVolume
+        snapshot.totalNotionalVolume = lastSnapshot.totalNotionalVolume
+      }
+    }
+    return snapshot as OptionVolumeSnapshot
+  }
+}

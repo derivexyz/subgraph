@@ -1,0 +1,10 @@
+# folders
+abis/
+addresses/
+generated/
+src/lib/
+
+# files
+.solcover.js
+coverage.json
+docify.js

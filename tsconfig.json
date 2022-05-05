@@ -1,0 +1,18 @@
+{
+  "compilerOptions": {
+    "lib": ["es2019", "es2020.promise", "es2020.bigint", "es2020.string"],
+    "module": "commonjs",
+    "target": "es2019",
+    "strict": true,
+    "strictNullChecks": false,
+    "esModuleInterop": true,
+    "outDir": "dist",
+    "resolveJsonModule": true
+  },
+  "include": ["**/*.ts"],
+  "exclude": ["node_modules", "artifacts", "cache", ".git"],
+  "nohoist": [
+    "**/typechain",
+    "**/@typechain/*"
+  ]
+}

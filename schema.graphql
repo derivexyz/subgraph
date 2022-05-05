@@ -1,0 +1,1027 @@
+type Global @entity {
+  " 1 "
+  id: ID!
+
+  " OptionMarketViewer address "
+  viewerAddress: Bytes
+
+  " Synthetix Address Resolver Address "
+  resolverAddress: Bytes
+
+  " Synthetix ExchangeRates Address "
+  exchangeRatesAddress: Bytes
+
+  " Synthetix CollateralShort Address "
+  collateralShortAddress: Bytes
+
+  " Lyra SynthetixAdapter address"
+  synthetixAdapter: Bytes
+
+  " Lyra Market Wrapper Address "
+  wrapperAddress: Bytes
+
+  " Markets reference "
+  markets: [Market!]! @derivedFrom(field: "global")
+}
+
+type Market @entity {
+  " OptionMarket address "
+  id: ID!
+
+  " OptionMarket address "
+  address: Bytes!
+
+  " QUOTE-BASE formatted name "
+  name: String!
+
+  " Address of the quote asset "
+  quoteAddress: Bytes!
+
+  " The key of the quoteAsset "
+  quoteKey: Bytes!
+
+  " Address of the base asset "
+  baseAddress: Bytes!
+
+  " The key of the baseAsset "
+  baseKey: Bytes!
+
+  " Owner of the contract "
+  owner: Bytes!
+
+  " Is the market removed "
+  isRemoved: Boolean!
+
+  " Active BoardIds for this expiry "
+  activeBoardIds: [String!]!
+
+  " Market standard size Param "
+  standardSize: BigInt!
+
+  " Market skew adjustment Factor Param "
+  skewAdjustmentFactor: BigInt!
+
+  " Market risk free rate parameter "
+  rateAndCarry: BigInt!
+
+  "Market trading cutoff (Number of seconds before expiry) "
+  tradingCutoff: Int!
+
+  # References
+
+  " Boards (Expiries) for this market "
+  boards: [Board!]! @derivedFrom(field: "market")
+
+  " Address of the chainlink aggregator for this market "
+  chainlinkAggregator: Bytes!
+
+  " Latest chainlink price for this market "
+  latestSpotPrice: BigInt!
+
+  " Chainlink price history for this market "
+  spotPriceHistory: [SpotPriceSnapshot!]! @derivedFrom(field: "market")
+
+  " Latest snapshot of market volume and fees"
+  latestVolumeAndFees: MarketVolumeAndFeesSnapshot!
+
+  " Historical snapshots of market volume and fees "
+  volumeAndFeesHistory: [MarketVolumeAndFeesSnapshot!]! @derivedFrom(field: "market")
+
+  " Latest snapshot of SNX fees"
+  latestSNXFees: MarketSNXFeesSnapshot!
+
+  " Historical snapshots of SNX Fees "
+  SNXFeesHistory: [MarketSNXFeesSnapshot!]! @derivedFrom(field: "market")
+
+  " Latest snapshot of market total value "
+  latestTotalValue: MarketTotalValueSnapshot!
+
+  " Historical snapshots of market total value "
+  marketTotalValueHistory: [MarketTotalValueSnapshot!]! @derivedFrom(field: "market")
+
+  " Latest snapshot of market greeks "
+  latestGreeks: MarketGreeksSnapshot!
+
+  " Historical snapshots of market greeks "
+  greeksHistory: [MarketGreeksSnapshot!]! @derivedFrom(field: "market")
+
+  " LiquidityPool reference "
+  liquidityPool: Pool!
+
+  " PoolHedger reference "
+  poolHedger: PoolHedger!
+
+  " OptionToken reference "
+  optionToken: OptionToken!
+
+  " GreekCache reference "
+  greekCache: GreekCache!
+
+  " ShortCollateral reference "
+  shortCollateral: ShortCollateral!
+
+  " Option MarketPricer reference "
+  optionMarketPricer: OptionMarketPricer!
+
+  " Global reference "
+  global: Global!
+}
+
+type GreekCache @entity {
+  " GreekCache address "
+  id: ID!
+
+  " Market reference "
+  market: Market!
+}
+
+type OptionToken @entity {
+  " OptionToken address "
+  id: ID!
+
+  " Market reference "
+  market: Market!
+}
+
+type OptionMarketPricer @entity {
+  " OptionMarketPricer address "
+  id: ID!
+
+  " Market reference "
+  market: Market!
+}
+
+type ShortCollateral @entity {
+  " ShortCollateral address "
+  id: ID!
+
+  " Market reference "
+  market: Market!
+
+  " The base balance of the short collateral contract  "
+  baseBalance: BigInt!
+
+  " The quote balance of the short collateral contract "
+  quoteBalance: BigInt!
+}
+
+type PoolHedger @entity {
+  " PoolHedger address "
+  id: ID!
+
+  " Market reference "
+  market: Market!
+
+  " The base balance of the pool hedger (Only relevant when hedger is long) "
+  baseBalance: BigInt!
+
+  " The short collateral quote balance (Only relevant when hedger is short) "
+  collateralQuoteBalance: BigInt!
+
+  " The pool hedger net delta history "
+  poolHedgerExposureHistory: [PoolHedgerExposureSnapshot!]! @derivedFrom(field: "poolHedger")
+
+  " Latest pool hedger net delta"
+  latestPoolHedgerExposure: PoolHedgerExposureSnapshot!
+}
+
+type Pool @entity {
+  " LiquidityPool address "
+  id: ID!
+
+  " Market reference "
+  market: Market!
+
+  quoteBalance: BigInt!
+
+  baseBalance: BigInt!
+
+  tokenPrice: BigInt!
+
+  " User Liquidity Reference (Liquidity per address) "
+  lpUsers: [LPUserLiquidity!]! @derivedFrom(field: "pool")
+
+  " CircuitBreaker events "
+  cbEvents: [CircuitBreaker!]! @derivedFrom(field: "pool")
+
+  " Latest snapshot of market pending liquidity "
+  latestPendingLiquidity: MarketPendingLiquiditySnapshot!
+
+  " Historical snapshots of market pending liquidity "
+  marketPendingLiquidityHistory: [MarketPendingLiquiditySnapshot!]! @derivedFrom(field: "pool")
+}
+
+type Board @entity {
+  " MarketAddress - Board ID "
+  id: ID!
+
+  " ID used to keep track of the board in the contract "
+  boardId: BigInt!
+
+  #Values
+
+  " Is the expiry date passed "
+  isExpired: Boolean!
+
+  " Is this expiry paused "
+  isPaused: Boolean!
+
+  " Expiry timestamp "
+  expiryTimestamp: Int!
+
+  " Expiry timestamp as Text "
+  expiryTimestampReadable: String!
+
+  " Quote price at time of expiry "
+  spotPriceAtExpiry: BigInt
+
+  " StrikeIds for this expiry (Used internally by the indexer) "
+  strikeIds: [String!]!
+
+  #References
+
+  " Strikes "
+  strikes: [Strike!]! @derivedFrom(field: "board")
+
+  " Current base IV "
+  baseIv: BigInt!
+
+  " Current iv variance from gwav "
+  ivVariance: BigInt!
+
+  " IV history snapshots "
+  boardBaseIVHistory: [BoardBaseIVSnapshot!]! @derivedFrom(field: "board")
+
+  " Market reference"
+  market: Market!
+}
+
+type Strike @entity {
+  " MarketAddress - Strike ID "
+  id: ID!
+
+  " ID used to keep track of the strike in the contract "
+  strikeId: BigInt!
+
+  " Strike price "
+  strikePrice: BigInt!
+
+  " Strike price "
+  strikePriceReadable: String!
+
+  #References
+
+  " Market reference "
+  market: Market!
+
+  " Board reference "
+  board: Board!
+
+  " Is the board for this strike expired "
+  isExpired: Boolean!
+
+  " Call Option reference "
+  callOption: Option!
+
+  " Put Option reference "
+  putOption: Option!
+
+  " Current Skew for this strike "
+  skew: BigInt!
+
+  " Current skew variance from gwav for this strike "
+  skewVariance: BigInt!
+
+  " Current iv for this strike "
+  iv: BigInt!
+
+  "IV, Skew, Vega, gamma History "
+  strikeIVAndGreeksHistory: [StrikeIVAndGreeksSnapshot!]! @derivedFrom(field: "strike")
+
+  " Most recent strike IV and greeks snapshot "
+  latestStrikeIVAndGreeks: StrikeIVAndGreeksSnapshot
+}
+
+type Option @entity {
+  " Market Address - Strike Id - Call / Put "
+  id: ID!
+
+  " Call or put "
+  isCall: Boolean!
+
+  # References
+
+  " Market reference "
+  market: Market!
+
+  " Board reference "
+  board: Board!
+
+  " Strike reference "
+  strike: Strike!
+
+  " Is the board for this option expired "
+  isExpired: Boolean!
+
+  " Trader positions for this Option "
+  positions: [Position!]! @derivedFrom(field: "option")
+
+  " Most recent option volume and OI snapshot "
+  latestOptionVolume: OptionVolumeSnapshot!
+
+  " Option volume and OI snapshots reference "
+  optionVolumeHistory: [OptionVolumeSnapshot!]! @derivedFrom(field: "option")
+
+  " Most recent option price and greeks snapshot "
+  latestOptionPriceAndGreeks: OptionPriceAndGreeksSnapshot
+
+  " Option price and greeks snapshots reference "
+  optionPriceAndGreeksHistory: [OptionPriceAndGreeksSnapshot!]! @derivedFrom(field: "option")
+}
+
+type Position @entity {
+  " Market Address - PositionId "
+  id: ID!
+
+  " Market Referendce "
+  market: Market!
+
+  " Board Reference "
+  board: Board
+
+  " Strike Reference "
+  strike: Strike
+
+  " Option reference "
+  option: Option
+
+  " Position ID "
+  positionId: Int!
+
+  " Trader/User address "
+  owner: Bytes!
+
+  " Is the position long "
+  isLong: Boolean!
+
+  " Is a short call is collateralized in the base asset or in quote. "
+  isBaseCollateral: Boolean
+
+  " The state of the position, definited by the PositionState Enum "
+  state: Int!
+
+  " Block timestamp when the position was opened "
+  openTimestamp: Int!
+
+  " Block timestamp when the position was closed "
+  closeTimestamp: Int
+
+  " Current position size "
+  size: BigInt!
+
+  " Current position collateral "
+  collateral: BigInt!
+
+  # size * avgCost = previousTotalCost
+  # newPremium + previousTotalCost
+  #
+
+  averageCostPerOption: BigInt!
+  # References
+
+  " Settlement reference "
+  settle: Settle
+
+  " Trades reference "
+  trades: [Trade!]! @derivedFrom(field: "position")
+
+  " Transfers reference "
+  transfers: [OptionTransfer!]! @derivedFrom(field: "position")
+
+  " Collateral Updates reference "
+  collateralUpdates: [CollateralUpdate!]! @derivedFrom(field: "position")
+}
+
+type Trade @entity {
+  " Market Address - PositionId - txHash "
+  id: ID!
+
+  " Market ID "
+  market: Market!
+
+  board: Board!
+
+  strike: Strike!
+
+  option: Option!
+
+  " Position Reference "
+  position: Position!
+
+  collateralUpdate: CollateralUpdate
+
+  " The position owner at the time of the trade "
+  trader: Bytes!
+
+  " Block timestamp when the trade happened "
+  timestamp: Int!
+
+  " Block number "
+  blockNumber: Int!
+
+  " Transaction hash of the trade "
+  transactionHash: Bytes!
+
+  " Is the trade a buy "
+  isBuy: Boolean!
+
+  " Is the trade an Open "
+  isOpen: Boolean!
+
+  " Is the trade a force close "
+  isForceClose: Boolean!
+
+  " Is the trade a liquidation "
+  isLiquidation: Boolean!
+
+  setCollateralTo: BigInt
+
+  " Trade amount "
+  size: BigInt!
+
+  " Trade Premium paid/recieved by user "
+  premium: BigInt!
+
+  " Raw premium without fees "
+  premiumLessFees:BigInt!
+
+  " Price Per Option "
+  pricePerOption: BigInt!
+
+  " Vol traded "
+  volTraded: BigInt!
+
+  " IV after the trade"
+  newIv: BigInt!
+
+  " Base IV after the trade"
+  newBaseIv: BigInt!
+
+  " Skew after the trade "
+  newSkew: BigInt!
+
+  " Spot price at the time of the trade "
+  spotPrice: BigInt!
+
+  " Paid spot price fees "
+  spotPriceFee: BigInt!
+
+  " Paid vega util fees "
+  vegaUtilFee: BigInt!
+
+  " Paid variance fee "
+  varianceFee: BigInt!
+
+  " Paid option price fees "
+  optionPriceFee: BigInt!
+
+  " Paid delta cutoff fees "
+  deltaCutoffFee: BigInt
+
+  " Paid liquidator fees "
+  liquidatorFee: BigInt
+
+  " Paid lp liquidation fees "
+  lpLiquidationFee: BigInt
+
+  " Paid sm liquidation fees "
+  smLiquidationFee: BigInt
+
+  " Paid external swap fees (Curve) "
+  externalSwapFees: BigInt
+}
+
+type Settle @entity {
+  " Market Address - PositionId - txHash "
+  id: ID!
+
+  " Position reference "
+  position: Position!
+
+  " Owner Address at time of settle "
+  owner: Bytes!
+
+  " Block timestamp of settlement "
+  timestamp: Int!
+
+  " Block number "
+  blockNumber: Int!
+
+  " Transaction hash of the settlement "
+  transactionHash: Bytes!
+
+  " Settlement amount "
+  size: BigInt!
+
+  " Spot price at time of expiry "
+  spotPriceAtExpiry: BigInt!
+}
+
+type OptionTransfer @entity {
+  " Market Address - PositionId - txHash "
+  id: ID!
+
+  " Position reference "
+  position: Position!
+
+  " Old owner of the position "
+  oldOwner: Bytes!
+
+  " New owner of the position "
+  newOwner: Bytes!
+
+  " Block timestamp of settlement "
+  timestamp: Int!
+
+  " Block number "
+  blockNumber: Int!
+
+  " Transaction hash of the settlement "
+  transactionHash: Bytes!
+}
+
+type CollateralUpdate @entity {
+  " Market Address - PositionId - txHash "
+  id: ID!
+
+  market: Market!
+
+  board: Board!
+
+  strike: Strike!
+
+  option: Option!
+
+  " Position Reference "
+  position: Position!
+
+  trade: Trade!
+
+  " Is the position base collateralized"
+  isBaseCollateral: Boolean!
+
+  " Timestamp "
+  timestamp: Int!
+
+  " Block number "
+  blockNumber: Int!
+
+  " Transaction hash of the update "
+  transactionHash: Bytes!
+
+  " Collateral update amount "
+  amount: BigInt!
+}
+
+type CircuitBreaker @entity {
+  " Pool address - transaction hash "
+  id: ID!
+
+  " Liquidity Pool Reference  "
+  pool: Pool!
+
+  " Timestamp of circuit breaker event "
+  timestamp: Int!
+
+  " Transaction hash of circuit breaker event "
+  transactionHash: Bytes!
+
+  " Timestamp when the circuitbreaker expires "
+  cbTimestamp: Int!
+
+  " True if the IV variance threshold was crossed "
+  ivVarianceCrossed: Boolean!
+
+  " True if the skew variance threshold was crossed "
+  skewVarianceCrossed: Boolean!
+
+  " True if the liquidity variance threshold was crossed "
+  liquidityVarianceCrossed: Boolean!
+}
+
+type LPUserLiquidity @entity {
+  " Pool Address - User Address "
+  id: ID!
+
+  " Pool reference "
+  pool: Pool!
+
+  " User address "
+  user: Bytes!
+
+  " Total amount deposited by this user "
+  totalAmountDeposited: BigInt!
+
+  " Total amount withdrawn by this user "
+  totalAmountWithdrawn: BigInt!
+
+  " List of deposits and withdrawals for this user "
+  depositsAndWithdrawals: [LPAction!]! @derivedFrom(field: "lpUserLiquidity")
+
+  " Pending deposits for this user "
+  pendingDepositsAndWithdrawals: [LPPendingAction!]! @derivedFrom(field: "lpUserLiquidity")
+}
+
+type LPAction @entity {
+  " Pool Address - User Address - Tx-hash"
+  id: ID!
+
+  " Pool reference "
+  pool: Pool!
+
+  " LP User reference "
+  lpUserLiquidity: LPUserLiquidity!
+
+  " Timestamp of withdrawal "
+  timestamp: Int!
+
+  " Transaction hash of the withdraw "
+  transactionHash: Bytes!
+
+  " True if tx is a deposit "
+  isDeposit: Boolean
+
+  " Queue ID (0 if never queued) "
+  queueID: BigInt!
+
+  " Quote Amount "
+  quoteAmount: BigInt!
+
+  " LP Token price at time of transaction "
+  tokenPrice: BigInt!
+
+  " LP Token Amount "
+  tokenAmount: BigInt!
+}
+
+type LPPendingAction @entity {
+  " Pool Address - WithdrawalQueueID "
+  id: ID!
+
+  " Pool reference "
+  pool: Pool!
+
+  " LP User reference "
+  lpUserLiquidity: LPUserLiquidity!
+
+  " Timestamp of withdrawal request "
+  timestamp: Int!
+
+  " True if is deposit "
+  isDeposit: Boolean!
+
+  " Transaction hash of the withdraw request "
+  transactionHash: Bytes!
+
+  " Withdrawal queue ID "
+  queueID: BigInt!
+
+  " Requestes withdrawal amount "
+  pendingAmount: BigInt!
+
+  " Amount of deposit that has been processed "
+  processedAmount: BigInt! #Withdrawals can be partially processed
+}
+
+type PoolHedgerExposureSnapshot @entity {
+  " PoolHedgerId-period-periodId (periodId is timestamp / period) "
+  id: ID!
+
+  " PoolHedger reference "
+  poolHedger: PoolHedger!
+
+  " Duration this snapshot captures in seconds (Options: 1hr: 3600, 1d: 86400). Example: 'period_gte:3600' gives hourly data "
+  period: Int!
+
+  " Snapshot timestamp "
+  timestamp: Int!
+
+  " Current net delta of the pool hedger "
+  currentNetDelta: BigInt!
+}
+
+type MarketTotalValueSnapshot @entity {
+  " MarketId-period-periodId (periodId is timestamp / period) "
+  id: ID!
+
+  " Market reference "
+  market: Market!
+
+  " Duration this snapshot captures in seconds (Options: 1hr: 3600, 1d: 86400). Example: 'period_gte:3600' gives hourly data "
+  period: Int!
+
+  " Snapshot timestamp "
+  timestamp: Int!
+
+  " Current LP Token price. Starts at 1 "
+  tokenPrice: BigInt!
+
+  " Amount of liquidity available for option collateral and premiums "
+  freeLiquidity: BigInt!
+
+  " Amount of liquidity available for withdrawals - different to freeLiquidity "
+  burnableLiquidity: BigInt!
+
+  " Amount of liquidity reserved for long options sold to traders "
+  usedCollatLiquidity: BigInt!
+
+  " Portion of liquidity reserved for delta hedging ($ outstanding) "
+  pendingDeltaLiquidity: BigInt!
+
+  " Current value of delta hedge "
+  usedDeltaLiquidity: BigInt!
+
+  " NAV at the beginning of this snapshot "
+  NAV: BigInt!
+
+  " Net Option value at the end of this snapshot "
+  netOptionValue: BigInt!
+}
+
+type MarketPendingLiquiditySnapshot @entity {
+  " MarketId-period-periodId (periodId is timestamp / period) "
+  id: ID!
+
+  " Market reference "
+  market: Market!
+
+  " Market reference "
+  pool: Pool!
+
+  " Duration this snapshot captures in seconds (Options: 1hr: 3600, 1d: 86400). Example: 'period_gte:3600' gives hourly data "
+  period: Int!
+
+  " Snapshot timestamp "
+  timestamp: Int!
+
+  " Value of pending deposits"
+  pendingDepositAmount: BigInt!
+
+  " Value of pending withdrawals"
+  pendingWithdrawalAmount: BigInt!
+}
+
+type MarketSNXFeesSnapshot @entity {
+  " MarketId-period-periodId (periodId is timestamp / period) "
+  id: ID!
+
+  " Market reference "
+  market: Market!
+
+  " Duration this snapshot captures in seconds (Options: 1hr: 3600, 1d: 86400). Example: 'period:3600' gives hourly data "
+  period: Int!
+
+  " Snapshot timestamp "
+  timestamp: Int!
+
+  " SNX fees paid by the poolHedger contract "
+  poolHedgerFees: BigInt!
+
+  " SNX fees paid by the liquidityPool contract "
+  liquidityPoolFees: BigInt!
+
+  " SNX fees paid by the shortCollateral contract "
+  shortCollateralFees: BigInt!
+
+  " SNX fees paid by other addresses/contracts "
+  otherFees: BigInt!
+}
+
+type MarketVolumeAndFeesSnapshot @entity {
+  " MarketId-period-periodId (periodId is timestamp / period) "
+  id: ID!
+
+  " Market reference "
+  market: Market!
+
+  " Duration this snapshot captures in seconds (Options: 1hr: 3600, 1d: 86400). Example: 'period:3600' gives hourly data "
+  period: Int!
+
+  " Snapshot timestamp "
+  timestamp: Int!
+
+  " Per-Period total premium volume "
+  premiumVolume: BigInt!
+
+  " Per-Period notional volume "
+  notionalVolume: BigInt!
+
+  " Total cumulative premium volume "
+  totalPremiumVolume: BigInt!
+
+  " Total cumulative notional volume "
+  totalNotionalVolume: BigInt!
+
+  " Total long open interest for calls "
+  totalLongCallOpenInterest: BigInt!
+
+  " Total short open interest for calls "
+  totalShortCallOpenInterest: BigInt!
+
+  " Total long open interest for puts "
+  totalLongPutOpenInterest: BigInt!
+
+  " Total short open interest for puts "
+  totalShortPutOpenInterest: BigInt!
+
+  # FEES
+
+  " Total spot price fees  "
+  spotPriceFees: BigInt!
+
+  " Total option price fees  "
+  optionPriceFees: BigInt!
+
+  " Total vega fees "
+  vegaFees: BigInt!
+
+  " Total variance fees"
+  varianceFees: BigInt!
+
+  " Total delta cutoff fees "
+  deltaCutoffFees: BigInt!
+
+  " Total liquidator fees "
+  liquidatorFees: BigInt!
+
+  " Total security module liquidation fees "
+  smLiquidationFees: BigInt!
+
+  " Total liquidation fees "
+  lpLiquidationFees: BigInt!
+
+  #LP DATA
+
+  # queuedDeposits: BigInt!
+
+  # queuedWithdrawals: BigInt!
+
+  # baseAmount: BigInt!
+
+  # quoteAmount: BigInt!
+
+  # freeLiquidity: BigInt!
+
+  # " Value of the LP token.  Intitialized at 1, so a value of 1.02 implies a gain of 2% since inception"
+  # tokenValue: BigInt!
+}
+
+type MarketGreeksSnapshot @entity {
+  " MarketId-period-periodId (periodId is timestamp / period) "
+  id: ID!
+
+  " Market "
+  market: Market!
+
+  " Duration this snapshot captures in seconds (Options: 1hr: 3600, 1d: 86400). Example: 'period_gte:3600' gives hourly data  "
+  period: Int!
+
+  " Snapshot timestamp "
+  timestamp: Int!
+
+  " Market net delta "
+  netDelta: BigInt!
+
+  " Market net std vega "
+  netStdVega: BigInt!
+
+  " Market net gamma "
+  netGamma: BigInt!
+}
+
+type SpotPriceSnapshot @entity {
+  " MarketId-period-periodId (periodId is timestamp / period) "
+  id: ID!
+
+  " Market reference "
+  market: Market!
+
+  " Snapshot timestamp "
+  timestamp: Int!
+
+  " Duration this snapshot captures in seconds (Options: 15m: 900, 1hr: 3600, 1d: 86400). Example: 'period_gte:3600' gives hourly data  "
+  period: Int!
+
+  " Spot price of the asset "
+  spotPrice: BigInt!
+}
+
+type BoardBaseIVSnapshot @entity {
+  " BoardId-period-periodId (periodId is timestamp / period)  "
+  id: ID!
+
+  " Board reference "
+  board: Board!
+
+  " Duration this snapshot captures in seconds (Options: 1hr: 3600, 1d: 86400). Example: 'period_gte:3600' gives hourly data "
+  period: Int!
+
+  " Snapshot timestamp "
+  timestamp: Int!
+
+  " IV of the board "
+  baseIv: BigInt!
+
+  " iv variance from gwav "
+  ivVariance: BigInt!
+}
+
+type StrikeIVAndGreeksSnapshot @entity {
+  " StrikeId-period-periodId (periodId is timestamp / period) "
+  id: ID!
+
+  " Strike reference "
+  strike: Strike!
+
+  " Board Reference "
+  board: Board!
+
+  " Duration this snapshot captures in seconds (Options: 15m: 900, 1hr: 3600, 1d: 86400). Example: 'period_gte:3600' gives hourly data  "
+  period: Int!
+
+  " Snapshot timestamp "
+  timestamp: Int!
+
+  " IV of the strike (skew * board iv) "
+  iv: BigInt!
+
+  " Strike skew"
+  skew: BigInt!
+
+  " Strike Skew Variance from gwav "
+  skewVariance: BigInt!
+
+  " Strike vega "
+  vega: BigInt!
+
+  " Strike gamma "
+  gamma: BigInt!
+}
+
+type OptionVolumeSnapshot @entity {
+  " OptionId-period-periodId (periodId is timestamp / period) "
+  id: ID!
+
+  " Option reference "
+  option: Option!
+
+  " Duration this snapshot captures in seconds (Options: 15m: 900, 1hr: 3600, 1d: 86400). Example: 'period:3600' gives hourly data "
+  period: Int!
+
+  " Snapshot timestamp "
+  timestamp: Int!
+
+  " Option long open interest "
+  longOpenInterest: BigInt!
+
+  " Option short open interest "
+  shortOpenInterest: BigInt!
+
+  " Per-Period option premium volume "
+  premiumVolume: BigInt!
+
+  " Per-Period option notional volume "
+  notionalVolume: BigInt!
+
+  " Total cumulative option premium volume "
+  totalPremiumVolume: BigInt!
+
+  " Total cumulative option notional volume "
+  totalNotionalVolume: BigInt!
+}
+
+type OptionPriceAndGreeksSnapshot @entity {
+  " OptionId-period-periodId (periodId is timestamp / period) "
+  id: ID!
+
+  " Option reference "
+  option: Option!
+
+  " Duration this snapshot captures in seconds (Options: 15m: 900, 1hr: 3600, 1d: 86400). Example: 'period_gte:3600' gives hourly data "
+  period: Int!
+
+  " Snapshot timestamp "
+  timestamp: Int!
+
+  " Option delta "
+  delta: BigInt!
+
+  " Option theta "
+  theta: BigInt!
+
+  " Option rho "
+  rho: BigInt!
+
+  " Option Black Scholes price "
+  optionPrice: BigInt!
+}
