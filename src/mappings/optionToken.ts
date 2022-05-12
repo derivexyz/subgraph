@@ -3,7 +3,7 @@ import { Global, Position, Trade, OptionTransfer, Option } from '../../generated
 import { PositionUpdated, Transfer } from '../../generated/templates/OptionToken/OptionToken'
 import { Entity, ZERO, ZERO_ADDRESS } from '../lib'
 
-function updatePositionCollateralHistory(
+export function updatePositionCollateralHistory(
   optionMarketId: string,
   boardId: string,
   strikeId: string,
@@ -14,6 +14,7 @@ function updatePositionCollateralHistory(
   newCollateral: BigInt,
   blockNumber: i32,
   isBaseCollateral: boolean,
+  owner: Bytes,
 ): void {
   let positionCollateralUpdate = Entity.loadOrCreatePositionCollateralUpdate(
     optionMarketId,
@@ -28,6 +29,7 @@ function updatePositionCollateralHistory(
   positionCollateralUpdate.strike = strikeId
   positionCollateralUpdate.option = optionId
   positionCollateralUpdate.amount = newCollateral
+  positionCollateralUpdate.trader = owner
   positionCollateralUpdate.save()
 }
 
@@ -122,8 +124,24 @@ export function handlePositionUpdated(event: PositionUpdated): void {
         ZERO,
         event.block.number.toI32(),
         position.isBaseCollateral,
+        position.owner,
       )
       position.collateral = ZERO
+    } else if (position.state == Entity.PositionState.CLOSED) {
+      updatePositionCollateralHistory(
+        marketAddress,
+        option.board,
+        option.strike,
+        option.id,
+        event.params.position.positionId.toI32(),
+        event.transaction.hash,
+        event.block.timestamp.toI32(),
+        ZERO,
+        event.block.number.toI32(),
+        position.isBaseCollateral,
+        position.owner,
+      )
+      position.collateral = event.params.position.collateral
     } else {
       updatePositionCollateralHistory(
         marketAddress,
@@ -136,6 +154,7 @@ export function handlePositionUpdated(event: PositionUpdated): void {
         event.params.position.collateral,
         event.block.number.toI32(),
         position.isBaseCollateral,
+        event.params.owner,
       )
       position.collateral = event.params.position.collateral
     }

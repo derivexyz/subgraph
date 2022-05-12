@@ -27,6 +27,7 @@ import {
 import { Entity, ZERO, PERIODS, UNIT, HOUR_SECONDS, ZERO_ADDRESS, Snapshot } from '../lib'
 import { log, Address, Bytes, BigInt, DataSourceContext, dataSource } from '@graphprotocol/graph-ts'
 import { addProxyAggregator } from './latestRates'
+import { updatePendingLiquiditySnapshot } from './liquidityPool'
 
 export function createPoolHedger(poolHedgerAddress: Address, timestamp: i32): PoolHedger {
   let poolHedgerId = Entity.getIDFromAddress(poolHedgerAddress)
@@ -109,6 +110,7 @@ export function handleGlobalAddressUpdated(event: GlobalAddressUpdated): void {
 //Initializes all datasources and entities for the new market
 export function handleMarketUpdated(event: MarketUpdated): void {
   let global = Entity.loadOrCreateGlobal()
+  let timestamp = event.block.timestamp.toI32()
 
   let context = new DataSourceContext()
   context.setString('market', event.params.market.optionMarket.toHex())
@@ -131,19 +133,19 @@ export function handleMarketUpdated(event: MarketUpdated): void {
   let marketVolumeAndFeesSnapshot = Entity.loadOrCreateMarketVolumeAndFeesSnapshot(
     marketId,
     HOUR_SECONDS,
-    event.block.timestamp.toI32(),
+    timestamp,
   )
 
   let marketSNXFeesSnapshot = Entity.loadOrCreateMarketSNXFeesSnapshot(
     market.id,
     HOUR_SECONDS,
-    event.block.timestamp.toI32(),
+    timestamp,
   )
 
   let marketTotalValueSnapshot = Entity.createMarketTotalValueSnapshot(
     marketId,
     HOUR_SECONDS,
-    event.block.timestamp.toI32(),
+    timestamp,
   )
   marketTotalValueSnapshot.NAV = ZERO
   marketTotalValueSnapshot.netOptionValue = ZERO
@@ -154,7 +156,7 @@ export function handleMarketUpdated(event: MarketUpdated): void {
   marketTotalValueSnapshot.usedDeltaLiquidity = ZERO
   marketTotalValueSnapshot.tokenPrice = UNIT
 
-  let marketGreeksSnapshot = Entity.createMarketGreeksSnapshot(marketId, HOUR_SECONDS, event.block.timestamp.toI32())
+  let marketGreeksSnapshot = Entity.createMarketGreeksSnapshot(marketId, HOUR_SECONDS, timestamp)
   marketGreeksSnapshot.netDelta = ZERO
   marketGreeksSnapshot.netGamma = ZERO
   marketGreeksSnapshot.netStdVega = ZERO
@@ -164,7 +166,7 @@ export function handleMarketUpdated(event: MarketUpdated): void {
   let optionMarketPricer = new OptionMarketPricer(optionMarketPricerId)
   let optionToken = new OptionToken(optionTokenId)
   let shortCollateral = new ShortCollateral(shortCollateralId)
-  let poolHedger = createPoolHedger(event.params.market.poolHedger, event.block.timestamp.toI32())
+  let poolHedger = createPoolHedger(event.params.market.poolHedger, timestamp)
 
   // config
   market.global = global.id
@@ -220,6 +222,7 @@ export function handleMarketUpdated(event: MarketUpdated): void {
   marketTotalValueSnapshot.save()
   marketGreeksSnapshot.save()
   pool.save()
+  updatePendingLiquiditySnapshot(pool.id, timestamp, ZERO, ZERO)
   greekCache.save()
   optionMarketPricer.save()
   optionToken.save()

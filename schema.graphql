@@ -453,7 +453,7 @@ type Trade @entity {
   premium: BigInt!
 
   " Raw premium without fees "
-  premiumLessFees:BigInt!
+  premiumLessFees: BigInt!
 
   " Price Per Option "
   pricePerOption: BigInt!
@@ -566,6 +566,8 @@ type CollateralUpdate @entity {
   position: Position!
 
   trade: Trade!
+
+  trader: Bytes!
 
   " Is the position base collateralized"
   isBaseCollateral: Boolean!
