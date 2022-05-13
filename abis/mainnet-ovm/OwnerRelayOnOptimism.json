@@ -3,13 +3,18 @@
     "inputs": [
       {
         "internalType": "address",
-        "name": "_owner",
+        "name": "_resolver",
         "type": "address"
       },
       {
         "internalType": "address",
-        "name": "_resolver",
+        "name": "_temporaryOwner",
         "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_ownershipDuration",
+        "type": "uint256"
       }
     ],
     "payable": false,
@@ -33,6 +38,25 @@
       }
     ],
     "name": "CacheUpdated",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "target",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "bytes",
+        "name": "payload",
+        "type": "bytes"
+      }
+    ],
+    "name": "DirectRelay",
     "type": "event"
   },
   {
@@ -71,46 +95,39 @@
     "anonymous": false,
     "inputs": [
       {
-        "indexed": true,
-        "internalType": "address",
-        "name": "token",
-        "type": "address"
-      },
-      {
-        "indexed": true,
-        "internalType": "bytes32",
-        "name": "currencyKey",
-        "type": "bytes32"
+        "indexed": false,
+        "internalType": "address[]",
+        "name": "targets",
+        "type": "address[]"
       },
       {
         "indexed": false,
-        "internalType": "address",
-        "name": "wrapperAddress",
-        "type": "address"
+        "internalType": "bytes[]",
+        "name": "payloads",
+        "type": "bytes[]"
       }
     ],
-    "name": "WrapperCreated",
+    "name": "RelayBatchFinalized",
     "type": "event"
   },
   {
-    "payable": true,
-    "stateMutability": "payable",
-    "type": "fallback"
-  },
-  {
-    "constant": true,
-    "inputs": [],
-    "name": "CONTRACT_NAME",
-    "outputs": [
+    "anonymous": false,
+    "inputs": [
       {
-        "internalType": "bytes32",
-        "name": "",
-        "type": "bytes32"
+        "indexed": false,
+        "internalType": "address",
+        "name": "target",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "bytes",
+        "name": "payload",
+        "type": "bytes"
       }
     ],
-    "payable": false,
-    "stateMutability": "view",
-    "type": "function"
+    "name": "RelayFinalized",
+    "type": "event"
   },
   {
     "constant": false,
@@ -125,37 +142,17 @@
     "constant": false,
     "inputs": [
       {
-        "internalType": "contract IERC20",
-        "name": "token",
-        "type": "address"
-      },
-      {
-        "internalType": "bytes32",
-        "name": "currencyKey",
-        "type": "bytes32"
-      },
-      {
-        "internalType": "bytes32",
-        "name": "synthContractName",
-        "type": "bytes32"
-      }
-    ],
-    "name": "createWrapper",
-    "outputs": [
-      {
         "internalType": "address",
-        "name": "",
+        "name": "target",
         "type": "address"
+      },
+      {
+        "internalType": "bytes",
+        "name": "payload",
+        "type": "bytes"
       }
     ],
-    "payable": false,
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "constant": false,
-    "inputs": [],
-    "name": "distributeFees",
+    "name": "directRelay",
     "outputs": [],
     "payable": false,
     "stateMutability": "nonpayable",
@@ -164,7 +161,7 @@
   {
     "constant": true,
     "inputs": [],
-    "name": "feesEscrowed",
+    "name": "expiryTime",
     "outputs": [
       {
         "internalType": "uint256",
@@ -177,30 +174,49 @@
     "type": "function"
   },
   {
-    "constant": true,
-    "inputs": [],
-    "name": "isResolverCached",
-    "outputs": [
+    "constant": false,
+    "inputs": [
       {
-        "internalType": "bool",
-        "name": "",
-        "type": "bool"
+        "internalType": "address",
+        "name": "target",
+        "type": "address"
+      },
+      {
+        "internalType": "bytes",
+        "name": "payload",
+        "type": "bytes"
       }
     ],
+    "name": "finalizeRelay",
+    "outputs": [],
     "payable": false,
-    "stateMutability": "view",
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
+        "internalType": "address[]",
+        "name": "targets",
+        "type": "address[]"
+      },
+      {
+        "internalType": "bytes[]",
+        "name": "payloads",
+        "type": "bytes[]"
+      }
+    ],
+    "name": "finalizeRelayBatch",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
     "type": "function"
   },
   {
     "constant": true,
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "possibleWrapper",
-        "type": "address"
-      }
-    ],
-    "name": "isWrapper",
+    "inputs": [],
+    "name": "isResolverCached",
     "outputs": [
       {
         "internalType": "bool",
@@ -231,21 +247,6 @@
     "constant": true,
     "inputs": [],
     "name": "nominatedOwner",
-    "outputs": [
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "payable": false,
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "constant": true,
-    "inputs": [],
-    "name": "owner",
     "outputs": [
       {
         "internalType": "address",
@@ -290,6 +291,36 @@
         "internalType": "bytes32[]",
         "name": "addresses",
         "type": "bytes32[]"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_duration",
+        "type": "uint256"
+      }
+    ],
+    "name": "setNewExpiryTime",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [],
+    "name": "temporaryOwner",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
       }
     ],
     "payable": false,

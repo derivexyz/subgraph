@@ -8,23 +8,8 @@
       },
       {
         "internalType": "address",
-        "name": "_oracle",
-        "type": "address"
-      },
-      {
-        "internalType": "address",
         "name": "_resolver",
         "type": "address"
-      },
-      {
-        "internalType": "bytes32[]",
-        "name": "_currencyKeys",
-        "type": "bytes32[]"
-      },
-      {
-        "internalType": "uint256[]",
-        "name": "_newRates",
-        "type": "uint256[]"
       }
     ],
     "payable": false,
@@ -93,81 +78,6 @@
     "inputs": [
       {
         "indexed": false,
-        "internalType": "bytes32",
-        "name": "currencyKey",
-        "type": "bytes32"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "entryPoint",
-        "type": "uint256"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "upperLimit",
-        "type": "uint256"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "lowerLimit",
-        "type": "uint256"
-      }
-    ],
-    "name": "InversePriceConfigured",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": false,
-        "internalType": "bytes32",
-        "name": "currencyKey",
-        "type": "bytes32"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "rate",
-        "type": "uint256"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "roundId",
-        "type": "uint256"
-      },
-      {
-        "indexed": false,
-        "internalType": "address",
-        "name": "initiator",
-        "type": "address"
-      }
-    ],
-    "name": "InversePriceFrozen",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": false,
-        "internalType": "address",
-        "name": "newOracle",
-        "type": "address"
-      }
-    ],
-    "name": "OracleUpdated",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": false,
         "internalType": "address",
         "name": "oldOwner",
         "type": "address"
@@ -196,36 +106,19 @@
     "type": "event"
   },
   {
-    "anonymous": false,
-    "inputs": [
+    "constant": true,
+    "inputs": [],
+    "name": "CONTRACT_NAME",
+    "outputs": [
       {
-        "indexed": false,
         "internalType": "bytes32",
-        "name": "currencyKey",
+        "name": "",
         "type": "bytes32"
       }
     ],
-    "name": "RateDeleted",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": false,
-        "internalType": "bytes32[]",
-        "name": "currencyKeys",
-        "type": "bytes32[]"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256[]",
-        "name": "newRates",
-        "type": "uint256[]"
-      }
-    ],
-    "name": "RatesUpdated",
-    "type": "event"
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
   },
   {
     "constant": false,
@@ -338,12 +231,17 @@
     "constant": true,
     "inputs": [
       {
-        "internalType": "bytes32",
-        "name": "",
-        "type": "bytes32"
+        "internalType": "bytes32[]",
+        "name": "currencyKeys",
+        "type": "bytes32[]"
+      },
+      {
+        "internalType": "uint256[]",
+        "name": "roundIds",
+        "type": "uint256[]"
       }
     ],
-    "name": "canFreezeRate",
+    "name": "anyRateIsInvalidAtRound",
     "outputs": [
       {
         "internalType": "bool",
@@ -404,10 +302,35 @@
         "internalType": "bytes32",
         "name": "",
         "type": "bytes32"
+      },
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      },
+      {
+        "internalType": "bytes32",
+        "name": "",
+        "type": "bytes32"
       }
     ],
-    "name": "currentRoundForRate",
+    "name": "effectiveAtomicValueAndRates",
     "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      },
       {
         "internalType": "uint256",
         "name": "",
@@ -416,21 +339,6 @@
     ],
     "payable": false,
     "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "constant": false,
-    "inputs": [
-      {
-        "internalType": "bytes32",
-        "name": "currencyKey",
-        "type": "bytes32"
-      }
-    ],
-    "name": "deleteRate",
-    "outputs": [],
-    "payable": false,
-    "stateMutability": "nonpayable",
     "type": "function"
   },
   {
@@ -534,31 +442,26 @@
         "type": "uint256"
       }
     ],
-    "name": "effectiveValueAtRound",
+    "name": "effectiveValueAndRatesAtRound",
     "outputs": [
       {
         "internalType": "uint256",
         "name": "value",
         "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "sourceRate",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "destinationRate",
+        "type": "uint256"
       }
     ],
     "payable": false,
     "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "constant": false,
-    "inputs": [
-      {
-        "internalType": "bytes32",
-        "name": "",
-        "type": "bytes32"
-      }
-    ],
-    "name": "freezeRate",
-    "outputs": [],
-    "payable": false,
-    "stateMutability": "nonpayable",
     "type": "function"
   },
   {
@@ -612,68 +515,6 @@
         "internalType": "uint256",
         "name": "",
         "type": "uint256"
-      }
-    ],
-    "payable": false,
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "constant": true,
-    "inputs": [
-      {
-        "internalType": "bytes32",
-        "name": "",
-        "type": "bytes32"
-      }
-    ],
-    "name": "inversePricing",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "entryPoint",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "upperLimit",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "lowerLimit",
-        "type": "uint256"
-      },
-      {
-        "internalType": "bool",
-        "name": "frozenAtUpperLimit",
-        "type": "bool"
-      },
-      {
-        "internalType": "bool",
-        "name": "frozenAtLowerLimit",
-        "type": "bool"
-      }
-    ],
-    "payable": false,
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "constant": true,
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "name": "invertedKeys",
-    "outputs": [
-      {
-        "internalType": "bytes32",
-        "name": "",
-        "type": "bytes32"
       }
     ],
     "payable": false,
@@ -756,21 +597,6 @@
     "constant": true,
     "inputs": [],
     "name": "nominatedOwner",
-    "outputs": [
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "payable": false,
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "constant": true,
-    "inputs": [],
-    "name": "oracle",
     "outputs": [
       {
         "internalType": "address",
@@ -927,27 +753,6 @@
     "inputs": [
       {
         "internalType": "bytes32",
-        "name": "",
-        "type": "bytes32"
-      }
-    ],
-    "name": "rateIsFrozen",
-    "outputs": [
-      {
-        "internalType": "bool",
-        "name": "",
-        "type": "bool"
-      }
-    ],
-    "payable": false,
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "constant": true,
-    "inputs": [
-      {
-        "internalType": "bytes32",
         "name": "currencyKey",
         "type": "bytes32"
       }
@@ -1038,6 +843,11 @@
         "internalType": "uint256",
         "name": "numRounds",
         "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "roundId",
+        "type": "uint256"
       }
     ],
     "name": "ratesAndUpdatedTimeForCurrencyLastNRounds",
@@ -1103,21 +913,6 @@
     "type": "function"
   },
   {
-    "constant": false,
-    "inputs": [
-      {
-        "internalType": "bytes32",
-        "name": "",
-        "type": "bytes32"
-      }
-    ],
-    "name": "removeInversePricing",
-    "outputs": [],
-    "payable": false,
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
     "constant": true,
     "inputs": [],
     "name": "resolver",
@@ -1156,102 +951,16 @@
         "type": "bytes32"
       }
     ],
-    "name": "roundFrozen",
+    "name": "synthTooVolatileForAtomicExchange",
     "outputs": [
       {
-        "internalType": "uint256",
+        "internalType": "bool",
         "name": "",
-        "type": "uint256"
+        "type": "bool"
       }
     ],
     "payable": false,
     "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "constant": false,
-    "inputs": [
-      {
-        "internalType": "bytes32",
-        "name": "",
-        "type": "bytes32"
-      },
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      },
-      {
-        "internalType": "bool",
-        "name": "",
-        "type": "bool"
-      },
-      {
-        "internalType": "bool",
-        "name": "",
-        "type": "bool"
-      }
-    ],
-    "name": "setInversePricing",
-    "outputs": [],
-    "payable": false,
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "constant": false,
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "_oracle",
-        "type": "address"
-      }
-    ],
-    "name": "setOracle",
-    "outputs": [],
-    "payable": false,
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "constant": false,
-    "inputs": [
-      {
-        "internalType": "bytes32[]",
-        "name": "currencyKeys",
-        "type": "bytes32[]"
-      },
-      {
-        "internalType": "uint256[]",
-        "name": "newRates",
-        "type": "uint256[]"
-      },
-      {
-        "internalType": "uint256",
-        "name": "timeSent",
-        "type": "uint256"
-      }
-    ],
-    "name": "updateRates",
-    "outputs": [
-      {
-        "internalType": "bool",
-        "name": "",
-        "type": "bool"
-      }
-    ],
-    "payable": false,
-    "stateMutability": "nonpayable",
     "type": "function"
   }
 ]

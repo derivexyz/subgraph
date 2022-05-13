@@ -40,6 +40,31 @@
     "inputs": [
       {
         "indexed": false,
+        "internalType": "bytes32",
+        "name": "currencyKey",
+        "type": "bytes32"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "previousRate",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "newRate",
+        "type": "uint256"
+      }
+    ],
+    "name": "LastRateOverriden",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
         "internalType": "address",
         "name": "oldOwner",
         "type": "address"
@@ -68,34 +93,19 @@
     "type": "event"
   },
   {
-    "anonymous": false,
-    "inputs": [
+    "constant": true,
+    "inputs": [],
+    "name": "CIRCUIT_BREAKER_SUSPENSION_REASON",
+    "outputs": [
       {
-        "indexed": true,
-        "internalType": "address",
-        "name": "token",
-        "type": "address"
-      },
-      {
-        "indexed": true,
-        "internalType": "bytes32",
-        "name": "currencyKey",
-        "type": "bytes32"
-      },
-      {
-        "indexed": false,
-        "internalType": "address",
-        "name": "wrapperAddress",
-        "type": "address"
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
       }
     ],
-    "name": "WrapperCreated",
-    "type": "event"
-  },
-  {
-    "payable": true,
-    "stateMutability": "payable",
-    "type": "fallback"
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
   },
   {
     "constant": true,
@@ -122,25 +132,9 @@
     "type": "function"
   },
   {
-    "constant": false,
-    "inputs": [
-      {
-        "internalType": "contract IERC20",
-        "name": "token",
-        "type": "address"
-      },
-      {
-        "internalType": "bytes32",
-        "name": "currencyKey",
-        "type": "bytes32"
-      },
-      {
-        "internalType": "bytes32",
-        "name": "synthContractName",
-        "type": "bytes32"
-      }
-    ],
-    "name": "createWrapper",
+    "constant": true,
+    "inputs": [],
+    "name": "exchangeRates",
     "outputs": [
       {
         "internalType": "address",
@@ -149,27 +143,29 @@
       }
     ],
     "payable": false,
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "constant": false,
-    "inputs": [],
-    "name": "distributeFees",
-    "outputs": [],
-    "payable": false,
-    "stateMutability": "nonpayable",
+    "stateMutability": "view",
     "type": "function"
   },
   {
     "constant": true,
-    "inputs": [],
-    "name": "feesEscrowed",
-    "outputs": [
+    "inputs": [
       {
         "internalType": "uint256",
-        "name": "",
+        "name": "base",
         "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "comparison",
+        "type": "uint256"
+      }
+    ],
+    "name": "isDeviationAboveThreshold",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
       }
     ],
     "payable": false,
@@ -195,17 +191,17 @@
     "constant": true,
     "inputs": [
       {
-        "internalType": "address",
-        "name": "possibleWrapper",
-        "type": "address"
+        "internalType": "bytes32",
+        "name": "currencyKey",
+        "type": "bytes32"
       }
     ],
-    "name": "isWrapper",
+    "name": "lastExchangeRate",
     "outputs": [
       {
-        "internalType": "bool",
+        "internalType": "uint256",
         "name": "",
-        "type": "bool"
+        "type": "uint256"
       }
     ],
     "payable": false,
@@ -258,9 +254,91 @@
     "type": "function"
   },
   {
+    "constant": true,
+    "inputs": [],
+    "name": "priceDeviationThresholdFactor",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "currencyKey",
+        "type": "bytes32"
+      }
+    ],
+    "name": "rateWithBreakCircuit",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "lastValidRate",
+        "type": "uint256"
+      },
+      {
+        "internalType": "bool",
+        "name": "circuitBroken",
+        "type": "bool"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "currencyKey",
+        "type": "bytes32"
+      }
+    ],
+    "name": "rateWithInvalid",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      },
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
     "constant": false,
     "inputs": [],
     "name": "rebuildCache",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
+        "internalType": "bytes32[]",
+        "name": "currencyKeys",
+        "type": "bytes32[]"
+      }
+    ],
+    "name": "resetLastExchangeRate",
     "outputs": [],
     "payable": false,
     "stateMutability": "nonpayable",

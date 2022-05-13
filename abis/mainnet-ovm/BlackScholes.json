@@ -1,18 +1,60 @@
 [
   {
+    "inputs": [],
+    "name": "LnNegativeUndefined",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "Overflow",
+    "type": "error"
+  },
+  {
     "inputs": [
       {
-        "internalType": "int256",
-        "name": "x",
-        "type": "int256"
+        "components": [
+          {
+            "internalType": "uint256",
+            "name": "timeToExpirySec",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "volatilityDecimal",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "spotDecimal",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "strikePriceDecimal",
+            "type": "uint256"
+          },
+          {
+            "internalType": "int256",
+            "name": "rateDecimal",
+            "type": "int256"
+          }
+        ],
+        "internalType": "struct BlackScholes.BlackScholesInputs",
+        "name": "bsInput",
+        "type": "tuple"
       }
     ],
-    "name": "abs",
+    "name": "delta",
     "outputs": [
       {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
+        "internalType": "int256",
+        "name": "callDeltaDecimal",
+        "type": "int256"
+      },
+      {
+        "internalType": "int256",
+        "name": "putDeltaDecimal",
+        "type": "int256"
       }
     ],
     "stateMutability": "pure",
@@ -21,67 +63,36 @@
   {
     "inputs": [
       {
-        "internalType": "uint256",
-        "name": "x",
-        "type": "uint256"
-      }
-    ],
-    "name": "exp",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "pure",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "int256",
-        "name": "x",
-        "type": "int256"
-      }
-    ],
-    "name": "exp",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "pure",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "timeToExpirySec",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "volatilityDecimal",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "spotDecimal",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "strikeDecimal",
-        "type": "uint256"
-      },
-      {
-        "internalType": "int256",
-        "name": "rateDecimal",
-        "type": "int256"
+        "components": [
+          {
+            "internalType": "uint256",
+            "name": "timeToExpirySec",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "volatilityDecimal",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "spotDecimal",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "strikePriceDecimal",
+            "type": "uint256"
+          },
+          {
+            "internalType": "int256",
+            "name": "rateDecimal",
+            "type": "int256"
+          }
+        ],
+        "internalType": "struct BlackScholes.BlackScholesInputs",
+        "name": "bsInput",
+        "type": "tuple"
       }
     ],
     "name": "optionPrices",
@@ -103,29 +114,36 @@
   {
     "inputs": [
       {
-        "internalType": "uint256",
-        "name": "timeToExpirySec",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "volatilityDecimal",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "spotDecimal",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "strikeDecimal",
-        "type": "uint256"
-      },
-      {
-        "internalType": "int256",
-        "name": "rateDecimal",
-        "type": "int256"
+        "components": [
+          {
+            "internalType": "uint256",
+            "name": "timeToExpirySec",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "volatilityDecimal",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "spotDecimal",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "strikePriceDecimal",
+            "type": "uint256"
+          },
+          {
+            "internalType": "int256",
+            "name": "rateDecimal",
+            "type": "int256"
+          }
+        ],
+        "internalType": "struct BlackScholes.BlackScholesInputs",
+        "name": "bsInput",
+        "type": "tuple"
       }
     ],
     "name": "pricesDeltaStdVega",
@@ -154,11 +172,16 @@
           },
           {
             "internalType": "uint256",
+            "name": "vega",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
             "name": "stdVega",
             "type": "uint256"
           }
         ],
-        "internalType": "struct IBlackScholes.PricesDeltaStdVega",
+        "internalType": "struct BlackScholes.PricesDeltaStdVega",
         "name": "",
         "type": "tuple"
       }
@@ -169,16 +192,43 @@
   {
     "inputs": [
       {
-        "internalType": "uint256",
-        "name": "x",
-        "type": "uint256"
+        "components": [
+          {
+            "internalType": "uint256",
+            "name": "timeToExpirySec",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "volatilityDecimal",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "spotDecimal",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "strikePriceDecimal",
+            "type": "uint256"
+          },
+          {
+            "internalType": "int256",
+            "name": "rateDecimal",
+            "type": "int256"
+          }
+        ],
+        "internalType": "struct BlackScholes.BlackScholesInputs",
+        "name": "bsInput",
+        "type": "tuple"
       }
     ],
-    "name": "sqrt",
+    "name": "vega",
     "outputs": [
       {
         "internalType": "uint256",
-        "name": "y",
+        "name": "vegaDecimal",
         "type": "uint256"
       }
     ],

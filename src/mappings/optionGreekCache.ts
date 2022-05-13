@@ -5,7 +5,7 @@ import {
   BoardCacheUpdated,
 } from '../../generated/templates/OptionGreekCache/OptionGreekCache'
 import { LiquidityPool as LiquidityPoolContract } from '../../generated/templates/OptionGreekCache/LiquidityPool'
-import { Global, Market, MarketTotalValueSnapshot, Strike, StrikeIVAndGreeksSnapshot } from '../../generated/schema'
+import { Global, Market, MarketTotalValueSnapshot, Pool, Strike, StrikeIVAndGreeksSnapshot } from '../../generated/schema'
 import { updateMarketGreeks } from '../market'
 import { Address, Bytes, dataSource, log } from '@graphprotocol/graph-ts'
 import { Entity, HOURLY_PERIODS, PERIODS, Snapshot, ZERO } from '../lib'
@@ -56,6 +56,7 @@ export function handleGlobalCacheUpdated(event: GlobalCacheUpdated): void {
         snapshot.usedCollatLiquidity = liquidity.value.usedCollatLiquidity
         snapshot.pendingDeltaLiquidity = liquidity.value.pendingDeltaLiquidity
         snapshot.usedDeltaLiquidity = liquidity.value.usedDeltaLiquidity
+        snapshot.baseBalance = (Pool.load(market.liquidityPool) as Pool).baseBalance
       } else {
         log.warning('Failed to get liquidity for: {} ', [market.name])
         snapshot.tokenPrice = ZERO
@@ -65,6 +66,7 @@ export function handleGlobalCacheUpdated(event: GlobalCacheUpdated): void {
         snapshot.usedCollatLiquidity = ZERO
         snapshot.pendingDeltaLiquidity = ZERO
         snapshot.usedDeltaLiquidity = ZERO
+        snapshot.baseBalance = ZERO
       }
 
       market.latestTotalValue = snapshot.id

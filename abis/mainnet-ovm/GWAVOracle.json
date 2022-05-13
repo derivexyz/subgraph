@@ -1,0 +1,299 @@
+[
+  {
+    "inputs": [],
+    "stateMutability": "nonpayable",
+    "type": "constructor"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "thrower",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "caller",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "nominatedOwner",
+        "type": "address"
+      }
+    ],
+    "name": "OnlyNominatedOwner",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "thrower",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "caller",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "owner",
+        "type": "address"
+      }
+    ],
+    "name": "OnlyOwner",
+    "type": "error"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "oldOwner",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "newOwner",
+        "type": "address"
+      }
+    ],
+    "name": "OwnerChanged",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "newOwner",
+        "type": "address"
+      }
+    ],
+    "name": "OwnerNominated",
+    "type": "event"
+  },
+  {
+    "inputs": [],
+    "name": "acceptOwnership",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "strikeId",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "secondsAgo",
+        "type": "uint256"
+      }
+    ],
+    "name": "deltaGWAV",
+    "outputs": [
+      {
+        "internalType": "int256",
+        "name": "callDelta",
+        "type": "int256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "contract OptionMarket",
+        "name": "_optionMarket",
+        "type": "address"
+      },
+      {
+        "internalType": "contract OptionGreekCache",
+        "name": "_greekCache",
+        "type": "address"
+      },
+      {
+        "internalType": "contract SynthetixAdapter",
+        "name": "_synthetixAdapter",
+        "type": "address"
+      }
+    ],
+    "name": "init",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "boardId",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "secondsAgo",
+        "type": "uint256"
+      }
+    ],
+    "name": "ivGWAV",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_owner",
+        "type": "address"
+      }
+    ],
+    "name": "nominateNewOwner",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "nominatedOwner",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "owner",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "strikeId",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "secondsAgo",
+        "type": "uint256"
+      }
+    ],
+    "name": "pricesGWAV",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "callPrice",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "putPrice",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "strikeId",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "secondsAgo",
+        "type": "uint256"
+      }
+    ],
+    "name": "skewGWAV",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "strikeId",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "secondsAgo",
+        "type": "uint256"
+      }
+    ],
+    "name": "vegaGWAV",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "vega",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "strikeId",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "secondsAgo",
+        "type": "uint256"
+      }
+    ],
+    "name": "volGWAV",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  }
+]

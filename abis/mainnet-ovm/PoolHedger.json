@@ -5,36 +5,221 @@
     "type": "constructor"
   },
   {
-    "anonymous": false,
     "inputs": [
       {
-        "indexed": false,
+        "internalType": "address",
+        "name": "thrower",
+        "type": "address"
+      }
+    ],
+    "name": "AlreadyInitialised",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "thrower",
+        "type": "address"
+      },
+      {
         "internalType": "uint256",
-        "name": "baseAmount",
+        "name": "lastInteraction",
         "type": "uint256"
       },
       {
-        "indexed": false,
+        "internalType": "uint256",
+        "name": "interactionDelta",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "currentTime",
+        "type": "uint256"
+      }
+    ],
+    "name": "InteractionDelayNotExpired",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "thrower",
+        "type": "address"
+      },
+      {
+        "components": [
+          {
+            "internalType": "uint256",
+            "name": "shortBuffer",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "interactionDelay",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "hedgeCap",
+            "type": "uint256"
+          }
+        ],
+        "internalType": "struct PoolHedger.PoolHedgerParameters",
+        "name": "poolHedgerParams",
+        "type": "tuple"
+      }
+    ],
+    "name": "InvalidPoolHedgerParameters",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "thrower",
+        "type": "address"
+      },
+      {
         "internalType": "uint256",
         "name": "quoteReceived",
         "type": "uint256"
-      }
-    ],
-    "name": "BaseExchanged",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
+      },
       {
-        "indexed": false,
         "internalType": "uint256",
-        "name": "newInteractionDelay",
+        "name": "minCollateral",
         "type": "uint256"
       }
     ],
-    "name": "InteractionDelaySet",
-    "type": "event"
+    "name": "NotEnoughQuoteForMinCollateral",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "thrower",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "caller",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "liquidityPool",
+        "type": "address"
+      }
+    ],
+    "name": "OnlyLiquidityPool",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "thrower",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "caller",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "nominatedOwner",
+        "type": "address"
+      }
+    ],
+    "name": "OnlyNominatedOwner",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "thrower",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "caller",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "owner",
+        "type": "address"
+      }
+    ],
+    "name": "OnlyOwner",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "thrower",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "approvee",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "amount",
+        "type": "uint256"
+      }
+    ],
+    "name": "QuoteApprovalFailure",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "thrower",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "from",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "to",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "amount",
+        "type": "uint256"
+      }
+    ],
+    "name": "QuoteTransferFailed",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "thrower",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "shortId",
+        "type": "uint256"
+      }
+    ],
+    "name": "ShortAccountAlreadyOpen",
+    "type": "error"
   },
   {
     "anonymous": false,
@@ -59,19 +244,75 @@
     "anonymous": false,
     "inputs": [
       {
-        "indexed": true,
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "shortId",
+        "type": "uint256"
+      }
+    ],
+    "name": "OpenedShortAccount",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
         "internalType": "address",
-        "name": "previousOwner",
+        "name": "oldOwner",
         "type": "address"
       },
       {
-        "indexed": true,
+        "indexed": false,
         "internalType": "address",
         "name": "newOwner",
         "type": "address"
       }
     ],
-    "name": "OwnershipTransferred",
+    "name": "OwnerChanged",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "newOwner",
+        "type": "address"
+      }
+    ],
+    "name": "OwnerNominated",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "components": [
+          {
+            "internalType": "uint256",
+            "name": "shortBuffer",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "interactionDelay",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "hedgeCap",
+            "type": "uint256"
+          }
+        ],
+        "indexed": false,
+        "internalType": "struct PoolHedger.PoolHedgerParameters",
+        "name": "poolHedgerParams",
+        "type": "tuple"
+      }
+    ],
+    "name": "PoolHedgerParametersSet",
     "type": "event"
   },
   {
@@ -105,56 +346,11 @@
       {
         "indexed": false,
         "internalType": "uint256",
-        "name": "quoteAmount",
-        "type": "uint256"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "baseReceived",
-        "type": "uint256"
-      }
-    ],
-    "name": "QuoteExchanged",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": false,
-        "internalType": "uint256",
         "name": "amountQuote",
         "type": "uint256"
       }
     ],
     "name": "QuoteReturnedToLP",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "newShortBuffer",
-        "type": "uint256"
-      }
-    ],
-    "name": "ShortBufferSet",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "shortId",
-        "type": "uint256"
-      }
-    ],
-    "name": "ShortInitialized",
     "type": "event"
   },
   {
@@ -190,12 +386,91 @@
   },
   {
     "inputs": [],
+    "name": "acceptOwnership",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getCappedExpectedHedge",
+    "outputs": [
+      {
+        "internalType": "int256",
+        "name": "cappedExpectedHedge",
+        "type": "int256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
     "name": "getCurrentHedgedNetDelta",
     "outputs": [
       {
         "internalType": "int256",
         "name": "",
         "type": "int256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "contract ICollateralShort",
+        "name": "short",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "spotPrice",
+        "type": "uint256"
+      }
+    ],
+    "name": "getHedgingLiquidity",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "pendingDeltaLiquidity",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "usedDeltaLiquidity",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getPoolHedgerParams",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "uint256",
+            "name": "shortBuffer",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "interactionDelay",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "hedgeCap",
+            "type": "uint256"
+          }
+        ],
+        "internalType": "struct PoolHedger.PoolHedgerParameters",
+        "name": "",
+        "type": "tuple"
       }
     ],
     "stateMutability": "view",
@@ -226,30 +501,6 @@
     "type": "function"
   },
   {
-    "inputs": [
-      {
-        "internalType": "contract ICollateralShort",
-        "name": "short",
-        "type": "address"
-      },
-      {
-        "internalType": "uint256",
-        "name": "spotPrice",
-        "type": "uint256"
-      }
-    ],
-    "name": "getValueQuote",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "value",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
     "inputs": [],
     "name": "hedgeDelta",
     "outputs": [],
@@ -259,32 +510,32 @@
   {
     "inputs": [
       {
-        "internalType": "contract ILyraGlobals",
-        "name": "_globals",
+        "internalType": "contract SynthetixAdapter",
+        "name": "_synthetixAdapter",
         "type": "address"
       },
       {
-        "internalType": "contract IOptionMarket",
+        "internalType": "contract OptionMarket",
         "name": "_optionMarket",
         "type": "address"
       },
       {
-        "internalType": "contract IOptionGreekCache",
+        "internalType": "contract OptionGreekCache",
         "name": "_optionGreekCache",
         "type": "address"
       },
       {
-        "internalType": "contract ILiquidityPool",
+        "internalType": "contract LiquidityPool",
         "name": "_liquidityPool",
         "type": "address"
       },
       {
-        "internalType": "contract IERC20",
+        "internalType": "contract ERC20",
         "name": "_quoteAsset",
         "type": "address"
       },
       {
-        "internalType": "contract IERC20",
+        "internalType": "contract ERC20",
         "name": "_baseAsset",
         "type": "address"
       }
@@ -292,26 +543,6 @@
     "name": "init",
     "outputs": [],
     "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "initShort",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "interactionDelay",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
     "type": "function"
   },
   {
@@ -325,6 +556,39 @@
       }
     ],
     "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_owner",
+        "type": "address"
+      }
+    ],
+    "name": "nominateNewOwner",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "nominatedOwner",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "openShortAccount",
+    "outputs": [],
+    "stateMutability": "nonpayable",
     "type": "function"
   },
   {
@@ -342,55 +606,62 @@
   },
   {
     "inputs": [],
-    "name": "renounceOwnership",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "reopenShort",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "newInteractionDelay",
-        "type": "uint256"
-      }
-    ],
-    "name": "setInteractionDelay",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "newShortBuffer",
-        "type": "uint256"
-      }
-    ],
-    "name": "setShortBuffer",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "shortBuffer",
+    "name": "poolHedgerParams",
     "outputs": [
       {
         "internalType": "uint256",
-        "name": "",
+        "name": "shortBuffer",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "interactionDelay",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "hedgeCap",
         "type": "uint256"
       }
     ],
     "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "resetInteractionDelay",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "components": [
+          {
+            "internalType": "uint256",
+            "name": "shortBuffer",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "interactionDelay",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "hedgeCap",
+            "type": "uint256"
+          }
+        ],
+        "internalType": "struct PoolHedger.PoolHedgerParameters",
+        "name": "_poolHedgerParams",
+        "type": "tuple"
+      }
+    ],
+    "name": "setPoolHedgerParams",
+    "outputs": [],
+    "stateMutability": "nonpayable",
     "type": "function"
   },
   {
@@ -408,26 +679,7 @@
   },
   {
     "inputs": [],
-    "name": "shortingInitialized",
-    "outputs": [
-      {
-        "internalType": "bool",
-        "name": "",
-        "type": "bool"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "newOwner",
-        "type": "address"
-      }
-    ],
-    "name": "transferOwnership",
+    "name": "updateCollateral",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"

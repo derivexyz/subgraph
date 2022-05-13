@@ -2,12 +2,7 @@
   {
     "inputs": [
       {
-        "internalType": "address",
-        "name": "_owner",
-        "type": "address"
-      },
-      {
-        "internalType": "address",
+        "internalType": "contract AddressResolver",
         "name": "_resolver",
         "type": "address"
       }
@@ -15,25 +10,6 @@
     "payable": false,
     "stateMutability": "nonpayable",
     "type": "constructor"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": false,
-        "internalType": "bytes32",
-        "name": "name",
-        "type": "bytes32"
-      },
-      {
-        "indexed": false,
-        "internalType": "address",
-        "name": "destination",
-        "type": "address"
-      }
-    ],
-    "name": "CacheUpdated",
-    "type": "event"
   },
   {
     "anonymous": false,
@@ -71,31 +47,14 @@
     "anonymous": false,
     "inputs": [
       {
-        "indexed": true,
-        "internalType": "address",
-        "name": "token",
-        "type": "address"
-      },
-      {
-        "indexed": true,
-        "internalType": "bytes32",
-        "name": "currencyKey",
-        "type": "bytes32"
-      },
-      {
         "indexed": false,
-        "internalType": "address",
-        "name": "wrapperAddress",
-        "type": "address"
+        "internalType": "uint256",
+        "name": "timestamp",
+        "type": "uint256"
       }
     ],
-    "name": "WrapperCreated",
+    "name": "SetOverrideTimestamp",
     "type": "event"
-  },
-  {
-    "payable": true,
-    "stateMutability": "payable",
-    "type": "fallback"
   },
   {
     "constant": true,
@@ -122,49 +81,107 @@
     "type": "function"
   },
   {
-    "constant": false,
-    "inputs": [
-      {
-        "internalType": "contract IERC20",
-        "name": "token",
-        "type": "address"
-      },
-      {
-        "internalType": "bytes32",
-        "name": "currencyKey",
-        "type": "bytes32"
-      },
-      {
-        "internalType": "bytes32",
-        "name": "synthContractName",
-        "type": "bytes32"
-      }
-    ],
-    "name": "createWrapper",
+    "constant": true,
+    "inputs": [],
+    "name": "decimals",
     "outputs": [
       {
-        "internalType": "address",
+        "internalType": "uint8",
         "name": "",
-        "type": "address"
+        "type": "uint8"
       }
     ],
     "payable": false,
-    "stateMutability": "nonpayable",
+    "stateMutability": "view",
     "type": "function"
   },
   {
-    "constant": false,
-    "inputs": [],
-    "name": "distributeFees",
-    "outputs": [],
+    "constant": true,
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_roundId",
+        "type": "uint256"
+      }
+    ],
+    "name": "getAnswer",
+    "outputs": [
+      {
+        "internalType": "int256",
+        "name": "answer",
+        "type": "int256"
+      }
+    ],
     "payable": false,
-    "stateMutability": "nonpayable",
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [
+      {
+        "internalType": "uint80",
+        "name": "",
+        "type": "uint80"
+      }
+    ],
+    "name": "getRoundData",
+    "outputs": [
+      {
+        "internalType": "uint80",
+        "name": "",
+        "type": "uint80"
+      },
+      {
+        "internalType": "int256",
+        "name": "",
+        "type": "int256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint80",
+        "name": "",
+        "type": "uint80"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_roundId",
+        "type": "uint256"
+      }
+    ],
+    "name": "getTimestamp",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "timestamp",
+        "type": "uint256"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
     "type": "function"
   },
   {
     "constant": true,
     "inputs": [],
-    "name": "feesEscrowed",
+    "name": "latestRound",
     "outputs": [
       {
         "internalType": "uint256",
@@ -179,33 +196,32 @@
   {
     "constant": true,
     "inputs": [],
-    "name": "isResolverCached",
+    "name": "latestRoundData",
     "outputs": [
       {
-        "internalType": "bool",
+        "internalType": "uint80",
         "name": "",
-        "type": "bool"
-      }
-    ],
-    "payable": false,
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "constant": true,
-    "inputs": [
+        "type": "uint80"
+      },
       {
-        "internalType": "address",
-        "name": "possibleWrapper",
-        "type": "address"
-      }
-    ],
-    "name": "isWrapper",
-    "outputs": [
-      {
-        "internalType": "bool",
+        "internalType": "int256",
         "name": "",
-        "type": "bool"
+        "type": "int256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint80",
+        "name": "",
+        "type": "uint80"
       }
     ],
     "payable": false,
@@ -245,6 +261,21 @@
   {
     "constant": true,
     "inputs": [],
+    "name": "overrideTimestamp",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [],
     "name": "owner",
     "outputs": [
       {
@@ -255,15 +286,6 @@
     ],
     "payable": false,
     "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "constant": false,
-    "inputs": [],
-    "name": "rebuildCache",
-    "outputs": [],
-    "payable": false,
-    "stateMutability": "nonpayable",
     "type": "function"
   },
   {
@@ -282,18 +304,18 @@
     "type": "function"
   },
   {
-    "constant": true,
-    "inputs": [],
-    "name": "resolverAddressesRequired",
-    "outputs": [
+    "constant": false,
+    "inputs": [
       {
-        "internalType": "bytes32[]",
-        "name": "addresses",
-        "type": "bytes32[]"
+        "internalType": "uint256",
+        "name": "timestamp",
+        "type": "uint256"
       }
     ],
+    "name": "setOverrideTimestamp",
+    "outputs": [],
     "payable": false,
-    "stateMutability": "view",
+    "stateMutability": "nonpayable",
     "type": "function"
   }
 ]

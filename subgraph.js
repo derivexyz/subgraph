@@ -227,14 +227,14 @@ const templates = [
           event: 'CircuitBreakerUpdated(uint256,bool,bool,bool)',
           handler: 'handleCircuitBreakerUpdated',
         },
-        // {
-        //   event: 'PremiumTransferred(indexed address,uint256)',
-        //   handler: 'handlePremiumTransferred',
-        // },
-        // {
-        //   event: 'QuoteTransferredToPoolHedger(uint256)',
-        //   handler: 'handleQuoteTransferredToPoolHedger',
-        // },
+        {
+          event: 'BasePurchased(uint256,uint256)',
+          handler: 'handleBasePurchased',
+        },
+        {
+          event: 'BaseSold(uint256,uint256)',
+          handler: 'handleBaseSold',
+        },
       ],
     },
   },
@@ -444,7 +444,7 @@ const templates = [
       ],
       eventHandlers: [
         {
-          event: 'PositionSettled(indexed uint256,indexed address,indexed address,uint256,uint256,uint8,uint256)',
+          event: 'PositionSettled(indexed uint256,indexed address,indexed address,uint256,uint256,uint8,uint256,uint256)',
           handler: 'handlePositionSettled',
         },
         // {

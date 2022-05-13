@@ -157,12 +157,6 @@ type ShortCollateral @entity {
 
   " Market reference "
   market: Market!
-
-  " The base balance of the short collateral contract  "
-  baseBalance: BigInt!
-
-  " The quote balance of the short collateral contract "
-  quoteBalance: BigInt!
 }
 
 type PoolHedger @entity {
@@ -171,12 +165,6 @@ type PoolHedger @entity {
 
   " Market reference "
   market: Market!
-
-  " The base balance of the pool hedger (Only relevant when hedger is long) "
-  baseBalance: BigInt!
-
-  " The short collateral quote balance (Only relevant when hedger is short) "
-  collateralQuoteBalance: BigInt!
 
   " The pool hedger net delta history "
   poolHedgerExposureHistory: [PoolHedgerExposureSnapshot!]! @derivedFrom(field: "poolHedger")
@@ -191,8 +179,6 @@ type Pool @entity {
 
   " Market reference "
   market: Market!
-
-  quoteBalance: BigInt!
 
   baseBalance: BigInt!
 
@@ -748,6 +734,9 @@ type MarketTotalValueSnapshot @entity {
 
   " Net Option value at the end of this snapshot "
   netOptionValue: BigInt!
+
+  " Market Base Balance "
+  baseBalance: BigInt!
 }
 
 type MarketPendingLiquiditySnapshot @entity {

@@ -82,37 +82,6 @@
     "anonymous": false,
     "inputs": [
       {
-        "indexed": true,
-        "internalType": "address",
-        "name": "account",
-        "type": "address"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "debtRatio",
-        "type": "uint256"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "debtEntryIndex",
-        "type": "uint256"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "feePeriodStartingDebtIndex",
-        "type": "uint256"
-      }
-    ],
-    "name": "IssuanceDebtRatioEntry",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
         "indexed": false,
         "internalType": "address",
         "name": "oldOwner",
@@ -209,28 +178,43 @@
     "type": "function"
   },
   {
-    "constant": false,
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "account",
-        "type": "address"
-      },
+    "constant": true,
+    "inputs": [],
+    "name": "allNetworksDebtSharesSupply",
+    "outputs": [
       {
         "internalType": "uint256",
-        "name": "debtRatio",
+        "name": "sharesSupply",
         "type": "uint256"
       },
       {
         "internalType": "uint256",
-        "name": "debtEntryIndex",
+        "name": "updatedAt",
         "type": "uint256"
       }
     ],
-    "name": "appendAccountIssuanceRecord",
-    "outputs": [],
     "payable": false,
-    "stateMutability": "nonpayable",
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [],
+    "name": "allNetworksSnxBackedDebt",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "debt",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "updatedAt",
+        "type": "uint256"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
     "type": "function"
   },
   {
@@ -273,6 +257,26 @@
     "constant": false,
     "inputs": [],
     "name": "closeCurrentFeePeriod",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "allNetworksSnxBackedDebt",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "allNetworksDebtSharesSupply",
+        "type": "uint256"
+      }
+    ],
+    "name": "closeSecondary",
     "outputs": [],
     "payable": false,
     "stateMutability": "nonpayable",
@@ -413,11 +417,6 @@
       {
         "internalType": "uint256",
         "name": "feePeriodId",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "startingDebtIndex",
         "type": "uint256"
       },
       {
@@ -605,7 +604,7 @@
       },
       {
         "internalType": "uint64",
-        "name": "startingDebtIndex",
+        "name": "unused",
         "type": "uint64"
       },
       {

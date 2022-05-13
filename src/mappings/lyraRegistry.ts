@@ -32,8 +32,6 @@ import { updatePendingLiquiditySnapshot } from './liquidityPool'
 export function createPoolHedger(poolHedgerAddress: Address, timestamp: i32): PoolHedger {
   let poolHedgerId = Entity.getIDFromAddress(poolHedgerAddress)
   let poolHedger = new PoolHedger(poolHedgerId)
-  poolHedger.baseBalance = ZERO
-  poolHedger.collateralQuoteBalance = ZERO
 
   let poolHedgerSnapshot = Entity.loadOrCreatePoolHedgerSnapshot(poolHedgerAddress, HOUR_SECONDS, timestamp)
   poolHedgerSnapshot.save()
@@ -154,6 +152,7 @@ export function handleMarketUpdated(event: MarketUpdated): void {
   marketTotalValueSnapshot.pendingDeltaLiquidity = ZERO
   marketTotalValueSnapshot.usedCollatLiquidity = ZERO
   marketTotalValueSnapshot.usedDeltaLiquidity = ZERO
+  marketTotalValueSnapshot.baseBalance = ZERO
   marketTotalValueSnapshot.tokenPrice = UNIT
 
   let marketGreeksSnapshot = Entity.createMarketGreeksSnapshot(marketId, HOUR_SECONDS, timestamp)
@@ -204,12 +203,9 @@ export function handleMarketUpdated(event: MarketUpdated): void {
   //References:
   pool.market = marketId
   pool.baseBalance = ZERO
-  pool.quoteBalance = ZERO
   pool.tokenPrice = UNIT
 
   shortCollateral.market = marketId
-  shortCollateral.baseBalance = ZERO
-  shortCollateral.quoteBalance = ZERO
 
   greekCache.market = marketId
   optionMarketPricer.market = marketId

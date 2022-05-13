@@ -6,6 +6,8 @@ import {
   WithdrawPartiallyProcessed,
   PoolHedgerUpdated,
   CircuitBreakerUpdated,
+  BasePurchased,
+  BaseSold,
 } from '../../generated/templates/LiquidityPool/LiquidityPool'
 import { PoolHedger as PoolHedgerTemplate } from '../../generated/templates'
 
@@ -40,13 +42,21 @@ export function handlePoolHedgerUpdated(event: PoolHedgerUpdated): void {
 ////// BASE PURCHASED/SOLD FUNCTIONALITY //////
 ////// ////// ////// ////// ////// //////
 
-export function handlePremiumTransferred(): void {}
+export function handleBasePurchased(event: BasePurchased): void {
+  let poolId = Entity.getIDFromAddress(event.address)
+  let pool = Pool.load(poolId) as Pool
 
-export function handleBaseLiquidated(): void {}
+  pool.baseBalance = pool.baseBalance.plus(event.params.baseReceived)
+  pool.save()
+}
 
-export function handleQuoteTransferredToPoolHedger(): void {}
+export function handleBaseSold(event: BaseSold): void {
+  let poolId = Entity.getIDFromAddress(event.address)
+  let pool = Pool.load(poolId) as Pool
 
-export function handleOutstandingSettlementSent(): void {}
+  pool.baseBalance = pool.baseBalance.minus(event.params.amountBase)
+  pool.save()
+}
 
 ////// ////// ////// ////// ////// ////// //////
 ////// DEPOSIT/WITHDRAW FUNCTIONALITY //////

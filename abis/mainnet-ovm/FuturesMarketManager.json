@@ -39,19 +39,25 @@
     "anonymous": false,
     "inputs": [
       {
-        "indexed": true,
+        "indexed": false,
         "internalType": "address",
-        "name": "_to",
+        "name": "market",
         "type": "address"
       },
       {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "_amount",
-        "type": "uint256"
+        "indexed": true,
+        "internalType": "bytes32",
+        "name": "asset",
+        "type": "bytes32"
+      },
+      {
+        "indexed": true,
+        "internalType": "bytes32",
+        "name": "marketKey",
+        "type": "bytes32"
       }
     ],
-    "name": "DepositFinalized",
+    "name": "MarketAdded",
     "type": "event"
   },
   {
@@ -59,67 +65,24 @@
     "inputs": [
       {
         "indexed": false,
-        "internalType": "uint256",
-        "name": "snxBackedAmount",
-        "type": "uint256"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "totalDebtShares",
-        "type": "uint256"
-      }
-    ],
-    "name": "FeePeriodCloseFinalized",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": true,
         "internalType": "address",
-        "name": "account",
+        "name": "market",
         "type": "address"
       },
       {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "escrowedAmount",
-        "type": "uint256"
+        "indexed": true,
+        "internalType": "bytes32",
+        "name": "asset",
+        "type": "bytes32"
       },
       {
-        "components": [
-          {
-            "internalType": "uint64",
-            "name": "endTime",
-            "type": "uint64"
-          },
-          {
-            "internalType": "uint256",
-            "name": "escrowAmount",
-            "type": "uint256"
-          }
-        ],
-        "indexed": false,
-        "internalType": "struct VestingEntries.VestingEntry[]",
-        "name": "vestingEntries",
-        "type": "tuple[]"
+        "indexed": true,
+        "internalType": "bytes32",
+        "name": "marketKey",
+        "type": "bytes32"
       }
     ],
-    "name": "ImportedVestingEntries",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [],
-    "name": "InitiationResumed",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [],
-    "name": "InitiationSuspended",
+    "name": "MarketRemoved",
     "type": "event"
   },
   {
@@ -155,50 +118,6 @@
     "type": "event"
   },
   {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": false,
-        "internalType": "address",
-        "name": "from",
-        "type": "address"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "amount",
-        "type": "uint256"
-      }
-    ],
-    "name": "RewardDepositFinalized",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": true,
-        "internalType": "address",
-        "name": "_from",
-        "type": "address"
-      },
-      {
-        "indexed": false,
-        "internalType": "address",
-        "name": "_to",
-        "type": "address"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "_amount",
-        "type": "uint256"
-      }
-    ],
-    "name": "WithdrawalInitiated",
-    "type": "event"
-  },
-  {
     "constant": true,
     "inputs": [],
     "name": "CONTRACT_NAME",
@@ -226,20 +145,30 @@
     "constant": false,
     "inputs": [
       {
-        "internalType": "address",
-        "name": "to",
-        "type": "address"
-      },
-      {
-        "internalType": "uint256",
-        "name": "amount",
-        "type": "uint256"
+        "internalType": "address[]",
+        "name": "marketsToAdd",
+        "type": "address[]"
       }
     ],
-    "name": "finalizeDeposit",
+    "name": "addMarkets",
     "outputs": [],
     "payable": false,
     "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [],
+    "name": "allMarkets",
+    "outputs": [
+      {
+        "internalType": "address[]",
+        "name": "",
+        "type": "address[]"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
     "type": "function"
   },
   {
@@ -252,69 +181,18 @@
       },
       {
         "internalType": "uint256",
-        "name": "escrowedAmount",
-        "type": "uint256"
-      },
-      {
-        "components": [
-          {
-            "internalType": "uint64",
-            "name": "endTime",
-            "type": "uint64"
-          },
-          {
-            "internalType": "uint256",
-            "name": "escrowAmount",
-            "type": "uint256"
-          }
-        ],
-        "internalType": "struct VestingEntries.VestingEntry[]",
-        "name": "vestingEntries",
-        "type": "tuple[]"
-      }
-    ],
-    "name": "finalizeEscrowMigration",
-    "outputs": [],
-    "payable": false,
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "constant": false,
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "snxBackedAmount",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "totalDebtShares",
-        "type": "uint256"
-      }
-    ],
-    "name": "finalizeFeePeriodClose",
-    "outputs": [],
-    "payable": false,
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "constant": false,
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "from",
-        "type": "address"
-      },
-      {
-        "internalType": "uint256",
         "name": "amount",
         "type": "uint256"
       }
     ],
-    "name": "finalizeRewardDeposit",
-    "outputs": [],
+    "name": "burnSUSD",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "postReclamationAmount",
+        "type": "uint256"
+      }
+    ],
     "payable": false,
     "stateMutability": "nonpayable",
     "type": "function"
@@ -322,7 +200,7 @@
   {
     "constant": true,
     "inputs": [],
-    "name": "initiationActive",
+    "name": "isResolverCached",
     "outputs": [
       {
         "internalType": "bool",
@@ -335,14 +213,87 @@
     "type": "function"
   },
   {
+    "constant": false,
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "account",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "amount",
+        "type": "uint256"
+      }
+    ],
+    "name": "issueSUSD",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
     "constant": true,
-    "inputs": [],
-    "name": "isResolverCached",
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "",
+        "type": "bytes32"
+      }
+    ],
+    "name": "marketForKey",
     "outputs": [
       {
-        "internalType": "bool",
+        "internalType": "address",
         "name": "",
-        "type": "bool"
+        "type": "address"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "index",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "pageSize",
+        "type": "uint256"
+      }
+    ],
+    "name": "markets",
+    "outputs": [
+      {
+        "internalType": "address[]",
+        "name": "",
+        "type": "address[]"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [
+      {
+        "internalType": "bytes32[]",
+        "name": "marketKeys",
+        "type": "bytes32[]"
+      }
+    ],
+    "name": "marketsForKeys",
+    "outputs": [
+      {
+        "internalType": "address[]",
+        "name": "",
+        "type": "address[]"
       }
     ],
     "payable": false,
@@ -382,6 +333,21 @@
   {
     "constant": true,
     "inputs": [],
+    "name": "numMarkets",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [],
     "name": "owner",
     "outputs": [
       {
@@ -396,8 +362,53 @@
   },
   {
     "constant": false,
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "amount",
+        "type": "uint256"
+      }
+    ],
+    "name": "payFee",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": false,
     "inputs": [],
     "name": "rebuildCache",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
+        "internalType": "address[]",
+        "name": "marketsToRemove",
+        "type": "address[]"
+      }
+    ],
+    "name": "removeMarkets",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
+        "internalType": "bytes32[]",
+        "name": "marketKeysToRemove",
+        "type": "bytes32[]"
+      }
+    ],
+    "name": "removeMarketsByKey",
     "outputs": [],
     "payable": false,
     "stateMutability": "nonpayable",
@@ -434,56 +445,23 @@
     "type": "function"
   },
   {
-    "constant": false,
+    "constant": true,
     "inputs": [],
-    "name": "resumeInitiation",
-    "outputs": [],
-    "payable": false,
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "constant": false,
-    "inputs": [],
-    "name": "suspendInitiation",
-    "outputs": [],
-    "payable": false,
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "constant": false,
-    "inputs": [
+    "name": "totalDebt",
+    "outputs": [
       {
         "internalType": "uint256",
-        "name": "amount",
+        "name": "debt",
         "type": "uint256"
-      }
-    ],
-    "name": "withdraw",
-    "outputs": [],
-    "payable": false,
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "constant": false,
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "to",
-        "type": "address"
       },
       {
-        "internalType": "uint256",
-        "name": "amount",
-        "type": "uint256"
+        "internalType": "bool",
+        "name": "isInvalid",
+        "type": "bool"
       }
     ],
-    "name": "withdrawTo",
-    "outputs": [],
     "payable": false,
-    "stateMutability": "nonpayable",
+    "stateMutability": "view",
     "type": "function"
   }
 ]
