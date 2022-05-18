@@ -444,7 +444,7 @@ const templates = [
       ],
       eventHandlers: [
         {
-          event: 'PositionSettled(indexed uint256,indexed address,indexed address,uint256,uint256,uint8,uint256,uint256)',
+          event: 'PositionSettled(indexed uint256,indexed address,indexed address,uint256,uint256,uint8,uint256,uint256,uint256)',
           handler: 'handlePositionSettled',
         },
         // {

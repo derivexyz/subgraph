@@ -1,6 +1,11 @@
 [
   {
     "inputs": [],
+    "name": "ExpOverflow",
+    "type": "error"
+  },
+  {
+    "inputs": [],
     "name": "LnNegativeUndefined",
     "type": "error"
   },

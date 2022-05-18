@@ -18,7 +18,7 @@ import {
   Strike,
   OptionPriceAndGreeksSnapshot,
 } from '../../generated/schema'
-import { Entity, HOUR_SECONDS, PERIODS, Snapshot, UNIT, ZERO } from '../lib'
+import { Entity, HOURLY_PERIODS, HOUR_SECONDS, PERIODS, Snapshot, UNIT, ZERO } from '../lib'
 import {
   handleTradeClose,
   handleTradeOpen,
@@ -326,18 +326,23 @@ export function handleBoardSettled(event: BoardSettled): void {
   }
   market.activeBoardIds = tempArray
 
-  let latestMarketSnapshot = Entity.loadOrCreateMarketVolumeAndFeesSnapshot(
-    marketId,
-    HOUR_SECONDS,
-    event.block.timestamp.toI32(),
-  ) as MarketVolumeAndFeesSnapshot
-  latestMarketSnapshot.totalLongCallOpenInterest =
-    latestMarketSnapshot.totalLongCallOpenInterest.minus(expiredLongCallOI)
-  latestMarketSnapshot.totalShortCallOpenInterest =
-    latestMarketSnapshot.totalShortCallOpenInterest.minus(expiredShortCallOI)
-  latestMarketSnapshot.totalLongPutOpenInterest = latestMarketSnapshot.totalLongPutOpenInterest.minus(expiredLongPutOI)
-  latestMarketSnapshot.totalShortPutOpenInterest =
-    latestMarketSnapshot.totalShortPutOpenInterest.minus(expiredShortPutOI)
+  let latestMarketSnapshot: MarketVolumeAndFeesSnapshot
+
+  for (let p = 0; p < HOURLY_PERIODS.length; p++) {
+    latestMarketSnapshot = Entity.loadOrCreateMarketVolumeAndFeesSnapshot(
+      marketId,
+      HOURLY_PERIODS[p],
+      event.block.timestamp.toI32(),
+    ) as MarketVolumeAndFeesSnapshot
+    latestMarketSnapshot.totalLongCallOpenInterest =
+      latestMarketSnapshot.totalLongCallOpenInterest.minus(expiredLongCallOI)
+    latestMarketSnapshot.totalShortCallOpenInterest =
+      latestMarketSnapshot.totalShortCallOpenInterest.minus(expiredShortCallOI)
+    latestMarketSnapshot.totalLongPutOpenInterest =
+      latestMarketSnapshot.totalLongPutOpenInterest.minus(expiredLongPutOI)
+    latestMarketSnapshot.totalShortPutOpenInterest =
+      latestMarketSnapshot.totalShortPutOpenInterest.minus(expiredShortPutOI)
+  }
 
   market.latestVolumeAndFees = latestMarketSnapshot.id
 

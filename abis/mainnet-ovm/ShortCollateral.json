@@ -413,6 +413,12 @@
       {
         "indexed": false,
         "internalType": "uint256",
+        "name": "settlementAmount",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
         "name": "insolventAmount",
         "type": "uint256"
       }
@@ -683,13 +689,7 @@
       }
     ],
     "name": "settleOptions",
-    "outputs": [
-      {
-        "internalType": "uint256[]",
-        "name": "settlementAmounts",
-        "type": "uint256[]"
-      }
-    ],
+    "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
   }

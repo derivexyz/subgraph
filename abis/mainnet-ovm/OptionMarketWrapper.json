@@ -152,6 +152,17 @@
     "type": "error"
   },
   {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "asset",
+        "type": "address"
+      }
+    ],
+    "name": "UnsupportedToken",
+    "type": "error"
+  },
+  {
     "anonymous": false,
     "inputs": [
       {
@@ -1113,6 +1124,40 @@
   {
     "inputs": [
       {
+        "internalType": "address",
+        "name": "fromToken",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "toToken",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "amountIn",
+        "type": "uint256"
+      }
+    ],
+    "name": "quoteCurveSwap",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "pool",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "amountOut",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
         "internalType": "uint256",
         "name": "params",
         "type": "uint256"
@@ -1171,35 +1216,6 @@
     ],
     "name": "removeMarket",
     "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint8",
-        "name": "market",
-        "type": "uint8"
-      },
-      {
-        "internalType": "uint32",
-        "name": "positionId",
-        "type": "uint32"
-      },
-      {
-        "internalType": "uint256",
-        "name": "setCollateralTo",
-        "type": "uint256"
-      }
-    ],
-    "name": "setPositionCollateral",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "newCollateral",
-        "type": "uint256"
-      }
-    ],
     "stateMutability": "nonpayable",
     "type": "function"
   },

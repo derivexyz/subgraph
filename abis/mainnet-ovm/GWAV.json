@@ -1,5 +1,10 @@
 [
   {
+    "inputs": [],
+    "name": "ExpOverflow",
+    "type": "error"
+  },
+  {
     "inputs": [
       {
         "internalType": "address",
