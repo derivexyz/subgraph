@@ -23,9 +23,9 @@
   "OptionMarketWrapper": {
     "contractName": "OptionMarketWrapper",
     "source": "OptionMarketWrapper",
-    "address": "0x5b8D049630B90b267C37479D070f424D5411343f",
-    "txn": "0xe19ab04a0dc675d781306638cc25d85bd802a3e3e653048e0ba2057bfec61314",
-    "blockNumber": 2492923
+    "address": "0x0B75A705882a67B48CcBaa76db6427E3a3feA71f",
+    "txn": "0x883f7282032e5271d00f18150684a8e781dbfbc2e54545511425ef29472baf49",
+    "blockNumber": 2570117
   },
   "LyraRegistry": {
     "contractName": "LyraRegistry",

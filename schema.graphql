@@ -430,6 +430,7 @@ type Trade @entity {
   " Is the trade a liquidation "
   isLiquidation: Boolean!
 
+  " New Collateral Amount"
   setCollateralTo: BigInt
 
   " Trade amount "
@@ -483,8 +484,11 @@ type Trade @entity {
   " Paid sm liquidation fees "
   smLiquidationFee: BigInt
 
-  " Paid external swap fees (Curve) "
+  " Paid external swap fees (Denominated in the external token's decimals) "
   externalSwapFees: BigInt
+
+  " The stablecoin address used for the swap "
+  externalSwapAddress: Bytes
 }
 
 type Settle @entity {
@@ -569,6 +573,12 @@ type CollateralUpdate @entity {
 
   " Collateral update amount "
   amount: BigInt!
+
+  " Paid external swap fees (Denominated in the external token's decimals) "
+  externalSwapFees: BigInt
+
+  " The stablecoin address used for the swap "
+  externalSwapAddress: Bytes
 }
 
 type CircuitBreaker @entity {
