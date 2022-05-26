@@ -59,6 +59,7 @@ export function handleGlobalCacheUpdated(event: GlobalCacheUpdated): void {
         snapshot.baseBalance = (Pool.load(market.liquidityPool) as Pool).baseBalance
       } else {
         log.warning('Failed to get liquidity for: {} ', [market.name])
+        log.warning('', [])
         snapshot.tokenPrice = ZERO
         snapshot.NAV = ZERO
         snapshot.freeLiquidity = ZERO

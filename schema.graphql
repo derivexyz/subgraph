@@ -515,6 +515,9 @@ type Settle @entity {
 
   " Spot price at time of expiry "
   spotPriceAtExpiry: BigInt!
+
+  " Profit or Loss at settlement "
+  profit: BigInt!
 }
 
 type OptionTransfer @entity {
@@ -555,7 +558,7 @@ type CollateralUpdate @entity {
   " Position Reference "
   position: Position!
 
-  trade: Trade!
+  trade: Trade
 
   trader: Bytes!
 
@@ -892,6 +895,9 @@ type MarketGreeksSnapshot @entity {
 
   " Market net delta "
   netDelta: BigInt!
+
+  " Market Net Delta + Pool Base Balance + Hedger exposure "
+  globalNetDelta: BigInt!
 
   " Market net std vega "
   netStdVega: BigInt!

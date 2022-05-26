@@ -9,6 +9,9 @@ import {
   Option,
   OptionPriceAndGreeksSnapshot,
   OptionVolumeSnapshot,
+  Pool,
+  PoolHedger,
+  PoolHedgerExposureSnapshot,
   Position,
   Settle,
   Strike,
@@ -41,20 +44,33 @@ export function updateMarketGreeks(optionMarketId: string, timestamp: i32, netDe
     }
   }
 
+  //Global Net Delta = sum netDelta + pool base balance + hedger delta
+  // Load pool
+  // Load latest hedger delta
+  let hedger = PoolHedger.load(market.poolHedger) as PoolHedger
+  let hedgerDelta = (PoolHedgerExposureSnapshot.load(hedger.latestPoolHedgerExposure) as PoolHedgerExposureSnapshot).currentNetDelta
+
+  let poolBaseBalance = (Pool.load(market.liquidityPool) as Pool).baseBalance
+
+  let globalNetDelta = poolBaseBalance.plus(hedgerDelta).minus(netDelta)
+
+
   //Force create daily snapshot if it doesnt exist
   if (
     base_period == 3600 &&
     MarketGreeksSnapshot.load(Snapshot.getSnapshotID(optionMarketId, DAY_SECONDS, timestamp)) == null
   ) {
-    let marketGreeksSnapshot = Entity.createMarketGreeksSnapshot(optionMarketId, DAY_SECONDS, timestamp)
-    marketGreeksSnapshot.netDelta = netDelta
-    marketGreeksSnapshot.netStdVega = netStdVega
-    marketGreeksSnapshot.netGamma = ZERO //TODO: Can we get this?
-    marketGreeksSnapshot.save()
+    let dailyMarketGreeksSnapshot = Entity.createMarketGreeksSnapshot(optionMarketId, DAY_SECONDS, timestamp)
+    dailyMarketGreeksSnapshot.netDelta = netDelta
+    dailyMarketGreeksSnapshot.globalNetDelta = globalNetDelta
+    dailyMarketGreeksSnapshot.netStdVega = netStdVega
+    dailyMarketGreeksSnapshot.netGamma = ZERO //TODO: Can we get this?
+    dailyMarketGreeksSnapshot.save()
   }
 
   let marketGreeksSnapshot = Entity.createMarketGreeksSnapshot(optionMarketId, base_period, timestamp)
   marketGreeksSnapshot.netDelta = netDelta
+  marketGreeksSnapshot.globalNetDelta = globalNetDelta
   marketGreeksSnapshot.netStdVega = netStdVega
   marketGreeksSnapshot.netGamma = ZERO //TODO: Can we get this?
   marketGreeksSnapshot.save()
@@ -478,6 +494,8 @@ export function handleTradeSettle(
 ): void {
   let positionId = Entity.getPositionID(optionMarketId, positionId_)
   let position = Position.load(positionId) as Position
+  let option = Option.load(position.option as string) as Option
+  let strike = Strike.load(option.strike) as Strike
   let settle = new Settle(Entity.getTradeIDFromPositionID(positionId, txHash))
 
   settle.position = positionId
@@ -486,6 +504,16 @@ export function handleTradeSettle(
   ;(settle.blockNumber = block), (settle.transactionHash = txHash)
   settle.size = amount
   settle.spotPriceAtExpiry = priceAtExpiry
+
+  if (option.isCall && priceAtExpiry.gt(strike.strikePrice)) {
+    let diff = priceAtExpiry.minus(strike.strikePrice).times(amount).div(UNIT)
+    settle.profit = position.isLong ? diff : diff.neg()
+  } else if (!option.isCall && priceAtExpiry.lt(strike.strikePrice)) {
+    let diff = strike.strikePrice.minus(priceAtExpiry).times(amount).div(UNIT)
+    settle.profit = position.isLong ? diff : diff.neg()
+  } else {
+    settle.profit = ZERO
+  }
 
   settle.save()
 }

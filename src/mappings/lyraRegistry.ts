@@ -157,6 +157,7 @@ export function handleMarketUpdated(event: MarketUpdated): void {
 
   let marketGreeksSnapshot = Entity.createMarketGreeksSnapshot(marketId, HOUR_SECONDS, timestamp)
   marketGreeksSnapshot.netDelta = ZERO
+  marketGreeksSnapshot.globalNetDelta = ZERO
   marketGreeksSnapshot.netGamma = ZERO
   marketGreeksSnapshot.netStdVega = ZERO
 

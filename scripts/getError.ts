@@ -5,7 +5,7 @@ axios({
   method: 'post',
   data: {
     query: `{
-  indexingStatusForCurrentVersion(subgraphId: "QmRLoncAgBNhgTdTCVCkwrgvWcUbx2nCWkRetWbfeyRyrY") {
+  indexingStatusForCurrentVersion(subgraphId: "QmRWM4pVmWrFDgMgjqc5QKGQUc4H6gSGAoVy566N7i8s87") {
     synced
     health
     fatalError {
