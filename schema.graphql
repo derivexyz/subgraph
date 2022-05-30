@@ -701,6 +701,9 @@ type PoolHedgerExposureSnapshot @entity {
   " PoolHedger reference "
   poolHedger: PoolHedger!
 
+  " Market Reference"
+  market: Market!
+
   " Duration this snapshot captures in seconds (Options: 1hr: 3600, 1d: 86400). Example: 'period_gte:3600' gives hourly data "
   period: Int!
 

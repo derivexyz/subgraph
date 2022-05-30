@@ -29,11 +29,17 @@ import { log, Address, Bytes, BigInt, DataSourceContext, dataSource } from '@gra
 import { addProxyAggregator } from './latestRates'
 import { updatePendingLiquiditySnapshot } from './liquidityPool'
 
-export function createPoolHedger(poolHedgerAddress: Address, timestamp: i32): PoolHedger {
+export function createPoolHedger(poolHedgerAddress: Address, timestamp: i32, optionMarketId: string): PoolHedger {
   let poolHedgerId = Entity.getIDFromAddress(poolHedgerAddress)
   let poolHedger = new PoolHedger(poolHedgerId)
+  poolHedger.market = optionMarketId
 
-  let poolHedgerSnapshot = Entity.loadOrCreatePoolHedgerSnapshot(poolHedgerAddress, HOUR_SECONDS, timestamp)
+  let poolHedgerSnapshot = Entity.loadOrCreatePoolHedgerSnapshot(
+    poolHedgerAddress,
+    optionMarketId,
+    HOUR_SECONDS,
+    timestamp,
+  )
   poolHedgerSnapshot.save()
 
   poolHedger.latestPoolHedgerExposure = poolHedgerSnapshot.id
@@ -128,23 +134,11 @@ export function handleMarketUpdated(event: MarketUpdated): void {
   let shortCollateralId = Entity.getIDFromAddress(event.params.market.shortCollateral)
 
   let market = new Market(marketId)
-  let marketVolumeAndFeesSnapshot = Entity.loadOrCreateMarketVolumeAndFeesSnapshot(
-    marketId,
-    HOUR_SECONDS,
-    timestamp,
-  )
+  let marketVolumeAndFeesSnapshot = Entity.loadOrCreateMarketVolumeAndFeesSnapshot(marketId, HOUR_SECONDS, timestamp)
 
-  let marketSNXFeesSnapshot = Entity.loadOrCreateMarketSNXFeesSnapshot(
-    market.id,
-    HOUR_SECONDS,
-    timestamp,
-  )
+  let marketSNXFeesSnapshot = Entity.loadOrCreateMarketSNXFeesSnapshot(market.id, HOUR_SECONDS, timestamp)
 
-  let marketTotalValueSnapshot = Entity.createMarketTotalValueSnapshot(
-    marketId,
-    HOUR_SECONDS,
-    timestamp,
-  )
+  let marketTotalValueSnapshot = Entity.createMarketTotalValueSnapshot(marketId, HOUR_SECONDS, timestamp)
   marketTotalValueSnapshot.NAV = ZERO
   marketTotalValueSnapshot.netOptionValue = ZERO
   marketTotalValueSnapshot.burnableLiquidity = ZERO
@@ -166,7 +160,7 @@ export function handleMarketUpdated(event: MarketUpdated): void {
   let optionMarketPricer = new OptionMarketPricer(optionMarketPricerId)
   let optionToken = new OptionToken(optionTokenId)
   let shortCollateral = new ShortCollateral(shortCollateralId)
-  let poolHedger = createPoolHedger(event.params.market.poolHedger, timestamp)
+  let poolHedger = createPoolHedger(event.params.market.poolHedger, timestamp, marketId)
 
   // config
   market.global = global.id
@@ -211,7 +205,6 @@ export function handleMarketUpdated(event: MarketUpdated): void {
   greekCache.market = marketId
   optionMarketPricer.market = marketId
   optionToken.market = marketId
-  poolHedger.market = marketId
 
   market.save()
   marketVolumeAndFeesSnapshot.save()

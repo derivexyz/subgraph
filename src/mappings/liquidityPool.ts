@@ -26,10 +26,10 @@ import { createPoolHedger } from './lyraRegistry'
 
 export function handlePoolHedgerUpdated(event: PoolHedgerUpdated): void {
   PoolHedgerTemplate.create(event.params.poolHedger)
-
-  let poolHedger = createPoolHedger(event.params.poolHedger, event.block.timestamp.toI32())
   let pool = Entity.loadPool(event.address) as Pool
   let market = Market.load(pool.market) as Market
+
+  let poolHedger = createPoolHedger(event.params.poolHedger, event.block.timestamp.toI32(), market.id)
 
   market.poolHedger = poolHedger.id
   poolHedger.market = market.id

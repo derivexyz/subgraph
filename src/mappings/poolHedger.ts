@@ -1,3 +1,4 @@
+import { dataSource } from '@graphprotocol/graph-ts'
 import { PoolHedger, PoolHedgerExposureSnapshot } from '../../generated/schema'
 import { PositionUpdated } from '../../generated/templates/PoolHedger/PoolHedger'
 import { DAY_SECONDS, Entity, HOURLY_PERIODS, Snapshot } from '../lib'
@@ -7,6 +8,8 @@ export function handlePositionUpdated(event: PositionUpdated): void {
   let poolHedger = PoolHedger.load(poolHedgerId) as PoolHedger
 
   let timestamp = event.block.timestamp.toI32()
+  let context = dataSource.context()
+  let market = context.getString('market')
 
   //Get the largest relevant period
   let base_period = HOURLY_PERIODS[0]
@@ -24,12 +27,12 @@ export function handlePositionUpdated(event: PositionUpdated): void {
       Snapshot.getSnapshotID(Entity.getIDFromAddress(event.address), DAY_SECONDS, timestamp),
     ) == null
   ) {
-    let poolHedgerSnapshot = Entity.loadOrCreatePoolHedgerSnapshot(event.address, DAY_SECONDS, timestamp)
+    let poolHedgerSnapshot = Entity.loadOrCreatePoolHedgerSnapshot(event.address, market,DAY_SECONDS, timestamp)
     poolHedgerSnapshot.currentNetDelta = event.params.currentNetDelta
     poolHedgerSnapshot.save()
   }
 
-  let poolHedgerSnapshot = Entity.loadOrCreatePoolHedgerSnapshot(event.address, base_period, timestamp)
+  let poolHedgerSnapshot = Entity.loadOrCreatePoolHedgerSnapshot(event.address, market, base_period, timestamp)
   poolHedgerSnapshot.currentNetDelta = event.params.currentNetDelta
   poolHedgerSnapshot.save()
 

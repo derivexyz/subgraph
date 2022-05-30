@@ -228,6 +228,7 @@ export namespace Entity {
 
   export function loadOrCreatePoolHedgerSnapshot(
     poolHedgerAddress: Address,
+    optionMarketId: string,
     period: i32,
     timestamp: i32,
   ): PoolHedgerExposureSnapshot {
@@ -240,6 +241,7 @@ export namespace Entity {
       let poolHedgerId = Entity.getIDFromAddress(poolHedgerAddress)
       snapshot.poolHedger = poolHedgerId
       snapshot.period = period
+      snapshot.market = optionMarketId
       snapshot.timestamp = Snapshot.roundTimestamp(timestamp, period)
       snapshot.currentNetDelta = ZERO
     }
