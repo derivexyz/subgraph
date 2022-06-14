@@ -132,6 +132,7 @@ export function updateStrikeAndOptionGreeks(
   period: i32,
 ): void {
   if (timestamp >= expiryTimestamp) {
+    //Could happen if options weren't settled fast enough
     log.warning('Timestamp greater than expiry: ', [])
     return
   }

@@ -70,6 +70,8 @@ export function updatePendingLiquiditySnapshot(
 ): void {
   let pool = Pool.load(poolId) as Pool
 
+  
+
   //Get the largest relevant period
   let base_period = HOURLY_PERIODS[0]
   let period_timestamp = Snapshot.roundTimestamp(timestamp, base_period)
@@ -112,6 +114,12 @@ export function updatePendingLiquiditySnapshot(
 
 export function handleDepositQueued(event: DepositQueued): void {
   let poolId = Entity.getIDFromAddress(event.address)
+  if (event.params.depositQueueId.equals(ZERO)) {
+    //First deposit comes in with an ID of ZERO, which causes issues. We just dont store the first queued deposit and create a USER LP object
+    let lpUserLiquidity = createOrLoadLPUserLiquidity(event.address, event.params.beneficiary, poolId)
+    lpUserLiquidity.save()
+    return
+  }
   let timestamp = event.block.timestamp.toI32()
 
   //LPUserLiquidity might not exist yet if this is a user's first deposit
@@ -164,7 +172,7 @@ export function handleDepositProcessed(event: DepositProcessed): void {
   deposit.save()
 
   //Remove from deposit queue if the deposit was not immediately processed
-  if (event.params.depositQueueId != ZERO) {
+  if (event.params.depositQueueId.notEqual(ZERO)) {
     let depositQueueId = Entity.getPendingDepositOrWithdrawID(event.address, event.params.depositQueueId, true)
     store.remove('LPPendingAction', depositQueueId)
 
@@ -173,6 +181,10 @@ export function handleDepositProcessed(event: DepositProcessed): void {
 }
 
 export function handleWithdrawQueued(event: WithdrawQueued): void {
+  if (event.params.withdrawalQueueId.equals(ZERO)) {
+    //First withdraw comes in with an ID of ZERO, which causes issues. We just ignore the first withdrawal
+    return
+  }
   let poolId = Entity.getIDFromAddress(event.address)
   let timestamp = event.block.timestamp.toI32()
   let lpUserLiquidity = createOrLoadLPUserLiquidity(event.address, event.params.withdrawer, poolId)
@@ -198,7 +210,7 @@ export function handleWithdrawProcessed(event: WithdrawProcessed): void {
   let timestamp = event.block.timestamp.toI32()
 
   let lpUserLiquidity: LPUserLiquidity
-  if (event.params.withdrawalQueueId == ZERO) {
+  if (event.params.withdrawalQueueId.equals(ZERO)) {
     lpUserLiquidity = createOrLoadLPUserLiquidity(event.address, event.params.caller, poolId)
   } else {
     let withdrawalQueueID = Entity.getPendingDepositOrWithdrawID(event.address, event.params.withdrawalQueueId, false)
@@ -225,7 +237,7 @@ export function handleWithdrawProcessed(event: WithdrawProcessed): void {
   withdrawal.save()
 
   //Remove from withdraw queue if the deposit was not immediately processed
-  if (event.params.withdrawalQueueId != ZERO) {
+  if (event.params.withdrawalQueueId.notEqual(ZERO)) {
     updatePendingLiquiditySnapshot(poolId, timestamp, ZERO, event.params.amountWithdrawn.neg())
     let withdrawalQueueID = Entity.getPendingDepositOrWithdrawID(event.address, event.params.withdrawalQueueId, false)
     store.remove('LPPendingAction', withdrawalQueueID)
@@ -237,7 +249,7 @@ export function handleWithdrawPartiallyProcessed(event: WithdrawPartiallyProcess
   let timestamp = event.block.timestamp.toI32()
 
   let lpUserLiquidity: LPUserLiquidity
-  if (event.params.withdrawalQueueId == ZERO) {
+  if (event.params.withdrawalQueueId.equals(ZERO)) {
     lpUserLiquidity = createOrLoadLPUserLiquidity(event.address, event.params.caller, poolId)
   } else {
     let withdrawalQueueID = Entity.getPendingDepositOrWithdrawID(event.address, event.params.withdrawalQueueId, false)
@@ -270,7 +282,9 @@ export function handleWithdrawPartiallyProcessed(event: WithdrawPartiallyProcess
   lpPendingWithdrawal.pendingAmount = lpPendingWithdrawal.pendingAmount.minus(event.params.amountWithdrawn)
   lpPendingWithdrawal.save()
 
-  updatePendingLiquiditySnapshot(poolId, timestamp, ZERO, event.params.amountWithdrawn.neg())
+  if (event.params.withdrawalQueueId.notEqual(ZERO)) {
+    updatePendingLiquiditySnapshot(poolId, timestamp, ZERO, event.params.amountWithdrawn.neg())
+  }
 }
 
 export function createOrLoadLPUserLiquidity(
