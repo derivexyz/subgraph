@@ -32,7 +32,7 @@ export class optionPrices {
 ////// MARKET FUNCTIONS //////
 ///////////////////////////
 
-export function updateMarketGreeks(optionMarketId: string, timestamp: i32, netDelta: BigInt, netStdVega: BigInt): void {
+export function updateMarketGreeks(optionMarketId: string, timestamp: i32, optionNetDelta: BigInt, netStdVega: BigInt): void {
   let market = Market.load(optionMarketId) as Market
 
   //Get the largest relevant period
@@ -51,8 +51,8 @@ export function updateMarketGreeks(optionMarketId: string, timestamp: i32, netDe
   let hedgerDelta = (PoolHedgerExposureSnapshot.load(hedger.latestPoolHedgerExposure) as PoolHedgerExposureSnapshot).currentNetDelta
 
   let poolBaseBalance = (Pool.load(market.liquidityPool) as Pool).baseBalance
-
-  let globalNetDelta = poolBaseBalance.plus(hedgerDelta).minus(netDelta)
+  let poolNetDelta = poolBaseBalance.minus(optionNetDelta)
+  let globalNetDelta = poolNetDelta.plus(hedgerDelta)
 
 
   //Force create daily snapshot if it doesnt exist
@@ -61,16 +61,22 @@ export function updateMarketGreeks(optionMarketId: string, timestamp: i32, netDe
     MarketGreeksSnapshot.load(Snapshot.getSnapshotID(optionMarketId, DAY_SECONDS, timestamp)) == null
   ) {
     let dailyMarketGreeksSnapshot = Entity.createMarketGreeksSnapshot(optionMarketId, DAY_SECONDS, timestamp)
-    dailyMarketGreeksSnapshot.netDelta = netDelta
-    dailyMarketGreeksSnapshot.globalNetDelta = globalNetDelta
+    dailyMarketGreeksSnapshot.hedgerNetDelta = hedgerDelta
+    dailyMarketGreeksSnapshot.baseBalance = poolBaseBalance
+    dailyMarketGreeksSnapshot.poolNetDelta = poolNetDelta
+    dailyMarketGreeksSnapshot.optionNetDelta = optionNetDelta
+    dailyMarketGreeksSnapshot.netDelta = globalNetDelta
     dailyMarketGreeksSnapshot.netStdVega = netStdVega
     dailyMarketGreeksSnapshot.netGamma = ZERO //TODO: Can we get this?
     dailyMarketGreeksSnapshot.save()
   }
 
   let marketGreeksSnapshot = Entity.createMarketGreeksSnapshot(optionMarketId, base_period, timestamp)
-  marketGreeksSnapshot.netDelta = netDelta
-  marketGreeksSnapshot.globalNetDelta = globalNetDelta
+  marketGreeksSnapshot.hedgerNetDelta = hedgerDelta
+  marketGreeksSnapshot.baseBalance = poolBaseBalance
+  marketGreeksSnapshot.poolNetDelta = poolNetDelta
+  marketGreeksSnapshot.optionNetDelta = optionNetDelta
+  marketGreeksSnapshot.netDelta = globalNetDelta
   marketGreeksSnapshot.netStdVega = netStdVega
   marketGreeksSnapshot.netGamma = ZERO //TODO: Can we get this?
   marketGreeksSnapshot.save()

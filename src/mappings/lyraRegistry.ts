@@ -150,8 +150,11 @@ export function handleMarketUpdated(event: MarketUpdated): void {
   marketTotalValueSnapshot.tokenPrice = UNIT
 
   let marketGreeksSnapshot = Entity.createMarketGreeksSnapshot(marketId, HOUR_SECONDS, timestamp)
+  marketGreeksSnapshot.hedgerNetDelta = ZERO
+  marketGreeksSnapshot.baseBalance = ZERO
+  marketGreeksSnapshot.poolNetDelta = ZERO
+  marketGreeksSnapshot.optionNetDelta = ZERO
   marketGreeksSnapshot.netDelta = ZERO
-  marketGreeksSnapshot.globalNetDelta = ZERO
   marketGreeksSnapshot.netGamma = ZERO
   marketGreeksSnapshot.netStdVega = ZERO
 

@@ -896,11 +896,20 @@ type MarketGreeksSnapshot @entity {
   " Snapshot timestamp "
   timestamp: Int!
 
-  " Market net delta "
-  netDelta: BigInt!
+  " Net delta of options "
+  optionNetDelta: BigInt!
 
-  " Market Net Delta + Pool Base Balance + Hedger exposure "
-  globalNetDelta: BigInt!
+  " Pool's balance of the underlying "
+  baseBalance: BigInt!
+
+  " optionNetDelta + baseBalance "
+  poolNetDelta: BigInt!
+
+  " Net delta of the pool hedger "
+  hedgerNetDelta: BigInt!
+
+  " optionNetDelta + baseBalance + hedgerNetDelta "
+  netDelta: BigInt!
 
   " Market net std vega "
   netStdVega: BigInt!

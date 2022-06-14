@@ -5,7 +5,14 @@ import {
   BoardCacheUpdated,
 } from '../../generated/templates/OptionGreekCache/OptionGreekCache'
 import { LiquidityPool as LiquidityPoolContract } from '../../generated/templates/OptionGreekCache/LiquidityPool'
-import { Global, Market, MarketTotalValueSnapshot, Pool, Strike, StrikeIVAndGreeksSnapshot } from '../../generated/schema'
+import {
+  Global,
+  Market,
+  MarketTotalValueSnapshot,
+  Pool,
+  Strike,
+  StrikeIVAndGreeksSnapshot,
+} from '../../generated/schema'
 import { updateMarketGreeks } from '../market'
 import { Address, Bytes, dataSource, log } from '@graphprotocol/graph-ts'
 import { Entity, HOURLY_PERIODS, PERIODS, Snapshot, ZERO } from '../lib'
@@ -57,24 +64,15 @@ export function handleGlobalCacheUpdated(event: GlobalCacheUpdated): void {
         snapshot.pendingDeltaLiquidity = liquidity.value.pendingDeltaLiquidity
         snapshot.usedDeltaLiquidity = liquidity.value.usedDeltaLiquidity
         snapshot.baseBalance = (Pool.load(market.liquidityPool) as Pool).baseBalance
+        market.latestTotalValue = snapshot.id
+        snapshot.save()
+        market.save()
       } else {
-        log.warning('Failed to get liquidity for: {} ', [market.name])
-        log.warning('', [])
-        snapshot.tokenPrice = ZERO
-        snapshot.NAV = ZERO
-        snapshot.freeLiquidity = ZERO
-        snapshot.burnableLiquidity = ZERO
-        snapshot.usedCollatLiquidity = ZERO
-        snapshot.pendingDeltaLiquidity = ZERO
-        snapshot.usedDeltaLiquidity = ZERO
-        snapshot.baseBalance = ZERO
+        log.error('Failed to get liquidity for: {}, price used: {}, liquidity failed: {} , token failed: {}, blocknum: {} ', [market.name, market.latestSpotPrice.toString(), liquidity.reverted.toString(), tokenPrice.reverted.toString(), event.block.number.toString()])
+        log.error('Reverted',[])
       }
-
-      market.latestTotalValue = snapshot.id
-      snapshot.save()
     }
   }
-  market.save()
 }
 
 export function handleStrikeCacheUpdated(event: StrikeCacheUpdated): void {
@@ -100,7 +98,9 @@ export function handleStrikeCacheUpdated(event: StrikeCacheUpdated): void {
   let strikeSnapshot = StrikeIVAndGreeksSnapshot.load(snapshotId)
 
   if (strikeSnapshot == null) {
-    let latestSnapshot = StrikeIVAndGreeksSnapshot.load(strike.latestStrikeIVAndGreeks as string) as StrikeIVAndGreeksSnapshot
+    let latestSnapshot = StrikeIVAndGreeksSnapshot.load(
+      strike.latestStrikeIVAndGreeks as string,
+    ) as StrikeIVAndGreeksSnapshot
 
     strikeSnapshot = Entity.createStrikeSnapshot(optionMarketId, strike.strikeId, base_period, timestamp)
     strikeSnapshot.board = strike.board
