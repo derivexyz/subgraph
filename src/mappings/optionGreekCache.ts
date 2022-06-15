@@ -44,9 +44,9 @@ export function handleGlobalCacheUpdated(event: GlobalCacheUpdated): void {
     ) {
       snapshot = Entity.createMarketTotalValueSnapshot(optionMarketId, HOURLY_PERIODS[p], timestamp)
       let global = Global.load('1') as Global
-
-      //Net Option Value TODO: This can be retrieved from globalCache events
       snapshot.netOptionValue = event.params.globalCache.netGreeks.netOptionValue
+
+      let pool = Pool.load(market.liquidityPool) as Pool
 
       //NAV
       let lpContract = LiquidityPoolContract.bind(changetype<Address>(Bytes.fromHexString(market.liquidityPool)))
@@ -64,6 +64,8 @@ export function handleGlobalCacheUpdated(event: GlobalCacheUpdated): void {
         snapshot.pendingDeltaLiquidity = liquidity.value.pendingDeltaLiquidity
         snapshot.usedDeltaLiquidity = liquidity.value.usedDeltaLiquidity
         snapshot.baseBalance = (Pool.load(market.liquidityPool) as Pool).baseBalance
+        snapshot.pendingDeposits = pool.pendingDeposits
+        snapshot.pendingWithdrawals = pool.pendingWithdrawals
         market.latestTotalValue = snapshot.id
         snapshot.save()
         market.save()

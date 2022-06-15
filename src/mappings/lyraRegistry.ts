@@ -27,7 +27,6 @@ import {
 import { Entity, ZERO, PERIODS, UNIT, HOUR_SECONDS, ZERO_ADDRESS, Snapshot } from '../lib'
 import { log, Address, Bytes, BigInt, DataSourceContext, dataSource } from '@graphprotocol/graph-ts'
 import { addProxyAggregator } from './latestRates'
-import { updatePendingLiquiditySnapshot } from './liquidityPool'
 
 export function createPoolHedger(poolHedgerAddress: Address, timestamp: i32, optionMarketId: string): PoolHedger {
   let poolHedgerId = Entity.getIDFromAddress(poolHedgerAddress)
@@ -148,6 +147,8 @@ export function handleMarketUpdated(event: MarketUpdated): void {
   marketTotalValueSnapshot.usedDeltaLiquidity = ZERO
   marketTotalValueSnapshot.baseBalance = ZERO
   marketTotalValueSnapshot.tokenPrice = UNIT
+  marketTotalValueSnapshot.pendingDeposits = ZERO
+  marketTotalValueSnapshot.pendingWithdrawals = ZERO
 
   let marketGreeksSnapshot = Entity.createMarketGreeksSnapshot(marketId, HOUR_SECONDS, timestamp)
   marketGreeksSnapshot.hedgerNetDelta = ZERO
@@ -202,6 +203,8 @@ export function handleMarketUpdated(event: MarketUpdated): void {
   pool.market = marketId
   pool.baseBalance = ZERO
   pool.tokenPrice = UNIT
+  pool.pendingDeposits = ZERO
+  pool.pendingWithdrawals = ZERO
 
   shortCollateral.market = marketId
 
@@ -215,7 +218,6 @@ export function handleMarketUpdated(event: MarketUpdated): void {
   marketTotalValueSnapshot.save()
   marketGreeksSnapshot.save()
   pool.save()
-  updatePendingLiquiditySnapshot(pool.id, timestamp, ZERO, ZERO)
   greekCache.save()
   optionMarketPricer.save()
   optionToken.save()

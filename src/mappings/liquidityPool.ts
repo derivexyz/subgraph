@@ -19,7 +19,6 @@ import {
   Market,
   Pool,
   CircuitBreaker,
-  MarketPendingLiquiditySnapshot,
 } from '../../generated/schema'
 import { Address, BigInt, store } from '@graphprotocol/graph-ts'
 import { createPoolHedger } from './lyraRegistry'
@@ -62,53 +61,15 @@ export function handleBaseSold(event: BaseSold): void {
 ////// DEPOSIT/WITHDRAW FUNCTIONALITY //////
 ////// ////// ////// ////// ////// //////
 
-export function updatePendingLiquiditySnapshot(
+export function updatePendingLiquidity(
   poolId: string,
   timestamp: i32,
   depositQueueAmount: BigInt,
   withdrawQueueAmount: BigInt,
 ): void {
   let pool = Pool.load(poolId) as Pool
-
-  
-
-  //Get the largest relevant period
-  let base_period = HOURLY_PERIODS[0]
-  let period_timestamp = Snapshot.roundTimestamp(timestamp, base_period)
-  for (let p = 1; p < HOURLY_PERIODS.length; p++) {
-    if (Snapshot.roundTimestamp(timestamp, HOURLY_PERIODS[p]) == period_timestamp) {
-      base_period = HOURLY_PERIODS[p]
-    }
-  }
-
-  //Force create daily snapshot if it doesnt exist
-  if (
-    base_period == 3600 &&
-    MarketPendingLiquiditySnapshot.load(Snapshot.getSnapshotID(pool.id, DAY_SECONDS, timestamp)) == null
-  ) {
-    let dailyLiquiditySnapshot = Entity.loadOrCreateMarketPendingLiquiditySnapshot(
-      pool.market,
-      pool.id,
-      DAY_SECONDS,
-      timestamp,
-    )
-    dailyLiquiditySnapshot.pendingDepositAmount = dailyLiquiditySnapshot.pendingDepositAmount.plus(depositQueueAmount)
-    dailyLiquiditySnapshot.pendingDepositAmount = dailyLiquiditySnapshot.pendingDepositAmount.plus(withdrawQueueAmount)
-    dailyLiquiditySnapshot.save()
-  }
-
-  //Create/update pending liquidity snapshot
-  let liquiditySnapshot = Entity.loadOrCreateMarketPendingLiquiditySnapshot(
-    pool.market,
-    pool.id,
-    base_period,
-    timestamp,
-  )
-  liquiditySnapshot.pendingDepositAmount = liquiditySnapshot.pendingDepositAmount.plus(depositQueueAmount)
-  liquiditySnapshot.pendingDepositAmount = liquiditySnapshot.pendingDepositAmount.plus(withdrawQueueAmount)
-  liquiditySnapshot.save()
-
-  pool.latestPendingLiquidity = liquiditySnapshot.id
+  pool.pendingDeposits = pool.pendingDeposits.plus(depositQueueAmount)
+  pool.pendingWithdrawals = pool.pendingWithdrawals.plus(withdrawQueueAmount)
   pool.save()
 }
 
@@ -140,7 +101,7 @@ export function handleDepositQueued(event: DepositQueued): void {
 
   queuedDeposit.save()
 
-  updatePendingLiquiditySnapshot(poolId, timestamp, event.params.amountDeposited, ZERO)
+  updatePendingLiquidity(poolId, timestamp, event.params.amountDeposited, ZERO)
 }
 
 export function handleDepositProcessed(event: DepositProcessed): void {
@@ -176,7 +137,7 @@ export function handleDepositProcessed(event: DepositProcessed): void {
     let depositQueueId = Entity.getPendingDepositOrWithdrawID(event.address, event.params.depositQueueId, true)
     store.remove('LPPendingAction', depositQueueId)
 
-    updatePendingLiquiditySnapshot(poolId, timestamp, event.params.amountDeposited.neg(), ZERO)
+    updatePendingLiquidity(poolId, timestamp, event.params.amountDeposited.neg(), ZERO)
   }
 }
 
@@ -202,7 +163,7 @@ export function handleWithdrawQueued(event: WithdrawQueued): void {
 
   queuedWithdrawal.save()
 
-  updatePendingLiquiditySnapshot(poolId, timestamp, ZERO, event.params.amountWithdrawn)
+  updatePendingLiquidity(poolId, timestamp, ZERO, event.params.amountWithdrawn)
 }
 
 export function handleWithdrawProcessed(event: WithdrawProcessed): void {
@@ -238,7 +199,7 @@ export function handleWithdrawProcessed(event: WithdrawProcessed): void {
 
   //Remove from withdraw queue if the deposit was not immediately processed
   if (event.params.withdrawalQueueId.notEqual(ZERO)) {
-    updatePendingLiquiditySnapshot(poolId, timestamp, ZERO, event.params.amountWithdrawn.neg())
+    updatePendingLiquidity(poolId, timestamp, ZERO, event.params.amountWithdrawn.neg())
     let withdrawalQueueID = Entity.getPendingDepositOrWithdrawID(event.address, event.params.withdrawalQueueId, false)
     store.remove('LPPendingAction', withdrawalQueueID)
   }
@@ -283,7 +244,7 @@ export function handleWithdrawPartiallyProcessed(event: WithdrawPartiallyProcess
   lpPendingWithdrawal.save()
 
   if (event.params.withdrawalQueueId.notEqual(ZERO)) {
-    updatePendingLiquiditySnapshot(poolId, timestamp, ZERO, event.params.amountWithdrawn.neg())
+    updatePendingLiquidity(poolId, timestamp, ZERO, event.params.amountWithdrawn.neg())
   }
 }
 

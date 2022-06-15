@@ -190,11 +190,9 @@ type Pool @entity {
   " CircuitBreaker events "
   cbEvents: [CircuitBreaker!]! @derivedFrom(field: "pool")
 
-  " Latest snapshot of market pending liquidity "
-  latestPendingLiquidity: MarketPendingLiquiditySnapshot!
+  pendingDeposits: BigInt!
 
-  " Historical snapshots of market pending liquidity "
-  marketPendingLiquidityHistory: [MarketPendingLiquiditySnapshot!]! @derivedFrom(field: "pool")
+  pendingWithdrawals: BigInt!
 }
 
 type Board @entity {
@@ -721,7 +719,7 @@ type MarketTotalValueSnapshot @entity {
   " Market reference "
   market: Market!
 
-  " Duration this snapshot captures in seconds (Options: 1hr: 3600, 1d: 86400). Example: 'period_gte:3600' gives hourly data "
+  " Duration this snapshot captures in seconds (Options: 1hr: 3600, 1d: 86400). Example: 'period:3600' gives hourly data "
   period: Int!
 
   " Snapshot timestamp "
@@ -753,29 +751,12 @@ type MarketTotalValueSnapshot @entity {
 
   " Market Base Balance "
   baseBalance: BigInt!
-}
 
-type MarketPendingLiquiditySnapshot @entity {
-  " MarketId-period-periodId (periodId is timestamp / period) "
-  id: ID!
+  " Pending LP Deposits "
+  pendingDeposits: BigInt!
 
-  " Market reference "
-  market: Market!
-
-  " Market reference "
-  pool: Pool!
-
-  " Duration this snapshot captures in seconds (Options: 1hr: 3600, 1d: 86400). Example: 'period_gte:3600' gives hourly data "
-  period: Int!
-
-  " Snapshot timestamp "
-  timestamp: Int!
-
-  " Value of pending deposits"
-  pendingDepositAmount: BigInt!
-
-  " Value of pending withdrawals"
-  pendingWithdrawalAmount: BigInt!
+  " Pending LP Withdrawals "
+  pendingWithdrawals: BigInt!
 }
 
 type MarketSNXFeesSnapshot @entity {

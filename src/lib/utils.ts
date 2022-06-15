@@ -23,7 +23,6 @@ import {
   Strike,
   MarketTotalValueSnapshot,
   MarketSNXFeesSnapshot,
-  MarketPendingLiquiditySnapshot,
 } from '../../generated/schema'
 
 export let ZERO = BigInt.fromI32(0)
@@ -270,39 +269,6 @@ export namespace Entity {
     snapshot.timestamp = Snapshot.roundTimestamp(timestamp, period)
 
     return snapshot
-  }
-
-  export function loadOrCreateMarketPendingLiquiditySnapshot(
-    optionMarketId: string,
-    poolId: string,
-    period: i32,
-    timestamp: i32,
-  ): MarketPendingLiquiditySnapshot {
-    let snapshotId = Snapshot.getSnapshotID(poolId, period, timestamp)
-    let snapshot = MarketPendingLiquiditySnapshot.load(snapshotId)
-
-    if (snapshot == null) {
-      snapshot = new MarketPendingLiquiditySnapshot(snapshotId)
-
-      snapshot.market = optionMarketId
-      snapshot.pool = poolId
-      snapshot.period = period
-      snapshot.timestamp = Snapshot.roundTimestamp(timestamp, period)
-
-      let pool = Pool.load(poolId)
-      let lastSnapshot: MarketPendingLiquiditySnapshot | null =
-        pool == null ? null : MarketPendingLiquiditySnapshot.load(pool.latestPendingLiquidity)
-
-      if (lastSnapshot == null) {
-        snapshot.pendingDepositAmount = ZERO
-        snapshot.pendingWithdrawalAmount = ZERO
-      } else {
-        //Load previous snapshot
-        snapshot.pendingDepositAmount = lastSnapshot.pendingDepositAmount
-        snapshot.pendingWithdrawalAmount = lastSnapshot.pendingWithdrawalAmount
-      }
-    }
-    return snapshot as MarketPendingLiquiditySnapshot
   }
 
   export function loadOrCreateMarketVolumeAndFeesSnapshot(
