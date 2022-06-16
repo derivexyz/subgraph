@@ -61,7 +61,7 @@ $ yarn create-local
 $ yarn deploy-local
 ```
 
-# You can use the following tool to query for subgraph error messages: 
+## You can use the following tool to query for subgraph error messages: 
 https://graphiql-online.com/graphiql
 
 ```graphql
