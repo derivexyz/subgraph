@@ -1,5 +1,7 @@
 # Lyra Subgraph
 
+Example Queries can be found in ExampleQueries.md
+
 ## To run and deploy
 
 list of networks: `local`, `local-ovm`, `kovan-ovm`, `mainnet-ovm`
@@ -59,5 +61,25 @@ $ yarn create-local
 $ yarn deploy-local
 ```
 
-# Debugging: 
+# You can use the following tool to query for subgraph error messages: 
 https://graphiql-online.com/graphiql
+
+```graphql
+query MyQuery {
+  indexingStatuses(subgraphs: ["{subgraph ID}"]) {
+    fatalError {
+      message
+      block {
+        number
+      }
+    }
+    nonFatalErrors {
+      message
+      block {
+        number
+      }
+    }
+  }
+}
+
+```
