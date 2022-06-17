@@ -11,9 +11,6 @@ type Global @entity {
   " Synthetix ExchangeRates Address "
   exchangeRatesAddress: Bytes
 
-  " Synthetix CollateralShort Address "
-  collateralShortAddress: Bytes
-
   " Lyra SynthetixAdapter address"
   synthetixAdapter: Bytes
 

@@ -183,6 +183,35 @@
     "type": "function"
   },
   {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "strikeId",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "secondsAgo",
+        "type": "uint256"
+      }
+    ],
+    "name": "optionPriceGWAV",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "callPrice",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "putPrice",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
     "inputs": [],
     "name": "owner",
     "outputs": [
@@ -198,30 +227,24 @@
   {
     "inputs": [
       {
-        "internalType": "uint256",
-        "name": "strikeId",
-        "type": "uint256"
+        "internalType": "contract OptionMarket",
+        "name": "_optionMarket",
+        "type": "address"
       },
       {
-        "internalType": "uint256",
-        "name": "secondsAgo",
-        "type": "uint256"
-      }
-    ],
-    "name": "pricesGWAV",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "callPrice",
-        "type": "uint256"
+        "internalType": "contract OptionGreekCache",
+        "name": "_greekCache",
+        "type": "address"
       },
       {
-        "internalType": "uint256",
-        "name": "putPrice",
-        "type": "uint256"
+        "internalType": "contract SynthetixAdapter",
+        "name": "_synthetixAdapter",
+        "type": "address"
       }
     ],
-    "stateMutability": "view",
+    "name": "setLyraAddresses",
+    "outputs": [],
+    "stateMutability": "nonpayable",
     "type": "function"
   },
   {

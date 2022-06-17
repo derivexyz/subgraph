@@ -11,7 +11,6 @@ import { Entity, HOURLY_PERIODS, UNIT } from '../lib'
 export function handleSynthetixAddressesUpdated(event: SynthetixAddressesUpdated): void {
   let global = Entity.loadOrCreateGlobal()
   global.exchangeRatesAddress = event.params.exchangeRates
-  global.collateralShortAddress = event.params.collateralShort
   global.save()
 }
 

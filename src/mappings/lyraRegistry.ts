@@ -9,7 +9,7 @@ import {
   OptionGreekCache as OptionGreekCacheTemplate,
   OptionToken as OptionTokenTemplate,
   ShortCollateral as ShortCollateralTemplate,
-  PoolHedger as PoolHedgerTemplate,
+  ShortPoolHedger as PoolHedgerTemplate,
   SynthetixAdapter as SynthetixAdapterTemplate,
   OptionMarketWrapper as OptionMarketWrapperTemplate,
 } from '../../generated/templates'

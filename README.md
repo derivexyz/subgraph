@@ -61,8 +61,8 @@ $ yarn create-local
 $ yarn deploy-local
 ```
 
-## You can use the following tool to query for subgraph error messages: 
-https://graphiql-online.com/graphiql
+## Debugging the Hosted Service
+You can use the following tool to query for subgraph error messages once the subgraph is deployed to the hosted service:  https://graphiql-online.com/graphiql
 
 ```graphql
 query MyQuery {

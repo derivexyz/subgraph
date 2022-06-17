@@ -52,8 +52,7 @@ export function handleGlobalCacheUpdated(event: GlobalCacheUpdated): void {
       let lpContract = LiquidityPoolContract.bind(changetype<Address>(Bytes.fromHexString(market.liquidityPool)))
       let tokenPrice = lpContract.try_getTokenPrice()
       let liquidity = lpContract.try_getLiquidity(
-        market.latestSpotPrice,
-        changetype<Address>(global.collateralShortAddress),
+        market.latestSpotPrice
       )
       if (!tokenPrice.reverted && !liquidity.reverted) {
         snapshot.tokenPrice = tokenPrice.value

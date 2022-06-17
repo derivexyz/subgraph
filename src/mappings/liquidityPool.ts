@@ -9,7 +9,7 @@ import {
   BasePurchased,
   BaseSold,
 } from '../../generated/templates/LiquidityPool/LiquidityPool'
-import { PoolHedger as PoolHedgerTemplate } from '../../generated/templates'
+import { ShortPoolHedger as PoolHedgerTemplate } from '../../generated/templates'
 
 import { DAY_SECONDS, Entity, HOURLY_PERIODS, Snapshot, ZERO } from '../lib'
 import {

@@ -86,7 +86,7 @@ const dataSources = [
       eventHandlers: [
         {
           event:
-            'MarketUpdated(indexed address,(address,address,address,address,address,address,address,address,address,address))',
+            'MarketUpdated(indexed address,(address,address,address,address,address,address,address,address,address,address,address))',
           handler: 'handleMarketUpdated',
         },
         {
@@ -156,7 +156,7 @@ const templates = [
       ],
       eventHandlers: [
         {
-          event: 'SynthetixAddressesUpdated(address,address,address,address,address)',
+          event: 'SynthetixAddressesUpdated(address,address,address,address)',
           handler: 'handleSynthetixAddressesUpdated',
         },
         {
@@ -464,21 +464,21 @@ const templates = [
   },
   {
     kind: 'ethereum/contract',
-    name: 'PoolHedger',
+    name: 'ShortPoolHedger',
     network,
     source: {
-      abi: 'PoolHedger',
+      abi: 'ShortPoolHedger',
     },
     mapping: {
       kind: 'ethereum/events',
       apiVersion: '0.0.5',
       language: 'wasm/assemblyscript',
-      file: './src/mappings/PoolHedger.ts',
+      file: './src/mappings/ShortPoolHedger.ts',
       entities: ['Market'],
       abis: [
         {
-          name: 'PoolHedger',
-          file: getABIPath('PoolHedger'),
+          name: 'ShortPoolHedger',
+          file: getABIPath('ShortPoolHedger'),
         },
       ],
       eventHandlers: [
