@@ -258,16 +258,20 @@ export namespace Entity {
     return snapshot as SpotPriceSnapshot
   }
 
-  export function createMarketTotalValueSnapshot(
+  export function loadOrCreateMarketTotalValueSnapshot(
     optionMarketId: string,
     period: i32,
     timestamp: i32,
   ): MarketTotalValueSnapshot {
-    let snapshot = new MarketTotalValueSnapshot(Snapshot.getSnapshotID(optionMarketId, period, timestamp))
-    snapshot.market = optionMarketId
-    snapshot.period = period
-    snapshot.timestamp = Snapshot.roundTimestamp(timestamp, period)
+    let snapshotId = Snapshot.getSnapshotID(optionMarketId, period, timestamp)
+    let snapshot = MarketTotalValueSnapshot.load(snapshotId)
 
+    if (snapshot == null) {
+      snapshot = new MarketTotalValueSnapshot(snapshotId)
+      snapshot.market = optionMarketId
+      snapshot.period = period
+      snapshot.timestamp = Snapshot.roundTimestamp(timestamp, period)
+    }
     return snapshot
   }
 

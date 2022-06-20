@@ -179,8 +179,6 @@ type Pool @entity {
 
   baseBalance: BigInt!
 
-  tokenPrice: BigInt!
-
   " User Liquidity Reference (Liquidity per address) "
   lpUsers: [LPUserLiquidity!]! @derivedFrom(field: "pool")
 
@@ -868,7 +866,7 @@ type MarketGreeksSnapshot @entity {
   " Market "
   market: Market!
 
-  " Duration this snapshot captures in seconds (Options: 1hr: 3600, 1d: 86400). Example: 'period_gte:3600' gives hourly data  "
+  " Duration this snapshot captures in seconds (Options: 1hr: 3600, 1d: 86400). Example: 'period:3600' gives hourly data  "
   period: Int!
 
   " Snapshot timestamp "

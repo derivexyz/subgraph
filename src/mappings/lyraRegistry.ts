@@ -137,7 +137,7 @@ export function handleMarketUpdated(event: MarketUpdated): void {
 
   let marketSNXFeesSnapshot = Entity.loadOrCreateMarketSNXFeesSnapshot(market.id, HOUR_SECONDS, timestamp)
 
-  let marketTotalValueSnapshot = Entity.createMarketTotalValueSnapshot(marketId, HOUR_SECONDS, timestamp)
+  let marketTotalValueSnapshot = Entity.loadOrCreateMarketTotalValueSnapshot(marketId, HOUR_SECONDS, timestamp)
   marketTotalValueSnapshot.NAV = ZERO
   marketTotalValueSnapshot.netOptionValue = ZERO
   marketTotalValueSnapshot.burnableLiquidity = ZERO
@@ -202,7 +202,6 @@ export function handleMarketUpdated(event: MarketUpdated): void {
   //References:
   pool.market = marketId
   pool.baseBalance = ZERO
-  pool.tokenPrice = UNIT
   pool.pendingDeposits = ZERO
   pool.pendingWithdrawals = ZERO
 

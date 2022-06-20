@@ -29,50 +29,57 @@ export function handleGlobalCacheUpdated(event: GlobalCacheUpdated): void {
     event.params.globalCache.netGreeks.netStdVega,
   )
 
+  //Check if smallest snapshot exists, if so, return
+  //We only want to update snapshots once per period, since the on-chain query is expensive
   let market = Market.load(optionMarketId) as Market
+  let smallestSnapshotId = Snapshot.getSnapshotID(optionMarketId, HOURLY_PERIODS[0], timestamp)
+  let smallestSnapshot = MarketTotalValueSnapshot.load(smallestSnapshotId)
+
+  if (smallestSnapshot != null) {
+    return
+  }
+
+  //Get Values
+  let pool = Pool.load(market.liquidityPool) as Pool
+  let lpContract = LiquidityPoolContract.bind(changetype<Address>(Bytes.fromHexString(market.liquidityPool)))
+  let tokenPrice = lpContract.try_getTokenPrice()
+  let liquidity = lpContract.try_getLiquidity(market.latestSpotPrice)
+
+  //If we fail to get liquidity info, exit
+  //This can happen during volatility halts
+  if (tokenPrice.reverted || liquidity.reverted) {
+    log.error(
+      'Failed to get liquidity for: {}, price used: {}, liquidity failed: {} , token failed: {}, blocknum: {} ',
+      [
+        market.name,
+        market.latestSpotPrice.toString(),
+        liquidity.reverted.toString(),
+        tokenPrice.reverted.toString(),
+        event.block.number.toString(),
+      ],
+    )
+    log.error('Reverted', [])
+    return
+  }
+
   for (let p = 0; p < HOURLY_PERIODS.length; p++) {
-    //Update Market TVL only once per hour
-    let snapshotId = Snapshot.getSnapshotID(optionMarketId, HOURLY_PERIODS[p], event.block.timestamp.toI32())
-    let snapshot = MarketTotalValueSnapshot.load(snapshotId)
 
-    //Don't duplicate snapshots for hourly/daily, only create snapshot once per period
-    if (
-      snapshot == null &&
-      (p == HOURLY_PERIODS.length - 1 ||
-        Snapshot.roundTimestamp(timestamp, HOURLY_PERIODS[p]) !=
-          Snapshot.roundTimestamp(timestamp, HOURLY_PERIODS[p + 1]))
-    ) {
-      snapshot = Entity.createMarketTotalValueSnapshot(optionMarketId, HOURLY_PERIODS[p], timestamp)
-      let global = Global.load('1') as Global
-      snapshot.netOptionValue = event.params.globalCache.netGreeks.netOptionValue
+    let snapshot = Entity.loadOrCreateMarketTotalValueSnapshot(optionMarketId, HOURLY_PERIODS[p], timestamp)
+    snapshot.netOptionValue = event.params.globalCache.netGreeks.netOptionValue
 
-      let pool = Pool.load(market.liquidityPool) as Pool
-
-      //NAV
-      let lpContract = LiquidityPoolContract.bind(changetype<Address>(Bytes.fromHexString(market.liquidityPool)))
-      let tokenPrice = lpContract.try_getTokenPrice()
-      let liquidity = lpContract.try_getLiquidity(
-        market.latestSpotPrice
-      )
-      if (!tokenPrice.reverted && !liquidity.reverted) {
-        snapshot.tokenPrice = tokenPrice.value
-        snapshot.NAV = liquidity.value.NAV
-        snapshot.freeLiquidity = liquidity.value.freeLiquidity
-        snapshot.burnableLiquidity = liquidity.value.burnableLiquidity
-        snapshot.usedCollatLiquidity = liquidity.value.usedCollatLiquidity
-        snapshot.pendingDeltaLiquidity = liquidity.value.pendingDeltaLiquidity
-        snapshot.usedDeltaLiquidity = liquidity.value.usedDeltaLiquidity
-        snapshot.baseBalance = (Pool.load(market.liquidityPool) as Pool).baseBalance
-        snapshot.pendingDeposits = pool.pendingDeposits
-        snapshot.pendingWithdrawals = pool.pendingWithdrawals
-        market.latestTotalValue = snapshot.id
-        snapshot.save()
-        market.save()
-      } else {
-        log.error('Failed to get liquidity for: {}, price used: {}, liquidity failed: {} , token failed: {}, blocknum: {} ', [market.name, market.latestSpotPrice.toString(), liquidity.reverted.toString(), tokenPrice.reverted.toString(), event.block.number.toString()])
-        log.error('Reverted',[])
-      }
-    }
+    snapshot.tokenPrice = tokenPrice.value
+    snapshot.NAV = liquidity.value.NAV
+    snapshot.freeLiquidity = liquidity.value.freeLiquidity
+    snapshot.burnableLiquidity = liquidity.value.burnableLiquidity
+    snapshot.usedCollatLiquidity = liquidity.value.usedCollatLiquidity
+    snapshot.pendingDeltaLiquidity = liquidity.value.pendingDeltaLiquidity
+    snapshot.usedDeltaLiquidity = liquidity.value.usedDeltaLiquidity
+    snapshot.baseBalance = (Pool.load(market.liquidityPool) as Pool).baseBalance
+    snapshot.pendingDeposits = pool.pendingDeposits
+    snapshot.pendingWithdrawals = pool.pendingWithdrawals.times(tokenPrice.value) //pendingWithdrawals is measured in depositTokens
+    market.latestTotalValue = snapshot.id
+    snapshot.save()
+    market.save()
   }
 }
 
