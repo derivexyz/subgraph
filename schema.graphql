@@ -772,12 +772,17 @@ type MarketSNXFeesSnapshot @entity {
 
   " SNX fees paid by the liquidityPool contract "
   liquidityPoolFees: BigInt!
-
-  " SNX fees paid by the shortCollateral contract "
-  shortCollateralFees: BigInt!
-
   " SNX fees paid by other addresses/contracts "
   otherFees: BigInt!
+
+  " SNX Volume by the poolHedger contract "
+  poolHedgerVolume: BigInt!
+
+  " SNX Volume by the liquidityPool contract "
+  liquidityPoolVolume: BigInt!
+
+  " SNX Volume by other addresses/contracts "
+  otherVolume: BigInt!
 }
 
 type MarketVolumeAndFeesSnapshot @entity {

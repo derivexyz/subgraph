@@ -27,7 +27,7 @@ export function handleBaseSwappedForQuote(event: BaseSwappedForQuote): void {
   let expectedReturn = market.latestSpotPrice.times(event.params.baseSwapped).div(UNIT)
   let snxFee = expectedReturn.minus(event.params.quoteReceived)
 
-  updateSNXFeesSnapshot(market, snxFee, event.params.exchanger, event.block.timestamp.toI32())
+  updateSNXFeesSnapshot(market, snxFee, expectedReturn, event.params.exchanger, event.block.timestamp.toI32())
 }
 
 //Handles SNX Fees for swaps to base
@@ -37,10 +37,22 @@ export function handleQuoteSwappedForBase(event: QuoteSwappedForBase): void {
   let expectedReturn = event.params.quoteSwapped.times(UNIT).div(market.latestSpotPrice)
   let snxFee = expectedReturn.minus(event.params.baseReceived).times(market.latestSpotPrice).div(UNIT)
 
-  updateSNXFeesSnapshot(market, snxFee, event.params.exchanger, event.block.timestamp.toI32())
+  updateSNXFeesSnapshot(
+    market,
+    snxFee,
+    event.params.quoteSwapped,
+    event.params.exchanger,
+    event.block.timestamp.toI32(),
+  )
 }
 
-export function updateSNXFeesSnapshot(market: Market, snxFee: BigInt, exchangerAddress: Address, timestamp: i32): void {
+export function updateSNXFeesSnapshot(
+  market: Market,
+  snxFee: BigInt,
+  snxVolume: BigInt,
+  exchangerAddress: Address,
+  timestamp: i32,
+): void {
   let exchanger = Entity.getIDFromAddress(exchangerAddress)
   let marketSNXFeesSnapshot: MarketSNXFeesSnapshot
 
@@ -48,12 +60,13 @@ export function updateSNXFeesSnapshot(market: Market, snxFee: BigInt, exchangerA
     marketSNXFeesSnapshot = Entity.loadOrCreateMarketSNXFeesSnapshot(market.id, HOURLY_PERIODS[p], timestamp)
     if (exchanger == market.poolHedger) {
       marketSNXFeesSnapshot.poolHedgerFees = marketSNXFeesSnapshot.poolHedgerFees.plus(snxFee)
+      marketSNXFeesSnapshot.poolHedgerVolume = marketSNXFeesSnapshot.poolHedgerVolume.plus(snxVolume)
     } else if (exchanger == market.liquidityPool) {
       marketSNXFeesSnapshot.liquidityPoolFees = marketSNXFeesSnapshot.liquidityPoolFees.plus(snxFee)
-    } else if (exchanger == market.shortCollateral) {
-      marketSNXFeesSnapshot.shortCollateralFees = marketSNXFeesSnapshot.shortCollateralFees.plus(snxFee)
+      marketSNXFeesSnapshot.liquidityPoolVolume = marketSNXFeesSnapshot.liquidityPoolVolume.plus(snxVolume)
     } else {
       marketSNXFeesSnapshot.otherFees = marketSNXFeesSnapshot.otherFees.plus(snxFee)
+      marketSNXFeesSnapshot.otherVolume = marketSNXFeesSnapshot.otherVolume.plus(snxVolume)
     }
     marketSNXFeesSnapshot.save()
   }

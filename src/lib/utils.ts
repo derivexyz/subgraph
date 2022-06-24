@@ -347,8 +347,10 @@ export namespace Entity {
 
       snapshot.poolHedgerFees = ZERO
       snapshot.liquidityPoolFees = ZERO
-      snapshot.shortCollateralFees = ZERO
       snapshot.otherFees = ZERO
+      snapshot.poolHedgerVolume = ZERO
+      snapshot.liquidityPoolVolume = ZERO
+      snapshot.otherVolume = ZERO
     }
 
     return snapshot as MarketSNXFeesSnapshot
