@@ -93,17 +93,16 @@ export function createPriceFeed(optionMarketAddress: Address, baseKey: Bytes, ti
 export function handleGlobalAddressUpdated(event: GlobalAddressUpdated): void {
   let changedAddress = event.params.name.toString()
 
-  if (changedAddress == 'SYNTHETIX_ADAPTER') {
-    let global = Entity.loadOrCreateGlobal()
+  let global = Entity.loadOrCreateGlobal()
+
+  if (changedAddress == 'SYNTHETIX_ADAPTER' && global.synthetixAdapter != event.params.addr) {
     global.synthetixAdapter = event.params.addr
     global.save()
     SynthetixAdapterTemplate.create(event.params.addr)
-  } else if (changedAddress == 'MARKET_VIEWER') {
-    let global = Entity.loadOrCreateGlobal()
+  } else if (changedAddress == 'MARKET_VIEWER' && global.viewerAddress != event.params.addr) {
     global.viewerAddress = event.params.addr
     global.save()
-  } else if (changedAddress == 'MARKET_WRAPPER') {
-    let global = Entity.loadOrCreateGlobal()
+  } else if (changedAddress == 'MARKET_WRAPPER' && global.wrapperAddress != event.params.addr) {
     global.wrapperAddress = event.params.addr
     global.save()
     OptionMarketWrapperTemplate.create(event.params.addr)
@@ -117,13 +116,6 @@ export function handleMarketUpdated(event: MarketUpdated): void {
 
   let context = new DataSourceContext()
   context.setString('market', event.params.market.optionMarket.toHex())
-  LiquidityPoolTemplate.createWithContext(event.params.market.liquidityPool, context)
-  OptionMarketTemplate.createWithContext(event.params.market.optionMarket, context)
-  OptionMarketPricerTemplate.createWithContext(event.params.market.optionMarketPricer, context)
-  OptionGreekCacheTemplate.createWithContext(event.params.market.greekCache, context)
-  OptionTokenTemplate.createWithContext(event.params.market.optionToken, context)
-  ShortCollateralTemplate.createWithContext(event.params.market.shortCollateral, context)
-  PoolHedgerTemplate.createWithContext(event.params.market.poolHedger, context)
 
   let marketId = Entity.getIDFromAddress(event.params.market.optionMarket)
   let poolId = Entity.getIDFromAddress(event.params.market.liquidityPool)
@@ -131,100 +123,134 @@ export function handleMarketUpdated(event: MarketUpdated): void {
   let optionMarketPricerId = Entity.getIDFromAddress(event.params.market.optionMarketPricer)
   let optionTokenId = Entity.getIDFromAddress(event.params.market.optionToken)
   let shortCollateralId = Entity.getIDFromAddress(event.params.market.shortCollateral)
+  let poolHedgerId = Entity.getIDFromAddress(event.params.market.poolHedger)
 
-  let market = new Market(marketId)
-  let marketVolumeAndFeesSnapshot = Entity.loadOrCreateMarketVolumeAndFeesSnapshot(marketId, HOUR_SECONDS, timestamp)
+  let market = Market.load(marketId)
 
-  let marketSNXFeesSnapshot = Entity.loadOrCreateMarketSNXFeesSnapshot(market.id, HOUR_SECONDS, timestamp)
+  if (market == null) {
+    OptionMarketTemplate.createWithContext(event.params.market.optionMarket, context)
 
-  let marketTotalValueSnapshot = Entity.loadOrCreateMarketTotalValueSnapshot(marketId, HOUR_SECONDS, timestamp)
-  marketTotalValueSnapshot.NAV = ZERO
-  marketTotalValueSnapshot.netOptionValue = ZERO
-  marketTotalValueSnapshot.burnableLiquidity = ZERO
-  marketTotalValueSnapshot.freeLiquidity = ZERO
-  marketTotalValueSnapshot.pendingDeltaLiquidity = ZERO
-  marketTotalValueSnapshot.usedCollatLiquidity = ZERO
-  marketTotalValueSnapshot.usedDeltaLiquidity = ZERO
-  marketTotalValueSnapshot.baseBalance = ZERO
-  marketTotalValueSnapshot.tokenPrice = UNIT
-  marketTotalValueSnapshot.pendingDeposits = ZERO
-  marketTotalValueSnapshot.pendingWithdrawals = ZERO
+    market = new Market(marketId)
+    let marketVolumeAndFeesSnapshot = Entity.loadOrCreateMarketVolumeAndFeesSnapshot(marketId, HOUR_SECONDS, timestamp)
 
-  let marketGreeksSnapshot = Entity.createMarketGreeksSnapshot(marketId, HOUR_SECONDS, timestamp)
-  marketGreeksSnapshot.hedgerNetDelta = ZERO
-  marketGreeksSnapshot.baseBalance = ZERO
-  marketGreeksSnapshot.poolNetDelta = ZERO
-  marketGreeksSnapshot.optionNetDelta = ZERO
-  marketGreeksSnapshot.netDelta = ZERO
-  marketGreeksSnapshot.netGamma = ZERO
-  marketGreeksSnapshot.netStdVega = ZERO
+    let marketSNXFeesSnapshot = Entity.loadOrCreateMarketSNXFeesSnapshot(market.id, HOUR_SECONDS, timestamp)
 
-  let pool = new Pool(poolId)
-  let greekCache = new GreekCache(greekCacheId)
-  let optionMarketPricer = new OptionMarketPricer(optionMarketPricerId)
-  let optionToken = new OptionToken(optionTokenId)
-  let shortCollateral = new ShortCollateral(shortCollateralId)
-  let poolHedger = createPoolHedger(event.params.market.poolHedger, timestamp, marketId)
+    let marketTotalValueSnapshot = Entity.loadOrCreateMarketTotalValueSnapshot(marketId, HOUR_SECONDS, timestamp)
+    marketTotalValueSnapshot.NAV = ZERO
+    marketTotalValueSnapshot.netOptionValue = ZERO
+    marketTotalValueSnapshot.burnableLiquidity = ZERO
+    marketTotalValueSnapshot.freeLiquidity = ZERO
+    marketTotalValueSnapshot.pendingDeltaLiquidity = ZERO
+    marketTotalValueSnapshot.usedCollatLiquidity = ZERO
+    marketTotalValueSnapshot.usedDeltaLiquidity = ZERO
+    marketTotalValueSnapshot.baseBalance = ZERO
+    marketTotalValueSnapshot.tokenPrice = UNIT
+    marketTotalValueSnapshot.pendingDeposits = ZERO
+    marketTotalValueSnapshot.pendingWithdrawals = ZERO
 
-  // config
-  market.global = global.id
-  market.owner = event.transaction.from
-  market.rateAndCarry = ZERO
-  market.standardSize = ZERO
-  market.skewAdjustmentFactor = ZERO
-  market.address = event.params.market.optionMarket
-  market.quoteAddress = event.params.market.quoteAsset
-  market.baseAddress = event.params.market.baseAsset
-  market.isRemoved = false
-  market.latestVolumeAndFees = marketVolumeAndFeesSnapshot.id
-  market.latestSNXFees = marketSNXFeesSnapshot.id
-  market.latestTotalValue = marketTotalValueSnapshot.id
-  market.tradingCutoff = ZERO.toI32()
-  market.latestGreeks = marketGreeksSnapshot.id
-  market.liquidityPool = pool.id
-  market.greekCache = greekCache.id
-  market.optionMarketPricer = optionMarketPricer.id
-  market.optionToken = optionToken.id
-  market.shortCollateral = shortCollateral.id
-  market.poolHedger = poolHedger.id
-  market.activeBoardIds = []
-  market.chainlinkAggregator = Bytes.fromHexString(ZERO_ADDRESS)
-  market.latestSpotPrice = ZERO
+    let marketGreeksSnapshot = Entity.createMarketGreeksSnapshot(marketId, HOUR_SECONDS, timestamp)
+    marketGreeksSnapshot.hedgerNetDelta = ZERO
+    marketGreeksSnapshot.baseBalance = ZERO
+    marketGreeksSnapshot.poolNetDelta = ZERO
+    marketGreeksSnapshot.optionNetDelta = ZERO
+    marketGreeksSnapshot.netDelta = ZERO
+    marketGreeksSnapshot.netGamma = ZERO
+    marketGreeksSnapshot.netStdVega = ZERO
 
-  //Get and Set baseKey and quoteKey
-  let synthetixAdapterContract = SynthetixAdapter.bind(changetype<Address>(global.synthetixAdapter))
-  let baseKey = synthetixAdapterContract.baseKey(event.params.market.optionMarket)
-  let quoteKey = synthetixAdapterContract.quoteKey(event.params.market.optionMarket)
-  market.baseKey = baseKey
-  market.quoteKey = quoteKey
-  market.name = baseKey.toString() //TODO: String leading "s"
+    // config
+    market.global = global.id
+    market.owner = event.transaction.from
+    market.rateAndCarry = ZERO
+    market.standardSize = ZERO
+    market.skewAdjustmentFactor = ZERO
+    market.address = event.params.market.optionMarket
+    market.quoteAddress = event.params.market.quoteAsset
+    market.baseAddress = event.params.market.baseAsset
+    market.isRemoved = false
+    market.latestVolumeAndFees = marketVolumeAndFeesSnapshot.id
+    market.latestSNXFees = marketSNXFeesSnapshot.id
+    market.latestTotalValue = marketTotalValueSnapshot.id
+    market.tradingCutoff = ZERO.toI32()
+    market.latestGreeks = marketGreeksSnapshot.id
+    market.liquidityPool = poolId
+    market.greekCache = greekCacheId
+    market.optionMarketPricer = optionMarketPricerId
+    market.optionToken = optionTokenId
+    market.shortCollateral = shortCollateralId
+    market.poolHedger = poolHedgerId
+    market.activeBoardIds = []
+    market.chainlinkAggregator = Bytes.fromHexString(ZERO_ADDRESS)
+    market.latestSpotPrice = ZERO
 
-  //References:
+    //Get and Set baseKey and quoteKey
+    let synthetixAdapterContract = SynthetixAdapter.bind(changetype<Address>(global.synthetixAdapter))
+    let baseKey = synthetixAdapterContract.baseKey(event.params.market.optionMarket)
+    let quoteKey = synthetixAdapterContract.quoteKey(event.params.market.optionMarket)
+    market.baseKey = baseKey
+    market.quoteKey = quoteKey
+    market.name = baseKey.toString() //TODO: String leading "s"
+
+    market.save()
+    marketVolumeAndFeesSnapshot.save()
+    marketSNXFeesSnapshot.save()
+    marketTotalValueSnapshot.save()
+    marketGreeksSnapshot.save()
+  }
+
+  let pool = Pool.load(poolId)
+  if (pool == null) {
+    LiquidityPoolTemplate.createWithContext(event.params.market.liquidityPool, context)
+    pool = new Pool(poolId)
+    //References:
+    pool.baseBalance = ZERO
+    pool.pendingDeposits = ZERO
+    pool.pendingWithdrawals = ZERO
+  }
   pool.market = marketId
-  pool.baseBalance = ZERO
-  pool.pendingDeposits = ZERO
-  pool.pendingWithdrawals = ZERO
-
-  shortCollateral.market = marketId
-
-  greekCache.market = marketId
-  optionMarketPricer.market = marketId
-  optionToken.market = marketId
-
-  market.save()
-  marketVolumeAndFeesSnapshot.save()
-  marketSNXFeesSnapshot.save()
-  marketTotalValueSnapshot.save()
-  marketGreeksSnapshot.save()
   pool.save()
-  greekCache.save()
+
+  let optionMarketPricer = OptionMarketPricer.load(optionMarketPricerId)
+  if (optionMarketPricer == null) {
+    OptionMarketPricerTemplate.createWithContext(event.params.market.optionMarketPricer, context)
+    optionMarketPricer = new OptionMarketPricer(optionMarketPricerId)
+  }
+  optionMarketPricer.market = marketId
   optionMarketPricer.save()
+
+  let greekCache = GreekCache.load(greekCacheId)
+  if (greekCache == null) {
+    OptionGreekCacheTemplate.createWithContext(event.params.market.greekCache, context)
+    greekCache = new GreekCache(greekCacheId)
+  }
+  greekCache.market = marketId
+  greekCache.save()
+
+  let optionToken = OptionToken.load(optionTokenId)
+  if (optionToken == null) {
+    OptionTokenTemplate.createWithContext(event.params.market.optionToken, context)
+    optionToken = new OptionToken(optionTokenId)
+  }
+  optionToken.market = marketId
   optionToken.save()
+
+  let shortCollateral = ShortCollateral.load(shortCollateralId)
+  if (shortCollateral == null) {
+    ShortCollateralTemplate.createWithContext(event.params.market.shortCollateral, context)
+    shortCollateral = new ShortCollateral(shortCollateralId)
+  }
+  shortCollateral.market = marketId
   shortCollateral.save()
+
+  let poolHedger = PoolHedger.load(poolHedgerId)
+  if (poolHedger == null) {
+    PoolHedgerTemplate.createWithContext(event.params.market.poolHedger, context)
+    poolHedger = createPoolHedger(event.params.market.poolHedger, timestamp, marketId)
+  }
+  poolHedger.market = marketId
   poolHedger.save()
 
   //Market needs to be created before this
-  let latestSpotPrice = createPriceFeed(event.params.market.optionMarket, baseKey, event.block.timestamp.toI32())
+  let latestSpotPrice = createPriceFeed(event.params.market.optionMarket, market.baseKey, event.block.timestamp.toI32())
   if (latestSpotPrice != ZERO) {
     market.latestSpotPrice = latestSpotPrice as BigInt
   } else {

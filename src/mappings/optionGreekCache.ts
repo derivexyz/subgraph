@@ -15,7 +15,7 @@ import {
 } from '../../generated/schema'
 import { updateMarketGreeks } from '../market'
 import { Address, Bytes, dataSource, log } from '@graphprotocol/graph-ts'
-import { Entity, HOURLY_PERIODS, PERIODS, Snapshot, ZERO } from '../lib'
+import { Entity, HOURLY_PERIODS, PERIODS, Snapshot, UNIT, ZERO } from '../lib'
 
 export function handleGlobalCacheUpdated(event: GlobalCacheUpdated): void {
   let context = dataSource.context()
@@ -76,7 +76,7 @@ export function handleGlobalCacheUpdated(event: GlobalCacheUpdated): void {
     snapshot.usedDeltaLiquidity = liquidity.value.usedDeltaLiquidity
     snapshot.baseBalance = (Pool.load(market.liquidityPool) as Pool).baseBalance
     snapshot.pendingDeposits = pool.pendingDeposits
-    snapshot.pendingWithdrawals = pool.pendingWithdrawals.times(tokenPrice.value) //pendingWithdrawals is measured in depositTokens
+    snapshot.pendingWithdrawals = pool.pendingWithdrawals.times(tokenPrice.value).div(UNIT) //pendingWithdrawals is measured in depositTokens
     market.latestTotalValue = snapshot.id
     snapshot.save()
     market.save()

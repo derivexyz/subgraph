@@ -342,11 +342,11 @@ export function handleBoardSettled(event: BoardSettled): void {
       latestMarketSnapshot.totalLongPutOpenInterest.minus(expiredLongPutOI)
     latestMarketSnapshot.totalShortPutOpenInterest =
       latestMarketSnapshot.totalShortPutOpenInterest.minus(expiredShortPutOI)
+      latestMarketSnapshot.save()
   }
 
   market.latestVolumeAndFees = latestMarketSnapshot.id
 
-  latestMarketSnapshot.save()
   market.save()
 }
 

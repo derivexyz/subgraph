@@ -433,7 +433,7 @@ export namespace Entity {
 
       let option = Option.load(optionId)
       let lastSnapshot: OptionVolumeSnapshot | null =
-        option == null ? null : (OptionVolumeSnapshot.load(option.latestOptionVolume as string) as OptionVolumeSnapshot)
+        option == null ? null : OptionVolumeSnapshot.load(option.latestOptionVolume as string)
 
       snapshot.premiumVolume = ZERO
       snapshot.notionalVolume = ZERO
