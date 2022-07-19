@@ -451,10 +451,10 @@ const templates = [
         //   event: 'QuoteSent(indexed address,uint256)',
         //   handler: 'handleQuoteSent',
         // },
-        // {
-        //   event: 'BaseSent(indexed address,uint256)',
-        //   handler: 'handleBaseSent',
-        // },
+        {
+          event: 'BaseSent(indexed address,uint256)',
+          handler: 'handleBaseSent',
+        },
         // {
         //   event: 'BaseExchangedAndQuoteSent(indexed address,uint256,uint256)',
         //   handler: 'handleBaseExchangedAndQuoteSent',
