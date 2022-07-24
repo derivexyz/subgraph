@@ -82,6 +82,10 @@ const dataSources = [
           name: 'AggregatorProxy',
           file: './abis/synthetix/AggregatorProxy.json',
         },
+        {
+          name: 'OptionGreekCache',
+          file: getABIPath('OptionGreekCache'),
+        },
       ],
       eventHandlers: [
         {

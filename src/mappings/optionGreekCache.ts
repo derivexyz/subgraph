@@ -14,7 +14,7 @@ import {
   StrikeIVAndGreeksSnapshot,
 } from '../../generated/schema'
 import { updateMarketGreeks } from '../market'
-import { Address, Bytes, dataSource, log } from '@graphprotocol/graph-ts'
+import { Address, Bytes, dataSource, log, BigInt } from '@graphprotocol/graph-ts'
 import { Entity, HOURLY_PERIODS, PERIODS, Snapshot, UNIT, ZERO } from '../lib'
 
 export function handleGlobalCacheUpdated(event: GlobalCacheUpdated): void {
@@ -35,7 +35,18 @@ export function handleGlobalCacheUpdated(event: GlobalCacheUpdated): void {
   let smallestSnapshotId = Snapshot.getSnapshotID(optionMarketId, HOURLY_PERIODS[0], timestamp)
   let smallestSnapshot = MarketTotalValueSnapshot.load(smallestSnapshotId)
 
-  if (smallestSnapshot != null) {
+  if (
+    smallestSnapshot != null ||
+    isGlobalCacheStale(
+      timestamp,
+      market.latestSpotPrice,
+      event.params.globalCache.minUpdatedAt.toI32(),
+      event.params.globalCache.minUpdatedAtPrice,
+      event.params.globalCache.maxUpdatedAtPrice,
+      market.staleUpdateDuration,
+      market.acceptableSpotPricePercentMove,
+    )
+  ) {
     return
   }
 
@@ -63,7 +74,6 @@ export function handleGlobalCacheUpdated(event: GlobalCacheUpdated): void {
   }
 
   for (let p = 0; p < HOURLY_PERIODS.length; p++) {
-
     let snapshot = Entity.loadOrCreateMarketTotalValueSnapshot(optionMarketId, HOURLY_PERIODS[p], timestamp)
     snapshot.netOptionValue = event.params.globalCache.netGreeks.netOptionValue
 
@@ -130,5 +140,44 @@ export function handleGreekCacheParametersSet(event: GreekCacheParametersSet): v
   let context = dataSource.context()
   let market = Market.load(context.getString('market')) as Market
   market.rateAndCarry = event.params.params.rateAndCarry
+  market.staleUpdateDuration = event.params.params.staleUpdateDuration.toI32()
+  market.acceptableSpotPricePercentMove = event.params.params.acceptableSpotPricePercentMove
   market.save()
+}
+
+export function isGlobalCacheStale(
+  currentBlockTimestamp: i32,
+  currentPrice: BigInt,
+  minUpdatedAt: i32,
+  minUpdatedAtPrice: BigInt,
+  maxUpdatedAtPrice: BigInt,
+  staleUpdateDuration: i32,
+  acceptableSpotPricePercentMove: BigInt,
+): boolean {
+  log.info(
+    'Current Block: {}, currentPrice: {}, minUpdatedAt: {}, minUpdatedPrice: {}, maxUpdatedPrice: {}, staleUpdateDuration:{}, acceptable:{}',
+    [
+      currentBlockTimestamp.toString(),
+      currentPrice.toString(),
+      minUpdatedAt.toString(),
+      minUpdatedAtPrice.toString(),
+      maxUpdatedAtPrice.toString(),
+      staleUpdateDuration.toString(),
+      acceptableSpotPricePercentMove.toString(),
+    ],
+  )
+  return (
+    currentBlockTimestamp - minUpdatedAt > staleUpdateDuration ||
+    !isPriceMoveAcceptable(minUpdatedAtPrice, currentPrice, acceptableSpotPricePercentMove) ||
+    !isPriceMoveAcceptable(maxUpdatedAtPrice, currentPrice, acceptableSpotPricePercentMove)
+  )
+}
+
+export function isPriceMoveAcceptable(pastPrice: BigInt, currentPrice: BigInt, acceptableMovePercent: BigInt): boolean {
+  let acceptableMove = pastPrice.times(acceptableMovePercent).div(UNIT)
+  if (currentPrice.gt(pastPrice)) {
+    return currentPrice.minus(pastPrice).lt(acceptableMove)
+  } else {
+    return pastPrice.minus(currentPrice).lt(acceptableMove)
+  }
 }

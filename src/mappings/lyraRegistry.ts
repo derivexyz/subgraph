@@ -1,7 +1,7 @@
 import { MarketUpdated, MarketRemoved, GlobalAddressUpdated } from '../../generated/LyraRegistry/LyraRegistry'
 import { SynthetixAdapter } from '../../generated/LyraRegistry/SynthetixAdapter'
 import { ExchangeRates } from '../../generated/LyraRegistry/ExchangeRates'
-
+import { OptionGreekCache as GreekCacheContract } from '../../generated/LyraRegistry/OptionGreekCache'
 import {
   LiquidityPool as LiquidityPoolTemplate,
   OptionMarket as OptionMarketTemplate,
@@ -161,6 +161,8 @@ export function handleMarketUpdated(event: MarketUpdated): void {
     market.global = global.id
     market.owner = event.transaction.from
     market.rateAndCarry = ZERO
+    market.staleUpdateDuration = 0
+    market.acceptableSpotPricePercentMove = ZERO
     market.standardSize = ZERO
     market.skewAdjustmentFactor = ZERO
     market.address = event.params.market.optionMarket
@@ -221,6 +223,15 @@ export function handleMarketUpdated(event: MarketUpdated): void {
   if (greekCache == null) {
     OptionGreekCacheTemplate.createWithContext(event.params.market.greekCache, context)
     greekCache = new GreekCache(greekCacheId)
+    let greekCacheContract = GreekCacheContract.bind(changetype<Address>(event.params.market.greekCache))
+    let greekCacheParams = greekCacheContract.try_getGreekCacheParams()
+
+    if(!greekCacheParams.reverted){
+      market.acceptableSpotPricePercentMove = greekCacheParams.value.acceptableSpotPricePercentMove
+      market.rateAndCarry = greekCacheParams.value.rateAndCarry
+      market.staleUpdateDuration = greekCacheParams.value.staleUpdateDuration.toI32()
+      market.save()
+    }
   }
   greekCache.market = marketId
   greekCache.save()

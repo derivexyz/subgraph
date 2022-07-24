@@ -64,6 +64,10 @@ type Market @entity {
   "Market trading cutoff (Number of seconds before expiry) "
   tradingCutoff: Int!
 
+  staleUpdateDuration: Int!
+
+  acceptableSpotPricePercentMove: BigInt!
+
   # References
 
   " Boards (Expiries) for this market "
@@ -509,7 +513,7 @@ type Settle @entity {
   " Spot price at time of expiry "
   spotPriceAtExpiry: BigInt!
 
-  " Profit or Loss at settlement "
+  " Profit or Loss at settlement (Doesnt include premiums) "
   profit: BigInt!
 }
 
