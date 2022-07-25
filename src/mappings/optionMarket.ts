@@ -18,7 +18,7 @@ import {
   Strike,
   OptionPriceAndGreeksSnapshot,
 } from '../../generated/schema'
-import { Entity, HOURLY_PERIODS, HOUR_SECONDS, PERIODS, Snapshot, UNIT, ZERO } from '../lib'
+import { Entity, HOURLY_PERIODS, HOUR_SECONDS, PERIODS, Snapshot, UNIT, UNITDECIMAL, ZERO } from '../lib'
 import {
   handleTradeClose,
   handleTradeOpen,
@@ -108,16 +108,21 @@ export function handleStrikeAdded(event: StrikeAdded): void {
   putOption.save()
   callOption.save()
 
-  updateStrikeAndOptionGreeks(
-    optionMarketId,
-    strike.id,
-    board.baseIv,
-    timestamp,
-    market.latestSpotPrice,
-    market.rateAndCarry,
-    board.expiryTimestamp,
-    HOUR_SECONDS,
-  )
+  if (board.expiryTimestamp > timestamp) {
+    let tAnnualised = f64(board.expiryTimestamp - timestamp) / f64(31536000)
+    let rateAndCarry = parseFloat(market.rateAndCarry.toBigDecimal().div(UNITDECIMAL).toString())
+    let spotPrice = parseFloat(market.latestSpotPrice.toBigDecimal().div(UNITDECIMAL).toString())
+    updateStrikeAndOptionGreeks(
+      optionMarketId,
+      strike.id,
+      board.baseIv,
+      tAnnualised,
+      spotPrice,
+      rateAndCarry,
+      HOUR_SECONDS,
+      timestamp,
+    )
+  }
 
   log.info('Added Strike {}', [strikeId])
 }
@@ -342,7 +347,7 @@ export function handleBoardSettled(event: BoardSettled): void {
       latestMarketSnapshot.totalLongPutOpenInterest.minus(expiredLongPutOI)
     latestMarketSnapshot.totalShortPutOpenInterest =
       latestMarketSnapshot.totalShortPutOpenInterest.minus(expiredShortPutOI)
-      latestMarketSnapshot.save()
+    latestMarketSnapshot.save()
   }
 
   market.latestVolumeAndFees = latestMarketSnapshot.id
@@ -366,23 +371,29 @@ export function handleBoardFrozen(event: BoardFrozen): void {
 export function handleBoardBaseIvSet(event: BoardBaseIvSet): void {
   let optionMarketId = Entity.getIDFromAddress(event.address)
   let boardId = Entity.getBoardID(optionMarketId, event.params.boardId)
+  let timestamp = event.block.timestamp.toI32()
   // update board iv and strike vols and skews
-  updateBoardIV(boardId, event.block.timestamp.toI32(), event.params.baseIv, ZERO)
+  updateBoardIV(boardId, timestamp, event.params.baseIv, ZERO)
   let market = Market.load(optionMarketId) as Market
   let board = Board.load(boardId) as Board
   let strikeIds = board.strikeIds
   let numStrikes = strikeIds.length
-  for (let i = 0; i < numStrikes; i++) {
-    updateStrikeAndOptionGreeks(
-      optionMarketId,
-      strikeIds.pop(),
-      event.params.baseIv,
-      event.block.timestamp.toI32(),
-      market.latestSpotPrice,
-      market.rateAndCarry,
-      board.expiryTimestamp,
-      HOUR_SECONDS,
-    )
+  if (board.expiryTimestamp > timestamp) {
+    let tAnnualised = f64(board.expiryTimestamp - timestamp) / f64(31536000)
+    let rateAndCarry = parseFloat(market.rateAndCarry.toBigDecimal().div(UNITDECIMAL).toString())
+    let spotPrice = parseFloat(market.latestSpotPrice.toBigDecimal().div(UNITDECIMAL).toString())
+    for (let i = 0; i < numStrikes; i++) {
+      updateStrikeAndOptionGreeks(
+        optionMarketId,
+        strikeIds.pop(),
+        event.params.baseIv,
+        tAnnualised,
+        spotPrice,
+        rateAndCarry,
+        HOUR_SECONDS,
+        timestamp,
+      )
+    }
   }
 }
 

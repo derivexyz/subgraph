@@ -28,6 +28,7 @@ import {
 export let ZERO = BigInt.fromI32(0)
 export let ONE = BigInt.fromI32(1)
 export let UNIT = BigInt.fromString('1' + '0'.repeat(18))
+export let UNITDECIMAL = UNIT.toBigDecimal()
 
 export let FIVE_MINUTE_SECONDS: i32 = 300
 export let FIFTEEN_MINUTE_SECONDS: i32 = FIVE_MINUTE_SECONDS * 3

@@ -18,7 +18,7 @@ import {
   StrikeIVAndGreeksSnapshot,
   Trade,
 } from '../generated/schema'
-import { Entity, UNIT, ZERO, BlackScholes, HOURLY_PERIODS, PERIODS, Snapshot, DAY_SECONDS } from './lib'
+import { Entity, UNIT, ZERO, BlackScholes, HOURLY_PERIODS, PERIODS, Snapshot, DAY_SECONDS, UNITDECIMAL } from './lib'
 
 export class optionPrices {
   callPrice: BigInt
@@ -32,7 +32,12 @@ export class optionPrices {
 ////// MARKET FUNCTIONS //////
 ///////////////////////////
 
-export function updateMarketGreeks(optionMarketId: string, timestamp: i32, optionNetDelta: BigInt, netStdVega: BigInt): void {
+export function updateMarketGreeks(
+  optionMarketId: string,
+  timestamp: i32,
+  optionNetDelta: BigInt,
+  netStdVega: BigInt,
+): void {
   let market = Market.load(optionMarketId) as Market
 
   //Get the largest relevant period
@@ -48,12 +53,12 @@ export function updateMarketGreeks(optionMarketId: string, timestamp: i32, optio
   // Load pool
   // Load latest hedger delta
   let hedger = PoolHedger.load(market.poolHedger) as PoolHedger
-  let hedgerDelta = (PoolHedgerExposureSnapshot.load(hedger.latestPoolHedgerExposure) as PoolHedgerExposureSnapshot).currentNetDelta
+  let hedgerDelta = (PoolHedgerExposureSnapshot.load(hedger.latestPoolHedgerExposure) as PoolHedgerExposureSnapshot)
+    .currentNetDelta
 
   let poolBaseBalance = (Pool.load(market.liquidityPool) as Pool).baseBalance
   let poolNetDelta = poolBaseBalance.minus(optionNetDelta)
   let globalNetDelta = poolNetDelta.plus(hedgerDelta)
-
 
   //Force create daily snapshot if it doesnt exist
   if (
@@ -125,17 +130,12 @@ export function updateStrikeAndOptionGreeks(
   optionMarketId: string,
   strikeId: string,
   baseIv: BigInt,
-  timestamp: i32,
-  latestSpotPrice: BigInt,
-  rateAndCarry: BigInt,
-  expiryTimestamp: i32,
+  tAnnualised: number,
+  latestSpotPrice: number,
+  rateAndCarry: number,
   period: i32,
+  timestamp: i32,
 ): void {
-  if (timestamp >= expiryTimestamp) {
-    //Could happen if options weren't settled fast enough
-    log.warning('Timestamp greater than expiry: ', [])
-    return
-  }
   let strike = Strike.load(strikeId) as Strike
   let callOption = Option.load(strike.callOption) as Option
   let putOption = Option.load(strike.putOption) as Option
@@ -144,12 +144,11 @@ export function updateStrikeAndOptionGreeks(
   let strikeIv = strike.skew.times(baseIv).div(UNIT)
   strike.iv = strikeIv
 
-  let timeToExpiry = expiryTimestamp - timestamp
   let allGreeks = BlackScholes.calculateGreeks(
-    timeToExpiry,
-    strikeIv,
+    tAnnualised,
+    parseFloat(strikeIv.toBigDecimal().div(UNITDECIMAL).toString()),
     latestSpotPrice,
-    strike.strikePrice,
+    parseFloat(strike.strikePriceReadable),
     rateAndCarry,
   )
 

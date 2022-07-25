@@ -6,7 +6,7 @@ import { AnswerUpdated as AnswerUpdatedEvent } from '../../generated/templates/A
 import { AggregatorProxy, Aggregator } from '../../generated/templates'
 import { BigInt, DataSourceContext, dataSource, log, Address, Bytes } from '@graphprotocol/graph-ts'
 import { Market, Board, SpotPriceSnapshot } from '../../generated/schema'
-import { Entity, ZERO_ADDRESS, PERIODS, Snapshot } from '../lib'
+import { Entity, ZERO_ADDRESS, PERIODS, Snapshot, UNITDECIMAL } from '../lib'
 import { updateStrikeAndOptionGreeks } from '../market'
 
 ///////////////////////
@@ -59,22 +59,27 @@ export function addLatestRate(marketId: string, rate: BigInt, timestamp: i32): v
 
   let boardIds = market.activeBoardIds
   let numBoards = boardIds.length
+  let rateAndCarry = parseFloat(market.rateAndCarry.toBigDecimal().div(UNITDECIMAL).toString())
+  let spotPrice = parseFloat(rate.toBigDecimal().div(UNITDECIMAL).toString())
   for (let i = 0; i < numBoards; i++) {
     let board = Board.load(boardIds.pop()) as Board
     let strikeIds = board.strikeIds
     let numStrikes = strikeIds.length
-    for (let j = 0; j < numStrikes; j++) {
-      let strikeId = strikeIds.pop()
-      updateStrikeAndOptionGreeks(
-        marketId,
-        strikeId,
-        board.baseIv,
-        timestamp,
-        rate,
-        market.rateAndCarry,
-        board.expiryTimestamp,
-        base_period,
-      )
+    if(board.expiryTimestamp > timestamp){
+      let tAnnualised = f64(board.expiryTimestamp - timestamp) / f64(31536000)
+      for (let j = 0; j < numStrikes; j++) {
+        let strikeId = strikeIds.pop()
+        updateStrikeAndOptionGreeks(
+          marketId,
+          strikeId,
+          board.baseIv,
+          tAnnualised,
+          spotPrice,
+          rateAndCarry,
+          base_period,
+          timestamp
+        )
+      }
     }
   }
 }

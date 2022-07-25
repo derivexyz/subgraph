@@ -1,5 +1,5 @@
-import { BigIntHelper, ONE, UNIT } from '.'
-import { BigDecimal, BigInt } from '@graphprotocol/graph-ts'
+import { ONE, UNIT, UNITDECIMAL } from '.'
+import { BigDecimal, BigInt, log } from '@graphprotocol/graph-ts'
 
 export namespace BlackScholes {
   export class AllGreeks {
@@ -153,28 +153,22 @@ export namespace BlackScholes {
     isCall: boolean,
   ): BigInt {
     let timeToExpiryAnnualized = f64(timeToExpirySeconds) / f64(60 * 60 * 24 * 365)
-    let _vol = BigIntHelper.toNumber(vol, 18)
-    let _spotPrice = BigIntHelper.toNumber(spotPrice, 18)
-    let _strikePrice = BigIntHelper.toNumber(strikePrice, 18)
-    let _rateAndCarry = BigIntHelper.toNumber(rateAndCarry, 18)
+    let _vol = parseFloat(vol.toBigDecimal().div(UNITDECIMAL).toString())
+    let _spotPrice = parseFloat(spotPrice.toBigDecimal().div(UNITDECIMAL).toString())
+    let _strikePrice = parseFloat(strikePrice.toBigDecimal().div(UNITDECIMAL).toString())
+    let _rateAndCarry = parseFloat(rateAndCarry.toBigDecimal().div(UNITDECIMAL).toString())
     let price = BlackScholes.price(timeToExpiryAnnualized, _vol, _spotPrice, _strikePrice, _rateAndCarry, isCall)
 
     return convertToBigNum(price)
   }
 
   export function calculateGreeks(
-    timeToExpirySeconds: i32,
-    vol: BigInt,
-    spotPrice: BigInt,
-    strikePrice: BigInt,
-    rateAndCarry: BigInt,
+    tAnnualised: number,
+    _vol: number,
+    _spotPrice: number,
+    _strikePrice: number,
+    _rateAndCarry: number,
   ): AllGreeks {
-    let tAnnualised = f64(timeToExpirySeconds) / f64(31536000) // 60 * 60 * 24 * 365 (seconds per year)
-    let _vol = BigIntHelper.toNumber(vol, 18)
-    let _spotPrice = BigIntHelper.toNumber(spotPrice, 18)
-    let _strikePrice = BigIntHelper.toNumber(strikePrice, 18)
-    let _rateAndCarry = BigIntHelper.toNumber(rateAndCarry, 18)
-
     //INPUTS
     let d1_ = d1(tAnnualised, _vol, _spotPrice, _strikePrice, _rateAndCarry)
     let d2_ = d2(tAnnualised, _vol, _spotPrice, _strikePrice, _rateAndCarry)
@@ -296,6 +290,7 @@ export namespace BlackScholes {
   }
 
   //Based on mathjs.erf implemenation
+  //https://github.com/josdejong/mathjs/blob/d520b2404b3d7ffdd9ab710c9e1bb9043772cdc2/src/function/special/erf.js
   export function erf(x: number): number {
     let MAX_NUM = Math.pow(2, 53)
 
