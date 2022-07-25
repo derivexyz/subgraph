@@ -28,6 +28,10 @@ export class optionPrices {
     this.putPrice = putPrice_
   }
 }
+export class gammaAndTheta {
+  gamma: BigInt
+  theta: BigInt
+}
 /////////////////////////////
 ////// MARKET FUNCTIONS //////
 ///////////////////////////
@@ -72,7 +76,8 @@ export function updateMarketGreeks(
     dailyMarketGreeksSnapshot.optionNetDelta = optionNetDelta
     dailyMarketGreeksSnapshot.netDelta = globalNetDelta
     dailyMarketGreeksSnapshot.netStdVega = netStdVega
-    dailyMarketGreeksSnapshot.netGamma = ZERO //TODO: Can we get this?
+    dailyMarketGreeksSnapshot.netGamma = market.netGamma //TODO: Can we get this?
+    dailyMarketGreeksSnapshot.netTheta = market.netTheta //TODO: Can we get this?
     dailyMarketGreeksSnapshot.save()
   }
 
@@ -83,7 +88,8 @@ export function updateMarketGreeks(
   marketGreeksSnapshot.optionNetDelta = optionNetDelta
   marketGreeksSnapshot.netDelta = globalNetDelta
   marketGreeksSnapshot.netStdVega = netStdVega
-  marketGreeksSnapshot.netGamma = ZERO //TODO: Can we get this?
+  marketGreeksSnapshot.netGamma = market.netGamma //TODO: Can we get this?
+  marketGreeksSnapshot.netTheta = market.netTheta //TODO: Can we get this?
   marketGreeksSnapshot.save()
 
   if (market.latestGreeks != marketGreeksSnapshot.id) {
@@ -135,7 +141,7 @@ export function updateStrikeAndOptionGreeks(
   rateAndCarry: number,
   period: i32,
   timestamp: i32,
-): void {
+): gammaAndTheta {
   let strike = Strike.load(strikeId) as Strike
   let callOption = Option.load(strike.callOption) as Option
   let putOption = Option.load(strike.putOption) as Option
@@ -193,6 +199,27 @@ export function updateStrikeAndOptionGreeks(
 
   strike.latestStrikeIVAndGreeks = latestStrikeSnapshot.id
   strike.save()
+
+  //Load latest open interest snapshot
+  let callOISnapshot = OptionVolumeSnapshot.load(callOption.latestOptionVolume) as OptionVolumeSnapshot
+  let putOISnapshot = OptionVolumeSnapshot.load(putOption.latestOptionVolume) as OptionVolumeSnapshot
+
+  let gamma = allGreeks.gamma
+    .times(
+      callOISnapshot.longOpenInterest
+        .plus(putOISnapshot.longOpenInterest)
+        .minus(callOISnapshot.shortOpenInterest)
+        .minus(putOISnapshot.shortOpenInterest),
+    )
+    .div(UNIT)
+  let callTheta = allGreeks.callTheta
+    .times(callOISnapshot.longOpenInterest.minus(callOISnapshot.shortOpenInterest))
+    .div(UNIT)
+  let putTheta = allGreeks.putTheta
+    .times(putOISnapshot.longOpenInterest.minus(putOISnapshot.shortOpenInterest))
+    .div(UNIT)
+  let theta = callTheta.plus(putTheta)
+  return { gamma, theta }
 }
 
 export function updateOptionOpenInterest(

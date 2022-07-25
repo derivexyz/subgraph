@@ -79,6 +79,10 @@ type Market @entity {
   " Latest chainlink price for this market "
   latestSpotPrice: BigInt!
 
+  netGamma: BigInt!
+
+  netTheta: BigInt!
+
   " Chainlink price history for this market "
   spotPriceHistory: [SpotPriceSnapshot!]! @derivedFrom(field: "market")
 
@@ -901,6 +905,9 @@ type MarketGreeksSnapshot @entity {
 
   " Market net gamma "
   netGamma: BigInt!
+
+  " Market net theta "
+  netTheta: BigInt!
 }
 
 type SpotPriceSnapshot @entity {

@@ -154,18 +154,6 @@ export function isGlobalCacheStale(
   staleUpdateDuration: i32,
   acceptableSpotPricePercentMove: BigInt,
 ): boolean {
-  log.info(
-    'Current Block: {}, currentPrice: {}, minUpdatedAt: {}, minUpdatedPrice: {}, maxUpdatedPrice: {}, staleUpdateDuration:{}, acceptable:{}',
-    [
-      currentBlockTimestamp.toString(),
-      currentPrice.toString(),
-      minUpdatedAt.toString(),
-      minUpdatedAtPrice.toString(),
-      maxUpdatedAtPrice.toString(),
-      staleUpdateDuration.toString(),
-      acceptableSpotPricePercentMove.toString(),
-    ],
-  )
   return (
     currentBlockTimestamp - minUpdatedAt > staleUpdateDuration ||
     !isPriceMoveAcceptable(minUpdatedAtPrice, currentPrice, acceptableSpotPricePercentMove) ||

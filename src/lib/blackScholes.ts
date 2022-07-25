@@ -186,8 +186,8 @@ export namespace BlackScholes {
 
     let theta_p1 = (-_spotPrice * stdNormal_d1 * _vol) / (2 * tAnnualised_sqrt)
     let theta_p2 = _rateAndCarry * _strikePrice * Math.exp(-_rateAndCarry * tAnnualised)
-    let callTheta = convertToBigNum(theta_p1 - theta_p2 * stdNormalCDF_d2)
-    let putTheta = convertToBigNum(theta_p1 + theta_p2 * neg_stdNormalCDF_d2)
+    let callTheta = convertToBigNum((theta_p1 - theta_p2 * stdNormalCDF_d2) / 365)
+    let putTheta = convertToBigNum((theta_p1 + theta_p2 * neg_stdNormalCDF_d2) / 365)
 
     let rho_p1 = _strikePrice * tAnnualised * Math.exp(-_rateAndCarry * tAnnualised)
     let callRho = convertToBigNum(rho_p1 * stdNormalCDF_d2)

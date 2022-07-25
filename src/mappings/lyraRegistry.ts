@@ -155,6 +155,7 @@ export function handleMarketUpdated(event: MarketUpdated): void {
     marketGreeksSnapshot.optionNetDelta = ZERO
     marketGreeksSnapshot.netDelta = ZERO
     marketGreeksSnapshot.netGamma = ZERO
+    marketGreeksSnapshot.netTheta = ZERO
     marketGreeksSnapshot.netStdVega = ZERO
 
     // config

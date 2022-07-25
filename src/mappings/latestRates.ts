@@ -6,7 +6,7 @@ import { AnswerUpdated as AnswerUpdatedEvent } from '../../generated/templates/A
 import { AggregatorProxy, Aggregator } from '../../generated/templates'
 import { BigInt, DataSourceContext, dataSource, log, Address, Bytes } from '@graphprotocol/graph-ts'
 import { Market, Board, SpotPriceSnapshot } from '../../generated/schema'
-import { Entity, ZERO_ADDRESS, PERIODS, Snapshot, UNITDECIMAL } from '../lib'
+import { Entity, ZERO_ADDRESS, PERIODS, Snapshot, UNITDECIMAL, ZERO } from '../lib'
 import { updateStrikeAndOptionGreeks } from '../market'
 
 ///////////////////////
@@ -61,6 +61,8 @@ export function addLatestRate(marketId: string, rate: BigInt, timestamp: i32): v
   let numBoards = boardIds.length
   let rateAndCarry = parseFloat(market.rateAndCarry.toBigDecimal().div(UNITDECIMAL).toString())
   let spotPrice = parseFloat(rate.toBigDecimal().div(UNITDECIMAL).toString())
+  let netGamma = ZERO
+  let netTheta = ZERO
   for (let i = 0; i < numBoards; i++) {
     let board = Board.load(boardIds.pop()) as Board
     let strikeIds = board.strikeIds
@@ -69,7 +71,7 @@ export function addLatestRate(marketId: string, rate: BigInt, timestamp: i32): v
       let tAnnualised = f64(board.expiryTimestamp - timestamp) / f64(31536000)
       for (let j = 0; j < numStrikes; j++) {
         let strikeId = strikeIds.pop()
-        updateStrikeAndOptionGreeks(
+        let gammaAndTheta = updateStrikeAndOptionGreeks(
           marketId,
           strikeId,
           board.baseIv,
@@ -79,9 +81,14 @@ export function addLatestRate(marketId: string, rate: BigInt, timestamp: i32): v
           base_period,
           timestamp
         )
+        netGamma = netGamma.plus(gammaAndTheta.gamma)
+        netTheta = netTheta.plus(gammaAndTheta.theta)
       }
     }
   }
+  market.netGamma = netGamma
+  market.netTheta = netTheta
+  market.save()
 }
 
 export function addProxyAggregator(aggregatorProxyAddress: Address, optionMarketId: string): void {
