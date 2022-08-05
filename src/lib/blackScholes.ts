@@ -1,4 +1,4 @@
-import { ONE, UNIT, UNITDECIMAL } from '.'
+import { ONE, UNIT, UNITDECIMAL, ZERO } from '.'
 import { BigDecimal, BigInt, log } from '@graphprotocol/graph-ts'
 
 export namespace BlackScholes {
@@ -196,7 +196,18 @@ export namespace BlackScholes {
     let vega = convertToBigNum(_spotPrice * stdNormal_d1 * tAnnualised_sqrt)
     let gamma = convertToBigNum(stdNormal_d1 / (_spotPrice * _vol * tAnnualised_sqrt))
 
-    return { callPrice, putPrice, callDelta, putDelta, callTheta, putTheta, callRho, putRho, vega, gamma }
+    return {
+      callPrice: callPrice.gt(ZERO) ? callPrice : ZERO, //Can sometimes return negative numbers close to expiry
+      putPrice: putPrice.gt(ZERO) ? putPrice : ZERO,
+      callDelta,
+      putDelta,
+      callTheta,
+      putTheta,
+      callRho,
+      putRho,
+      vega,
+      gamma,
+    }
   }
 
   function convertToBigNum(num: number): BigInt {

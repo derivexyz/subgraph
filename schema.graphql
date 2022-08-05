@@ -688,10 +688,10 @@ type LPPendingAction @entity {
   " Withdrawal queue ID "
   queueID: BigInt!
 
-  " Requestes withdrawal amount "
+  " Requestes deposit/withdrawal amount "
   pendingAmount: BigInt!
 
-  " Amount of deposit that has been processed "
+  " Amount of withdrawal/deposit that has been processed "
   processedAmount: BigInt! #Withdrawals can be partially processed
 }
 
