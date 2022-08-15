@@ -1,0 +1,792 @@
+{
+  "SafeDecimalMath": {
+    "name": "SafeDecimalMath",
+    "address": "0x6Bb3B18694A6849654379F040DcB112E07da9DC7",
+    "source": "SafeDecimalMath",
+    "link": "https://goerli-explorer.optimism.io/address/0x6Bb3B18694A6849654379F040DcB112E07da9DC7",
+    "timestamp": "2022-07-16T12:43:33.858Z",
+    "txn": "",
+    "network": "goerli",
+    "constructorArgs": []
+  },
+  "Math": {
+    "name": "Math",
+    "address": "0x6fa3D41F37F544c6982693eFEe8B0d4BD88986ed",
+    "source": "Math",
+    "link": "https://goerli-explorer.optimism.io/address/0x6fa3D41F37F544c6982693eFEe8B0d4BD88986ed",
+    "timestamp": "2022-07-16T12:43:36.089Z",
+    "txn": "",
+    "network": "goerli",
+    "constructorArgs": []
+  },
+  "SystemSettingsLib": {
+    "name": "SystemSettingsLib",
+    "address": "0x83732C3eD8F24Af9b87DAcDC23b0Fe40abb77337",
+    "source": "SystemSettingsLib",
+    "link": "https://goerli-explorer.optimism.io/address/0x83732C3eD8F24Af9b87DAcDC23b0Fe40abb77337",
+    "timestamp": "2022-07-16T12:43:38.035Z",
+    "txn": "",
+    "network": "goerli",
+    "constructorArgs": []
+  },
+  "SignedSafeDecimalMath": {
+    "name": "SignedSafeDecimalMath",
+    "address": "0x6d2eA159C128eC361a9a23b1456Ef0aAD0bec46b",
+    "source": "SignedSafeDecimalMath",
+    "link": "https://goerli-explorer.optimism.io/address/0x6d2eA159C128eC361a9a23b1456Ef0aAD0bec46b",
+    "timestamp": "2022-07-16T12:43:44.554Z",
+    "txn": "",
+    "network": "goerli",
+    "constructorArgs": []
+  },
+  "AddressResolver": {
+    "name": "AddressResolver",
+    "address": "0x1d551351613a28d676BaC1Af157799e201279198",
+    "source": "AddressResolver",
+    "link": "https://goerli-explorer.optimism.io/address/0x1d551351613a28d676BaC1Af157799e201279198",
+    "timestamp": "2022-07-16T12:43:50.898Z",
+    "txn": "",
+    "network": "goerli",
+    "constructorArgs": [
+      "0x73570075092502472E4b61A7058Df1A4a1DB12f2"
+    ]
+  },
+  "ReadProxyAddressResolver": {
+    "name": "ReadProxyAddressResolver",
+    "address": "0x9Fc84992dF5496797784374B810E04238728743d",
+    "source": "ReadProxy",
+    "link": "https://goerli-explorer.optimism.io/address/0x9Fc84992dF5496797784374B810E04238728743d",
+    "timestamp": "2022-07-16T12:43:57.922Z",
+    "txn": "",
+    "network": "goerli",
+    "constructorArgs": [
+      "0x73570075092502472E4b61A7058Df1A4a1DB12f2"
+    ]
+  },
+  "OneNetAggregatorIssuedSynths": {
+    "name": "OneNetAggregatorIssuedSynths",
+    "address": "0x904c9424484ba6D5C47d979d8e9Fc5261747D681",
+    "source": "OneNetAggregatorIssuedSynths",
+    "link": "https://goerli-explorer.optimism.io/address/0x904c9424484ba6D5C47d979d8e9Fc5261747D681",
+    "timestamp": "2022-07-16T12:44:04.857Z",
+    "txn": "",
+    "network": "goerli",
+    "constructorArgs": [
+      "0x9Fc84992dF5496797784374B810E04238728743d"
+    ]
+  },
+  "OneNetAggregatorDebtRatio": {
+    "name": "OneNetAggregatorDebtRatio",
+    "address": "0x88e566CF9E29e08AfFB23abe3E9065bD88ACB152",
+    "source": "OneNetAggregatorDebtRatio",
+    "link": "https://goerli-explorer.optimism.io/address/0x88e566CF9E29e08AfFB23abe3E9065bD88ACB152",
+    "timestamp": "2022-07-16T12:44:07.136Z",
+    "txn": "",
+    "network": "goerli",
+    "constructorArgs": [
+      "0x9Fc84992dF5496797784374B810E04238728743d"
+    ]
+  },
+  "FlexibleStorage": {
+    "name": "FlexibleStorage",
+    "address": "0x88CAf687f3E1cae053BF0CdbB52EFb1c5dcAbD87",
+    "source": "FlexibleStorage",
+    "link": "https://goerli-explorer.optimism.io/address/0x88CAf687f3E1cae053BF0CdbB52EFb1c5dcAbD87",
+    "timestamp": "2022-07-16T12:44:13.716Z",
+    "txn": "",
+    "network": "goerli",
+    "constructorArgs": [
+      "0x9Fc84992dF5496797784374B810E04238728743d"
+    ]
+  },
+  "SystemSettings": {
+    "name": "SystemSettings",
+    "address": "0xD2cECA6DD62243aB2d342Eb04882c86a10b35274",
+    "source": "SystemSettings",
+    "link": "https://goerli-explorer.optimism.io/address/0xD2cECA6DD62243aB2d342Eb04882c86a10b35274",
+    "timestamp": "2022-07-16T12:44:20.549Z",
+    "txn": "",
+    "network": "goerli",
+    "constructorArgs": [
+      "0x73570075092502472E4b61A7058Df1A4a1DB12f2",
+      "0x9Fc84992dF5496797784374B810E04238728743d"
+    ]
+  },
+  "SystemStatus": {
+    "name": "SystemStatus",
+    "address": "0x9D89fF8C6f3CC22F4BbB859D0F85FB3a4e1FA916",
+    "source": "SystemStatus",
+    "link": "https://goerli-explorer.optimism.io/address/0x9D89fF8C6f3CC22F4BbB859D0F85FB3a4e1FA916",
+    "timestamp": "2022-07-16T12:44:23.219Z",
+    "txn": "",
+    "network": "goerli",
+    "constructorArgs": [
+      "0x73570075092502472E4b61A7058Df1A4a1DB12f2"
+    ]
+  },
+  "ExchangeRates": {
+    "name": "ExchangeRates",
+    "address": "0xd90690084Cc97F87214f373a6835A2748C5bedd5",
+    "source": "ExchangeRates",
+    "link": "https://goerli-explorer.optimism.io/address/0xd90690084Cc97F87214f373a6835A2748C5bedd5",
+    "timestamp": "2022-07-16T12:44:29.827Z",
+    "txn": "",
+    "network": "goerli",
+    "constructorArgs": [
+      "0x73570075092502472E4b61A7058Df1A4a1DB12f2",
+      "0x9Fc84992dF5496797784374B810E04238728743d"
+    ]
+  },
+  "RewardEscrowV2": {
+    "name": "RewardEscrowV2",
+    "address": "0x6dd94459B5A844a6739c2b38a9E6d6b165cE45D9",
+    "source": "ImportableRewardEscrowV2",
+    "link": "https://goerli-explorer.optimism.io/address/0x6dd94459B5A844a6739c2b38a9E6d6b165cE45D9",
+    "timestamp": "2022-07-16T12:44:32.163Z",
+    "txn": "",
+    "network": "goerli",
+    "constructorArgs": [
+      "0x73570075092502472E4b61A7058Df1A4a1DB12f2",
+      "0x9Fc84992dF5496797784374B810E04238728743d"
+    ]
+  },
+  "SynthetixEscrow": {
+    "name": "SynthetixEscrow",
+    "address": "0xFaFd00D0CaA6D5cd5161c5C1F18AaB24942aCAFA",
+    "source": "SynthetixEscrow",
+    "link": "https://goerli-explorer.optimism.io/address/0xFaFd00D0CaA6D5cd5161c5C1F18AaB24942aCAFA",
+    "timestamp": "2022-07-16T12:44:38.661Z",
+    "txn": "",
+    "network": "goerli",
+    "constructorArgs": [
+      "0x73570075092502472E4b61A7058Df1A4a1DB12f2",
+      "0x0000000000000000000000000000000000000000"
+    ]
+  },
+  "SynthetixDebtShare": {
+    "name": "SynthetixDebtShare",
+    "address": "0x3c710172e7f95aCAaDeD243982a90F8F235fF9f1",
+    "source": "SynthetixDebtShare",
+    "link": "https://goerli-explorer.optimism.io/address/0x3c710172e7f95aCAaDeD243982a90F8F235fF9f1",
+    "timestamp": "2022-07-16T12:44:41.083Z",
+    "txn": "",
+    "network": "goerli",
+    "constructorArgs": [
+      "0x73570075092502472E4b61A7058Df1A4a1DB12f2",
+      "0x9Fc84992dF5496797784374B810E04238728743d"
+    ]
+  },
+  "ProxyFeePool": {
+    "name": "ProxyFeePool",
+    "address": "0x4Fa8252a6C60C891BE35Db51F1F4F5973b88dF98",
+    "source": "Proxy",
+    "link": "https://goerli-explorer.optimism.io/address/0x4Fa8252a6C60C891BE35Db51F1F4F5973b88dF98",
+    "timestamp": "2022-07-16T12:44:43.075Z",
+    "txn": "",
+    "network": "goerli",
+    "constructorArgs": [
+      "0x73570075092502472E4b61A7058Df1A4a1DB12f2"
+    ]
+  },
+  "DelegateApprovalsEternalStorage": {
+    "name": "DelegateApprovalsEternalStorage",
+    "address": "0x9800812f1d80bbe763DA97C967e746ca7a2d1Ccd",
+    "source": "EternalStorage",
+    "link": "https://goerli-explorer.optimism.io/address/0x9800812f1d80bbe763DA97C967e746ca7a2d1Ccd",
+    "timestamp": "2022-07-16T12:44:49.818Z",
+    "txn": "",
+    "network": "goerli",
+    "constructorArgs": [
+      "0x73570075092502472E4b61A7058Df1A4a1DB12f2",
+      "0x0000000000000000000000000000000000000000"
+    ]
+  },
+  "DelegateApprovals": {
+    "name": "DelegateApprovals",
+    "address": "0x2715DC87A9c9a9A1a02641403205F4F093E1A659",
+    "source": "DelegateApprovals",
+    "link": "https://goerli-explorer.optimism.io/address/0x2715DC87A9c9a9A1a02641403205F4F093E1A659",
+    "timestamp": "2022-07-16T12:44:56.706Z",
+    "txn": "",
+    "network": "goerli",
+    "constructorArgs": [
+      "0x73570075092502472E4b61A7058Df1A4a1DB12f2",
+      "0x9800812f1d80bbe763DA97C967e746ca7a2d1Ccd"
+    ]
+  },
+  "Liquidator": {
+    "name": "Liquidator",
+    "address": "0x94215de0377428c810E32c73f7fc12E5f2Af2FE2",
+    "source": "Liquidator",
+    "link": "https://goerli-explorer.optimism.io/address/0x94215de0377428c810E32c73f7fc12E5f2Af2FE2",
+    "timestamp": "2022-07-16T12:45:03.677Z",
+    "txn": "",
+    "network": "goerli",
+    "constructorArgs": [
+      "0x73570075092502472E4b61A7058Df1A4a1DB12f2",
+      "0x9Fc84992dF5496797784374B810E04238728743d"
+    ]
+  },
+  "LiquidatorRewards": {
+    "name": "LiquidatorRewards",
+    "address": "0x1c6C0a89064206e397E75b11Bcd370E8A8A007B4",
+    "source": "LiquidatorRewards",
+    "link": "https://goerli-explorer.optimism.io/address/0x1c6C0a89064206e397E75b11Bcd370E8A8A007B4",
+    "timestamp": "2022-07-16T12:45:06.243Z",
+    "txn": "",
+    "network": "goerli",
+    "constructorArgs": [
+      "0x73570075092502472E4b61A7058Df1A4a1DB12f2",
+      "0x9Fc84992dF5496797784374B810E04238728743d"
+    ]
+  },
+  "FeePoolEternalStorage": {
+    "name": "FeePoolEternalStorage",
+    "address": "0xd01075abdD086006c85840de62544506d7Ab3C79",
+    "source": "FeePoolEternalStorage",
+    "link": "https://goerli-explorer.optimism.io/address/0xd01075abdD086006c85840de62544506d7Ab3C79",
+    "timestamp": "2022-07-16T12:45:12.532Z",
+    "txn": "",
+    "network": "goerli",
+    "constructorArgs": [
+      "0x73570075092502472E4b61A7058Df1A4a1DB12f2",
+      "0x0000000000000000000000000000000000000000"
+    ]
+  },
+  "FeePool": {
+    "name": "FeePool",
+    "address": "0x216B2767C7E28f26878e668a6a06d3C364dE0725",
+    "source": "FeePool",
+    "link": "https://goerli-explorer.optimism.io/address/0x216B2767C7E28f26878e668a6a06d3C364dE0725",
+    "timestamp": "2022-07-16T12:45:14.917Z",
+    "txn": "",
+    "network": "goerli",
+    "constructorArgs": [
+      "0x4Fa8252a6C60C891BE35Db51F1F4F5973b88dF98",
+      "0x73570075092502472E4b61A7058Df1A4a1DB12f2",
+      "0x9Fc84992dF5496797784374B810E04238728743d"
+    ]
+  },
+  "FeePoolState": {
+    "name": "FeePoolState",
+    "address": "0x0FA904962C4f5427590dD4517697C32363639303",
+    "source": "FeePoolState",
+    "link": "https://goerli-explorer.optimism.io/address/0x0FA904962C4f5427590dD4517697C32363639303",
+    "timestamp": "2022-07-16T12:45:20.856Z",
+    "txn": "",
+    "network": "goerli",
+    "constructorArgs": [
+      "0x73570075092502472E4b61A7058Df1A4a1DB12f2",
+      "0x216B2767C7E28f26878e668a6a06d3C364dE0725"
+    ]
+  },
+  "RewardsDistribution": {
+    "name": "RewardsDistribution",
+    "address": "0xb12704F8BddA7CF3eBa5F9A463404D4ba5d0e282",
+    "source": "RewardsDistribution",
+    "link": "https://goerli-explorer.optimism.io/address/0xb12704F8BddA7CF3eBa5F9A463404D4ba5d0e282",
+    "timestamp": "2022-07-16T12:45:23.164Z",
+    "txn": "",
+    "network": "goerli",
+    "constructorArgs": [
+      "0x73570075092502472E4b61A7058Df1A4a1DB12f2",
+      "0x0000000000000000000000000000000000000000",
+      "0x0000000000000000000000000000000000000000",
+      "0x6dd94459B5A844a6739c2b38a9E6d6b165cE45D9",
+      "0x4Fa8252a6C60C891BE35Db51F1F4F5973b88dF98"
+    ]
+  },
+  "TokenStateSynthetix": {
+    "name": "TokenStateSynthetix",
+    "address": "0xB9525040A5B6a2d9e013240397079Fd1320559C4",
+    "source": "LegacyTokenState",
+    "link": "https://goerli-explorer.optimism.io/address/0xB9525040A5B6a2d9e013240397079Fd1320559C4",
+    "timestamp": "2022-07-16T12:45:29.669Z",
+    "txn": "",
+    "network": "goerli",
+    "constructorArgs": [
+      "0x73570075092502472E4b61A7058Df1A4a1DB12f2",
+      "0x73570075092502472E4b61A7058Df1A4a1DB12f2"
+    ]
+  },
+  "ProxySynthetix": {
+    "name": "ProxySynthetix",
+    "address": "0x2E5ED97596a8368EB9E44B1f3F25B2E813845303",
+    "source": "ProxyERC20",
+    "link": "https://goerli-explorer.optimism.io/address/0x2E5ED97596a8368EB9E44B1f3F25B2E813845303",
+    "timestamp": "2022-07-16T12:45:31.950Z",
+    "txn": "",
+    "network": "goerli",
+    "constructorArgs": [
+      "0x73570075092502472E4b61A7058Df1A4a1DB12f2"
+    ]
+  },
+  "Synthetix": {
+    "name": "Synthetix",
+    "address": "0xE5Ff777aBF6bCDBEA930179526AE5284cD884e0B",
+    "source": "MintableSynthetix",
+    "link": "https://goerli-explorer.optimism.io/address/0xE5Ff777aBF6bCDBEA930179526AE5284cD884e0B",
+    "timestamp": "2022-07-16T12:45:38.577Z",
+    "txn": "",
+    "network": "goerli",
+    "constructorArgs": [
+      "0x2E5ED97596a8368EB9E44B1f3F25B2E813845303",
+      "0xB9525040A5B6a2d9e013240397079Fd1320559C4",
+      "0x73570075092502472E4b61A7058Df1A4a1DB12f2",
+      "0",
+      "0x9Fc84992dF5496797784374B810E04238728743d"
+    ]
+  },
+  "DebtCache": {
+    "name": "DebtCache",
+    "address": "0x216EaF79575563A5e13227ad075850cDeb004083",
+    "source": "DebtCache",
+    "link": "https://goerli-explorer.optimism.io/address/0x216EaF79575563A5e13227ad075850cDeb004083",
+    "timestamp": "2022-07-16T12:45:41.124Z",
+    "txn": "",
+    "network": "goerli",
+    "constructorArgs": [
+      "0x73570075092502472E4b61A7058Df1A4a1DB12f2",
+      "0x9Fc84992dF5496797784374B810E04238728743d"
+    ]
+  },
+  "Exchanger": {
+    "name": "Exchanger",
+    "address": "0xcFAd59957537e62FB11E70d25c654e1538cC31C2",
+    "source": "Exchanger",
+    "link": "https://goerli-explorer.optimism.io/address/0xcFAd59957537e62FB11E70d25c654e1538cC31C2",
+    "timestamp": "2022-07-16T12:45:47.791Z",
+    "txn": "",
+    "network": "goerli",
+    "constructorArgs": [
+      "0x73570075092502472E4b61A7058Df1A4a1DB12f2",
+      "0x9Fc84992dF5496797784374B810E04238728743d"
+    ]
+  },
+  "ExchangeCircuitBreaker": {
+    "name": "ExchangeCircuitBreaker",
+    "address": "0xFdb50671276DbC9D24D68b272B54dE4a87aaCc6c",
+    "source": "ExchangeCircuitBreaker",
+    "link": "https://goerli-explorer.optimism.io/address/0xFdb50671276DbC9D24D68b272B54dE4a87aaCc6c",
+    "timestamp": "2022-07-16T12:45:54.836Z",
+    "txn": "",
+    "network": "goerli",
+    "constructorArgs": [
+      "0x73570075092502472E4b61A7058Df1A4a1DB12f2",
+      "0x9Fc84992dF5496797784374B810E04238728743d"
+    ]
+  },
+  "ExchangeState": {
+    "name": "ExchangeState",
+    "address": "0xeD5D12c5A772F32dE608CF84F671C123e132FA80",
+    "source": "ExchangeState",
+    "link": "https://goerli-explorer.optimism.io/address/0xeD5D12c5A772F32dE608CF84F671C123e132FA80",
+    "timestamp": "2022-07-16T12:45:57.025Z",
+    "txn": "",
+    "network": "goerli",
+    "constructorArgs": [
+      "0x73570075092502472E4b61A7058Df1A4a1DB12f2",
+      "0xcFAd59957537e62FB11E70d25c654e1538cC31C2"
+    ]
+  },
+  "Issuer": {
+    "name": "Issuer",
+    "address": "0xd054361Cc8DeE60A32bDaF4B0d1c610326c29FE5",
+    "source": "Issuer",
+    "link": "https://goerli-explorer.optimism.io/address/0xd054361Cc8DeE60A32bDaF4B0d1c610326c29FE5",
+    "timestamp": "2022-07-16T12:46:03.592Z",
+    "txn": "",
+    "network": "goerli",
+    "constructorArgs": [
+      "0x73570075092502472E4b61A7058Df1A4a1DB12f2",
+      "0x9Fc84992dF5496797784374B810E04238728743d"
+    ]
+  },
+  "TradingRewards": {
+    "name": "TradingRewards",
+    "address": "0x08fb827Ee5A00232aDe347964225Ba4344665eD5",
+    "source": "TradingRewards",
+    "link": "https://goerli-explorer.optimism.io/address/0x08fb827Ee5A00232aDe347964225Ba4344665eD5",
+    "timestamp": "2022-07-16T12:46:10.803Z",
+    "txn": "",
+    "network": "goerli",
+    "constructorArgs": [
+      "0x73570075092502472E4b61A7058Df1A4a1DB12f2",
+      "0x73570075092502472E4b61A7058Df1A4a1DB12f2",
+      "0x9Fc84992dF5496797784374B810E04238728743d"
+    ]
+  },
+  "EscrowChecker": {
+    "name": "EscrowChecker",
+    "address": "0x69927Cda9Df863464afAC7DA506928BF3a3ec11f",
+    "source": "EscrowChecker",
+    "link": "https://goerli-explorer.optimism.io/address/0x69927Cda9Df863464afAC7DA506928BF3a3ec11f",
+    "timestamp": "2022-07-16T12:46:12.990Z",
+    "txn": "",
+    "network": "goerli",
+    "constructorArgs": [
+      "0xFaFd00D0CaA6D5cd5161c5C1F18AaB24942aCAFA"
+    ]
+  },
+  "SynthetixBridgeToBase": {
+    "name": "SynthetixBridgeToBase",
+    "address": "0xD2b3F0Ea40dB68088415412b0043F37B3088836D",
+    "source": "SynthetixBridgeToBase",
+    "link": "https://goerli-explorer.optimism.io/address/0xD2b3F0Ea40dB68088415412b0043F37B3088836D",
+    "timestamp": "2022-07-16T12:46:15.021Z",
+    "txn": "",
+    "network": "goerli",
+    "constructorArgs": [
+      "0x73570075092502472E4b61A7058Df1A4a1DB12f2",
+      "0x9Fc84992dF5496797784374B810E04238728743d"
+    ]
+  },
+  "OwnerRelayOnOptimism": {
+    "name": "OwnerRelayOnOptimism",
+    "address": "0x55C20ea46766E3E50D4eD1973A88550B2949825c",
+    "source": "OwnerRelayOnOptimism",
+    "link": "https://goerli-explorer.optimism.io/address/0x55C20ea46766E3E50D4eD1973A88550B2949825c",
+    "timestamp": "2022-07-16T12:46:39.778Z",
+    "txn": "",
+    "network": "goerli",
+    "constructorArgs": [
+      "0x9Fc84992dF5496797784374B810E04238728743d",
+      "0x73570075092502472E4b61A7058Df1A4a1DB12f2",
+      5184000
+    ]
+  },
+  "SynthRedeemer": {
+    "name": "SynthRedeemer",
+    "address": "0x2A8338199D802620B4516a557195a498595d7Eb6",
+    "source": "SynthRedeemer",
+    "link": "https://goerli-explorer.optimism.io/address/0x2A8338199D802620B4516a557195a498595d7Eb6",
+    "timestamp": "2022-07-16T12:46:42.059Z",
+    "txn": "",
+    "network": "goerli",
+    "constructorArgs": [
+      "0x9Fc84992dF5496797784374B810E04238728743d"
+    ]
+  },
+  "WrapperFactory": {
+    "name": "WrapperFactory",
+    "address": "0x507cbddCF4e01396981190F0Ced8Ea37ca25b452",
+    "source": "WrapperFactory",
+    "link": "https://goerli-explorer.optimism.io/address/0x507cbddCF4e01396981190F0Ced8Ea37ca25b452",
+    "timestamp": "2022-07-16T12:46:48.462Z",
+    "txn": "",
+    "network": "goerli",
+    "constructorArgs": [
+      "0x73570075092502472E4b61A7058Df1A4a1DB12f2",
+      "0x9Fc84992dF5496797784374B810E04238728743d"
+    ]
+  },
+  "TokenStatesUSD": {
+    "name": "TokenStatesUSD",
+    "address": "0x43CA5848a2957C0718D240c02A4381A90111591e",
+    "source": "TokenState",
+    "link": "https://goerli-explorer.optimism.io/address/0x43CA5848a2957C0718D240c02A4381A90111591e",
+    "timestamp": "2022-07-16T12:46:55.223Z",
+    "txn": "",
+    "network": "goerli",
+    "constructorArgs": [
+      "0x73570075092502472E4b61A7058Df1A4a1DB12f2",
+      "0x0000000000000000000000000000000000000000"
+    ]
+  },
+  "ProxysUSD": {
+    "name": "ProxysUSD",
+    "address": "0xeBaEAAD9236615542844adC5c149F86C36aD1136",
+    "source": "ProxyERC20",
+    "link": "https://goerli-explorer.optimism.io/address/0xeBaEAAD9236615542844adC5c149F86C36aD1136",
+    "timestamp": "2022-07-16T12:47:02.113Z",
+    "txn": "",
+    "network": "goerli",
+    "constructorArgs": [
+      "0x73570075092502472E4b61A7058Df1A4a1DB12f2"
+    ]
+  },
+  "SynthsUSD": {
+    "name": "SynthsUSD",
+    "address": "0x7c0B9FbA343fC80086ccC248A8431D5D8531d782",
+    "source": "Synth",
+    "link": "https://goerli-explorer.optimism.io/address/0x7c0B9FbA343fC80086ccC248A8431D5D8531d782",
+    "timestamp": "2022-07-16T12:47:08.932Z",
+    "txn": "",
+    "network": "goerli",
+    "constructorArgs": [
+      "0xeBaEAAD9236615542844adC5c149F86C36aD1136",
+      "0x43CA5848a2957C0718D240c02A4381A90111591e",
+      "Synth sUSD",
+      "sUSD",
+      "0x73570075092502472E4b61A7058Df1A4a1DB12f2",
+      "0x7355534400000000000000000000000000000000000000000000000000000000",
+      0,
+      "0x9Fc84992dF5496797784374B810E04238728743d"
+    ]
+  },
+  "TokenStatesETH": {
+    "name": "TokenStatesETH",
+    "address": "0x1557769Cf42EE9e7c8D98CCFE0b454c2DEC125B6",
+    "source": "TokenState",
+    "link": "https://goerli-explorer.optimism.io/address/0x1557769Cf42EE9e7c8D98CCFE0b454c2DEC125B6",
+    "timestamp": "2022-07-16T12:47:11.015Z",
+    "txn": "",
+    "network": "goerli",
+    "constructorArgs": [
+      "0x73570075092502472E4b61A7058Df1A4a1DB12f2",
+      "0x0000000000000000000000000000000000000000"
+    ]
+  },
+  "ProxysETH": {
+    "name": "ProxysETH",
+    "address": "0x6c3856488e664C6b0380AAEfBFD1c28cd6727eC8",
+    "source": "ProxyERC20",
+    "link": "https://goerli-explorer.optimism.io/address/0x6c3856488e664C6b0380AAEfBFD1c28cd6727eC8",
+    "timestamp": "2022-07-16T12:47:17.688Z",
+    "txn": "",
+    "network": "goerli",
+    "constructorArgs": [
+      "0x73570075092502472E4b61A7058Df1A4a1DB12f2"
+    ]
+  },
+  "SynthsETH": {
+    "name": "SynthsETH",
+    "address": "0x7D442107e2AD048C02F06332C918b1F81bd6850d",
+    "source": "MultiCollateralSynth",
+    "link": "https://goerli-explorer.optimism.io/address/0x7D442107e2AD048C02F06332C918b1F81bd6850d",
+    "timestamp": "2022-07-16T12:47:19.971Z",
+    "txn": "",
+    "network": "goerli",
+    "constructorArgs": [
+      "0x6c3856488e664C6b0380AAEfBFD1c28cd6727eC8",
+      "0x1557769Cf42EE9e7c8D98CCFE0b454c2DEC125B6",
+      "Synth sETH",
+      "sETH",
+      "0x73570075092502472E4b61A7058Df1A4a1DB12f2",
+      "0x7345544800000000000000000000000000000000000000000000000000000000",
+      0,
+      "0x9Fc84992dF5496797784374B810E04238728743d"
+    ]
+  },
+  "TokenStatesBTC": {
+    "name": "TokenStatesBTC",
+    "address": "0x716044850a48DeD57B0581298018D2d8502B1091",
+    "source": "TokenState",
+    "link": "https://goerli-explorer.optimism.io/address/0x716044850a48DeD57B0581298018D2d8502B1091",
+    "timestamp": "2022-07-16T12:47:22.003Z",
+    "txn": "",
+    "network": "goerli",
+    "constructorArgs": [
+      "0x73570075092502472E4b61A7058Df1A4a1DB12f2",
+      "0x0000000000000000000000000000000000000000"
+    ]
+  },
+  "ProxysBTC": {
+    "name": "ProxysBTC",
+    "address": "0x23c7a77D22Fc1274eCecB703f74699500db106E6",
+    "source": "ProxyERC20",
+    "link": "https://goerli-explorer.optimism.io/address/0x23c7a77D22Fc1274eCecB703f74699500db106E6",
+    "timestamp": "2022-07-16T12:47:28.699Z",
+    "txn": "",
+    "network": "goerli",
+    "constructorArgs": [
+      "0x73570075092502472E4b61A7058Df1A4a1DB12f2"
+    ]
+  },
+  "SynthsBTC": {
+    "name": "SynthsBTC",
+    "address": "0xFdB84151Bfc76857398BC3efd8d1b32A32c571f2",
+    "source": "MultiCollateralSynth",
+    "link": "https://goerli-explorer.optimism.io/address/0xFdB84151Bfc76857398BC3efd8d1b32A32c571f2",
+    "timestamp": "2022-07-16T12:47:31.146Z",
+    "txn": "",
+    "network": "goerli",
+    "constructorArgs": [
+      "0x23c7a77D22Fc1274eCecB703f74699500db106E6",
+      "0x716044850a48DeD57B0581298018D2d8502B1091",
+      "Synth sBTC",
+      "sBTC",
+      "0x73570075092502472E4b61A7058Df1A4a1DB12f2",
+      "0x7342544300000000000000000000000000000000000000000000000000000000",
+      0,
+      "0x9Fc84992dF5496797784374B810E04238728743d"
+    ]
+  },
+  "EtherWrapper": {
+    "name": "EtherWrapper",
+    "address": "0x858A2FF0EAe5fcb0be10df79B741Cff89B77FeCB",
+    "source": "EmptyEtherWrapper",
+    "link": "https://goerli-explorer.optimism.io/address/0x858A2FF0EAe5fcb0be10df79B741Cff89B77FeCB",
+    "timestamp": "2022-07-16T12:47:37.437Z",
+    "txn": "",
+    "network": "goerli",
+    "constructorArgs": []
+  },
+  "CollateralUtil": {
+    "name": "CollateralUtil",
+    "address": "0x4BbDe1e5f91e6E8928CdCBF800aC990015387EbA",
+    "source": "CollateralUtil",
+    "link": "https://goerli-explorer.optimism.io/address/0x4BbDe1e5f91e6E8928CdCBF800aC990015387EbA",
+    "timestamp": "2022-07-16T12:47:44.265Z",
+    "txn": "",
+    "network": "goerli",
+    "constructorArgs": [
+      "0x9Fc84992dF5496797784374B810E04238728743d"
+    ]
+  },
+  "CollateralManagerState": {
+    "name": "CollateralManagerState",
+    "address": "0xA6B255CB2Bd5Ad5f3EaE2D246ec1c2c3F7F79574",
+    "source": "CollateralManagerState",
+    "link": "https://goerli-explorer.optimism.io/address/0xA6B255CB2Bd5Ad5f3EaE2D246ec1c2c3F7F79574",
+    "timestamp": "2022-07-16T12:47:51.175Z",
+    "txn": "",
+    "network": "goerli",
+    "constructorArgs": [
+      "0x73570075092502472E4b61A7058Df1A4a1DB12f2",
+      "0x73570075092502472E4b61A7058Df1A4a1DB12f2"
+    ]
+  },
+  "CollateralManager": {
+    "name": "CollateralManager",
+    "address": "0x0440f82444C825a0842f50e1c25cb68676d736e3",
+    "source": "CollateralManager",
+    "link": "https://goerli-explorer.optimism.io/address/0x0440f82444C825a0842f50e1c25cb68676d736e3",
+    "timestamp": "2022-07-16T12:47:58.242Z",
+    "txn": "",
+    "network": "goerli",
+    "constructorArgs": [
+      "0xA6B255CB2Bd5Ad5f3EaE2D246ec1c2c3F7F79574",
+      "0x73570075092502472E4b61A7058Df1A4a1DB12f2",
+      "0x9Fc84992dF5496797784374B810E04238728743d",
+      "75000000000000000000000000",
+      "200000000000000000",
+      "158443823",
+      "158443823"
+    ]
+  },
+  "CollateralEth": {
+    "name": "CollateralEth",
+    "address": "0x35725C94f3B1aB6BbD533c0B6Df525537d422c5F",
+    "source": "CollateralEth",
+    "link": "https://goerli-explorer.optimism.io/address/0x35725C94f3B1aB6BbD533c0B6Df525537d422c5F",
+    "timestamp": "2022-07-16T12:48:05.095Z",
+    "txn": "",
+    "network": "goerli",
+    "constructorArgs": [
+      "0x73570075092502472E4b61A7058Df1A4a1DB12f2",
+      "0x0440f82444C825a0842f50e1c25cb68676d736e3",
+      "0x9Fc84992dF5496797784374B810E04238728743d",
+      "0x7345544800000000000000000000000000000000000000000000000000000000",
+      "1300000000000000000",
+      "2000000000000000000"
+    ]
+  },
+  "CollateralShort": {
+    "name": "CollateralShort",
+    "address": "0x1a471C12f7efd7adB0065E3c7e457a0c36c13490",
+    "source": "CollateralShort",
+    "link": "https://goerli-explorer.optimism.io/address/0x1a471C12f7efd7adB0065E3c7e457a0c36c13490",
+    "timestamp": "2022-07-16T12:48:12.089Z",
+    "txn": "",
+    "network": "goerli",
+    "constructorArgs": [
+      "0x73570075092502472E4b61A7058Df1A4a1DB12f2",
+      "0x0440f82444C825a0842f50e1c25cb68676d736e3",
+      "0x9Fc84992dF5496797784374B810E04238728743d",
+      "0x7355534400000000000000000000000000000000000000000000000000000000",
+      "1200000000000000000",
+      "1000000000000000000000"
+    ]
+  },
+  "FuturesMarketManager": {
+    "name": "FuturesMarketManager",
+    "address": "0x95d6B120862986Fb605B0ccD1f0E8a71f5f4fB2c",
+    "source": "FuturesMarketManager",
+    "link": "https://goerli-explorer.optimism.io/address/0x95d6B120862986Fb605B0ccD1f0E8a71f5f4fB2c",
+    "timestamp": "2022-07-16T12:48:18.917Z",
+    "txn": "",
+    "network": "goerli",
+    "constructorArgs": [
+      "0x73570075092502472E4b61A7058Df1A4a1DB12f2",
+      "0x9Fc84992dF5496797784374B810E04238728743d"
+    ]
+  },
+  "FuturesMarketData": {
+    "name": "FuturesMarketData",
+    "address": "0x3FAe35Cfea950Fada314589213BABC54A084d5Bf",
+    "source": "FuturesMarketData",
+    "link": "https://goerli-explorer.optimism.io/address/0x3FAe35Cfea950Fada314589213BABC54A084d5Bf",
+    "timestamp": "2022-07-16T12:48:20.998Z",
+    "txn": "",
+    "network": "goerli",
+    "constructorArgs": [
+      "0x9Fc84992dF5496797784374B810E04238728743d"
+    ]
+  },
+  "FuturesMarketSettings": {
+    "name": "FuturesMarketSettings",
+    "address": "0x0dde87714C3bdACB93bB1d38605aFff209a85998",
+    "source": "FuturesMarketSettings",
+    "link": "https://goerli-explorer.optimism.io/address/0x0dde87714C3bdACB93bB1d38605aFff209a85998",
+    "timestamp": "2022-07-16T12:48:27.624Z",
+    "txn": "",
+    "network": "goerli",
+    "constructorArgs": [
+      "0x73570075092502472E4b61A7058Df1A4a1DB12f2",
+      "0x9Fc84992dF5496797784374B810E04238728743d"
+    ]
+  },
+  "FuturesMarketBTC": {
+    "name": "FuturesMarketBTC",
+    "address": "0x2f421752B7C07268DEA60A1B39D67927a5abA2F6",
+    "source": "FuturesMarket",
+    "link": "https://goerli-explorer.optimism.io/address/0x2f421752B7C07268DEA60A1B39D67927a5abA2F6",
+    "timestamp": "2022-07-16T12:48:30.009Z",
+    "txn": "",
+    "network": "goerli",
+    "constructorArgs": [
+      "0x9Fc84992dF5496797784374B810E04238728743d",
+      "0x7342544300000000000000000000000000000000000000000000000000000000",
+      "0x7342544300000000000000000000000000000000000000000000000000000000"
+    ]
+  },
+  "FuturesMarketETH": {
+    "name": "FuturesMarketETH",
+    "address": "0x0D10c032ad006C98C33A95e59ab3BA2b0849bD59",
+    "source": "FuturesMarket",
+    "link": "https://goerli-explorer.optimism.io/address/0x0D10c032ad006C98C33A95e59ab3BA2b0849bD59",
+    "timestamp": "2022-07-16T12:48:36.670Z",
+    "txn": "",
+    "network": "goerli",
+    "constructorArgs": [
+      "0x9Fc84992dF5496797784374B810E04238728743d",
+      "0x7345544800000000000000000000000000000000000000000000000000000000",
+      "0x7345544800000000000000000000000000000000000000000000000000000000"
+    ]
+  },
+  "SynthUtil": {
+    "name": "SynthUtil",
+    "address": "0xC647DecC9c4f9162dBF77E4367199F5ED0950355",
+    "source": "SynthUtil",
+    "link": "https://goerli-explorer.optimism.io/address/0xC647DecC9c4f9162dBF77E4367199F5ED0950355",
+    "timestamp": "2022-07-16T12:48:51.283Z",
+    "txn": "",
+    "network": "goerli",
+    "constructorArgs": [
+      "0x9Fc84992dF5496797784374B810E04238728743d"
+    ]
+  },
+  "DappMaintenance": {
+    "name": "DappMaintenance",
+    "address": "0x4259a2004A1E110A86564ff1441c37F1461F344F",
+    "source": "DappMaintenance",
+    "link": "https://goerli-explorer.optimism.io/address/0x4259a2004A1E110A86564ff1441c37F1461F344F",
+    "timestamp": "2022-07-16T12:48:57.896Z",
+    "txn": "",
+    "network": "goerli",
+    "constructorArgs": [
+      "0x73570075092502472E4b61A7058Df1A4a1DB12f2"
+    ]
+  }
+}

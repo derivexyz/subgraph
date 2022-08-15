@@ -1,0 +1,262 @@
+[
+  {
+    "inputs": [],
+    "name": "ExpOverflow",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "LnNegativeUndefined",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "Overflow",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "int256",
+        "name": "x",
+        "type": "int256"
+      }
+    ],
+    "name": "_stdNormalCDF",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "pure",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "components": [
+          {
+            "internalType": "uint256",
+            "name": "timeToExpirySec",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "volatilityDecimal",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "spotDecimal",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "strikePriceDecimal",
+            "type": "uint256"
+          },
+          {
+            "internalType": "int256",
+            "name": "rateDecimal",
+            "type": "int256"
+          }
+        ],
+        "internalType": "struct BlackScholes.BlackScholesInputs",
+        "name": "bsInput",
+        "type": "tuple"
+      }
+    ],
+    "name": "delta",
+    "outputs": [
+      {
+        "internalType": "int256",
+        "name": "callDeltaDecimal",
+        "type": "int256"
+      },
+      {
+        "internalType": "int256",
+        "name": "putDeltaDecimal",
+        "type": "int256"
+      }
+    ],
+    "stateMutability": "pure",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "components": [
+          {
+            "internalType": "uint256",
+            "name": "timeToExpirySec",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "volatilityDecimal",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "spotDecimal",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "strikePriceDecimal",
+            "type": "uint256"
+          },
+          {
+            "internalType": "int256",
+            "name": "rateDecimal",
+            "type": "int256"
+          }
+        ],
+        "internalType": "struct BlackScholes.BlackScholesInputs",
+        "name": "bsInput",
+        "type": "tuple"
+      }
+    ],
+    "name": "optionPrices",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "call",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "put",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "pure",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "components": [
+          {
+            "internalType": "uint256",
+            "name": "timeToExpirySec",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "volatilityDecimal",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "spotDecimal",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "strikePriceDecimal",
+            "type": "uint256"
+          },
+          {
+            "internalType": "int256",
+            "name": "rateDecimal",
+            "type": "int256"
+          }
+        ],
+        "internalType": "struct BlackScholes.BlackScholesInputs",
+        "name": "bsInput",
+        "type": "tuple"
+      }
+    ],
+    "name": "pricesDeltaStdVega",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "uint256",
+            "name": "callPrice",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "putPrice",
+            "type": "uint256"
+          },
+          {
+            "internalType": "int256",
+            "name": "callDelta",
+            "type": "int256"
+          },
+          {
+            "internalType": "int256",
+            "name": "putDelta",
+            "type": "int256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "vega",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "stdVega",
+            "type": "uint256"
+          }
+        ],
+        "internalType": "struct BlackScholes.PricesDeltaStdVega",
+        "name": "",
+        "type": "tuple"
+      }
+    ],
+    "stateMutability": "pure",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "components": [
+          {
+            "internalType": "uint256",
+            "name": "timeToExpirySec",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "volatilityDecimal",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "spotDecimal",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "strikePriceDecimal",
+            "type": "uint256"
+          },
+          {
+            "internalType": "int256",
+            "name": "rateDecimal",
+            "type": "int256"
+          }
+        ],
+        "internalType": "struct BlackScholes.BlackScholesInputs",
+        "name": "bsInput",
+        "type": "tuple"
+      }
+    ],
+    "name": "vega",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "vegaDecimal",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "pure",
+    "type": "function"
+  }
+]

@@ -18,6 +18,8 @@ const getNetwork = (networkForPath) => {
     case 'local':
     case 'kovan-ovm':
       return 'optimism-kovan'
+    case 'goerli-ovm':
+      return 'optimism-goerli'
     case 'mainnet-ovm':
       return 'optimism'
     default:

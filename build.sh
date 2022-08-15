@@ -8,6 +8,8 @@ graphNetwork=$network
 
 if [ $network = 'kovan-ovm' ]; then
   graphNetwork='optimism-kovan'
+elif [ $network = 'goerli-ovm' ]; then
+  graphNetwork='optimism-goerli'
 elif [ $network = 'mainnet-ovm' ]; then
   graphNetwork='optimism'
 fi

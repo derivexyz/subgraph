@@ -1,0 +1,38 @@
+[
+  {
+    "inputs": [],
+    "name": "ExpOverflow",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "thrower",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "timestamp",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "lastObservedTimestamp",
+        "type": "uint256"
+      }
+    ],
+    "name": "InvalidBlockTimestamp",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "LnNegativeUndefined",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "Overflow",
+    "type": "error"
+  }
+]
