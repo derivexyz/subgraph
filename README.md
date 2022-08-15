@@ -4,7 +4,7 @@ Example Queries can be found in ExampleQueries.md
 
 ## To run and deploy
 
-list of networks: `local`, `local-ovm`, `kovan-ovm`, `mainnet-ovm`
+list of networks: `local`, `local-ovm`, `kovan-ovm`, `mainnet-ovm`, `goerli-ovm`
 list of deployTypes: `real`, `realPricing`, `mockSnx`
 
 ```bash
