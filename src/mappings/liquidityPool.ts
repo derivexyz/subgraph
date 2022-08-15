@@ -111,6 +111,7 @@ export function handleDepositProcessed(event: DepositProcessed): void {
   //Update total user deposited amount
   let lpUserLiquidity = createOrLoadLPUserLiquidity(event.address, event.params.beneficiary, poolId)
   lpUserLiquidity.totalAmountDeposited = lpUserLiquidity.totalAmountDeposited.plus(event.params.amountDeposited)
+  lpUserLiquidity.lpTokenBalance = lpUserLiquidity.lpTokenBalance.plus(event.params.tokensReceived)
   lpUserLiquidity.save()
 
   let depositId = Entity.getDepositOrWithdrawalID(
@@ -180,6 +181,7 @@ export function handleWithdrawProcessed(event: WithdrawProcessed): void {
   }
 
   lpUserLiquidity.totalAmountWithdrawn = lpUserLiquidity.totalAmountWithdrawn.plus(event.params.amountWithdrawn)
+  lpUserLiquidity.lpTokenBalance = lpUserLiquidity.lpTokenBalance.minus(event.params.amountWithdrawn)
   lpUserLiquidity.save()
 
   let withdrawID = Entity.getDepositOrWithdrawalID(event.address, lpUserLiquidity.user.toHex(), event.transaction.hash)
@@ -219,6 +221,7 @@ export function handleWithdrawPartiallyProcessed(event: WithdrawPartiallyProcess
   }
 
   lpUserLiquidity.totalAmountWithdrawn = lpUserLiquidity.totalAmountWithdrawn.plus(event.params.amountWithdrawn)
+  lpUserLiquidity.lpTokenBalance = lpUserLiquidity.lpTokenBalance.minus(event.params.amountWithdrawn)
   lpUserLiquidity.save()
 
   let withdrawID = Entity.getDepositOrWithdrawalID(event.address, lpUserLiquidity.user.toHex(), event.transaction.hash)
@@ -262,6 +265,7 @@ export function createOrLoadLPUserLiquidity(
     lpUserLiquidity.user = userAddress
     lpUserLiquidity.totalAmountDeposited = ZERO
     lpUserLiquidity.totalAmountWithdrawn = ZERO
+    lpUserLiquidity.lpTokenBalance = ZERO
   }
 
   return lpUserLiquidity as LPUserLiquidity

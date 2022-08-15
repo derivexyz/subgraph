@@ -627,6 +627,9 @@ type LPUserLiquidity @entity {
   " Total amount withdrawn by this user "
   totalAmountWithdrawn: BigInt!
 
+  " Current LP Token Balance "
+  lpTokenBalance: BigInt!
+
   " List of deposits and withdrawals for this user "
   depositsAndWithdrawals: [LPAction!]! @derivedFrom(field: "lpUserLiquidity")
 
