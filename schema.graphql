@@ -923,6 +923,8 @@ type SpotPriceSnapshot @entity {
   " Snapshot timestamp "
   timestamp: Int!
 
+  blockNumber: Int!
+
   " Duration this snapshot captures in seconds (Options: 15m: 900, 1hr: 3600, 1d: 86400). Example: 'period_gte:3600' gives hourly data  "
   period: Int!
 
@@ -1026,6 +1028,9 @@ type OptionPriceAndGreeksSnapshot @entity {
 
   " Snapshot timestamp "
   timestamp: Int!
+
+  "Snapshot block number "
+  blockNumber: Int!
 
   " Option delta "
   delta: BigInt!

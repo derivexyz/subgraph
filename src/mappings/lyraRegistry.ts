@@ -47,7 +47,12 @@ export function createPoolHedger(poolHedgerAddress: Address, timestamp: i32, opt
 }
 
 //Creates the Chainlink Aggregator data source and initial spot price entities
-export function createPriceFeed(optionMarketAddress: Address, baseKey: Bytes, timestamp: i32): BigInt {
+export function createPriceFeed(
+  optionMarketAddress: Address,
+  baseKey: Bytes,
+  timestamp: i32,
+  blockNumber: i32,
+): BigInt {
   let global = Entity.loadOrCreateGlobal() as Global
   // let exchangeRatesAddress = changetype<Address>(
   //   changetype<Address>(Bytes.fromHexString('0xF62Da62b5Af8B0cae27B1D9D8bB0Adb94EB4c1e2')),
@@ -79,7 +84,7 @@ export function createPriceFeed(optionMarketAddress: Address, baseKey: Bytes, ti
       }
     }
 
-    let spotPriceSnapshot = Entity.createSpotPriceSnapshot(optionMarketId, base_period, timestamp)
+    let spotPriceSnapshot = Entity.createSpotPriceSnapshot(optionMarketId, base_period, timestamp, blockNumber)
     spotPriceSnapshot.spotPrice = r
     spotPriceSnapshot.save()
 
@@ -227,7 +232,7 @@ export function handleMarketUpdated(event: MarketUpdated): void {
     let greekCacheContract = GreekCacheContract.bind(changetype<Address>(event.params.market.greekCache))
     let greekCacheParams = greekCacheContract.try_getGreekCacheParams()
 
-    if(!greekCacheParams.reverted){
+    if (!greekCacheParams.reverted) {
       market.acceptableSpotPricePercentMove = greekCacheParams.value.acceptableSpotPricePercentMove
       market.rateAndCarry = greekCacheParams.value.rateAndCarry
       market.staleUpdateDuration = greekCacheParams.value.staleUpdateDuration.toI32()
@@ -262,7 +267,7 @@ export function handleMarketUpdated(event: MarketUpdated): void {
   poolHedger.save()
 
   //Market needs to be created before this
-  let latestSpotPrice = createPriceFeed(event.params.market.optionMarket, market.baseKey, event.block.timestamp.toI32())
+  let latestSpotPrice = createPriceFeed(event.params.market.optionMarket, market.baseKey, event.block.timestamp.toI32(), event.block.number.toI32())
   if (latestSpotPrice != ZERO) {
     market.latestSpotPrice = latestSpotPrice as BigInt
   } else {

@@ -22,14 +22,14 @@ export function handleAggregatorAnswerUpdated(event: AnswerUpdatedEvent): void {
   let context = dataSource.context()
   let rate = event.params.current.times(BigInt.fromI32(10).pow(10)) //Chainlink prices are 1e8, convert to 1e18
   let market = context.getString('market')
-  addLatestRate(market, rate, event.block.timestamp.toI32())
+  addLatestRate(market, rate, event.block.timestamp.toI32(), event.block.number.toI32())
 }
 
 ////////////////////////////////
 ////// SUPPORT FUNCTIONS //////
 //////////////////////////////
 
-export function addLatestRate(marketId: string, rate: BigInt, timestamp: i32): void {
+export function addLatestRate(marketId: string, rate: BigInt, timestamp: i32, blockNumber: i32): void {
   let market = Market.load(marketId) as Market
 
   //Update Rates
@@ -53,7 +53,7 @@ export function addLatestRate(marketId: string, rate: BigInt, timestamp: i32): v
     return
   }
 
-  let spotPriceSnapshot = Entity.createSpotPriceSnapshot(market.id, base_period, timestamp)
+  let spotPriceSnapshot = Entity.createSpotPriceSnapshot(market.id, base_period, timestamp, blockNumber)
   spotPriceSnapshot.spotPrice = rate
   spotPriceSnapshot.save()
 
@@ -67,7 +67,7 @@ export function addLatestRate(marketId: string, rate: BigInt, timestamp: i32): v
     let board = Board.load(boardIds.pop()) as Board
     let strikeIds = board.strikeIds
     let numStrikes = strikeIds.length
-    if(board.expiryTimestamp > timestamp){
+    if (board.expiryTimestamp > timestamp) {
       let tAnnualised = f64(board.expiryTimestamp - timestamp) / f64(31536000)
       for (let j = 0; j < numStrikes; j++) {
         let strikeId = strikeIds.pop()
@@ -79,7 +79,8 @@ export function addLatestRate(marketId: string, rate: BigInt, timestamp: i32): v
           spotPrice,
           rateAndCarry,
           base_period,
-          timestamp
+          timestamp,
+          blockNumber
         )
         netGamma = netGamma.plus(gammaAndTheta.gamma)
         netTheta = netTheta.plus(gammaAndTheta.theta)

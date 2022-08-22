@@ -72,6 +72,7 @@ export function handleBoardCreated(event: BoardCreated): void {
 export function handleStrikeAdded(event: StrikeAdded): void {
   let optionMarketId = Entity.getIDFromAddress(event.address)
   let timestamp = event.block.timestamp.toI32()
+  let blockNumber = event.block.number.toI32()
 
   let boardId = Entity.getBoardID(optionMarketId, event.params.boardId)
   let callOptionId = Entity.getOptionID(optionMarketId, event.params.strikeId, true)
@@ -100,8 +101,8 @@ export function handleStrikeAdded(event: StrikeAdded): void {
   strike.putOption = putOptionId
   strike.isExpired = false
 
-  let callOption = createOption(callOptionId, optionMarketId, boardId, strikeId, true, timestamp)
-  let putOption = createOption(putOptionId, optionMarketId, boardId, strikeId, false, timestamp)
+  let callOption = createOption(callOptionId, optionMarketId, boardId, strikeId, true, timestamp, blockNumber)
+  let putOption = createOption(putOptionId, optionMarketId, boardId, strikeId, false, timestamp, blockNumber)
 
   strike.save()
   board.save()
@@ -121,6 +122,7 @@ export function handleStrikeAdded(event: StrikeAdded): void {
       rateAndCarry,
       HOUR_SECONDS,
       timestamp,
+      blockNumber
     )
   }
 
@@ -134,6 +136,7 @@ export function createOption(
   strikeId: string,
   isCall: boolean,
   timestamp: i32,
+  blockNumber: i32,
 ): Option {
   let option = new Option(optionId)
   option.isCall = isCall
@@ -154,7 +157,7 @@ export function createOption(
     }
   }
 
-  optionGreekSnapshot = Entity.createOptionPriceAndGreeksSnapshot(optionId, base_period, timestamp)
+  optionGreekSnapshot = Entity.createOptionPriceAndGreeksSnapshot(optionId, base_period, timestamp, blockNumber)
   optionGreekSnapshot.delta = ZERO
   optionGreekSnapshot.theta = ZERO
   optionGreekSnapshot.rho = ZERO
@@ -392,6 +395,7 @@ export function handleBoardBaseIvSet(event: BoardBaseIvSet): void {
         rateAndCarry,
         HOUR_SECONDS,
         timestamp,
+        event.block.number.toI32()
       )
     }
   }

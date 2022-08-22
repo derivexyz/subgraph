@@ -249,12 +249,18 @@ export namespace Entity {
     return snapshot as PoolHedgerExposureSnapshot
   }
 
-  export function createSpotPriceSnapshot(optionMarketId_: string, period: i32, timestamp: i32): SpotPriceSnapshot {
+  export function createSpotPriceSnapshot(
+    optionMarketId_: string,
+    period: i32,
+    timestamp: i32,
+    blockNumber: i32,
+  ): SpotPriceSnapshot {
     let snapshotId = Snapshot.getSnapshotID(optionMarketId_, period, timestamp)
     let snapshot = new SpotPriceSnapshot(snapshotId)
     snapshot.market = optionMarketId_
     snapshot.period = period
     snapshot.timestamp = Snapshot.roundTimestamp(timestamp, period)
+    snapshot.blockNumber = blockNumber
 
     return snapshot as SpotPriceSnapshot
   }
@@ -406,12 +412,14 @@ export namespace Entity {
     optionId: string,
     period: i32,
     timestamp: i32,
+    blockNumber: i32,
   ): OptionPriceAndGreeksSnapshot {
     let snapshotId = Snapshot.getSnapshotID(optionId, period, timestamp)
 
     let snapshot = new OptionPriceAndGreeksSnapshot(snapshotId)
     snapshot.option = optionId
     snapshot.period = period
+    snapshot.blockNumber = blockNumber
     snapshot.timestamp = Snapshot.roundTimestamp(timestamp, period)
 
     return snapshot as OptionPriceAndGreeksSnapshot

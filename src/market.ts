@@ -141,6 +141,7 @@ export function updateStrikeAndOptionGreeks(
   rateAndCarry: number,
   period: i32,
   timestamp: i32,
+  blockNumber: i32,
 ): gammaAndTheta {
   let strike = Strike.load(strikeId) as Strike
   let callOption = Option.load(strike.callOption) as Option
@@ -173,7 +174,7 @@ export function updateStrikeAndOptionGreeks(
   latestStrikeSnapshot.save()
 
   //Update Call option greeks
-  callOptionGreekSnapshot = Entity.createOptionPriceAndGreeksSnapshot(callOption.id, period, timestamp)
+  callOptionGreekSnapshot = Entity.createOptionPriceAndGreeksSnapshot(callOption.id, period, timestamp, blockNumber)
   callOptionGreekSnapshot.optionPrice = allGreeks.callPrice
   callOptionGreekSnapshot.delta = allGreeks.callDelta
   callOptionGreekSnapshot.theta = allGreeks.callTheta
@@ -181,7 +182,7 @@ export function updateStrikeAndOptionGreeks(
   callOptionGreekSnapshot.save()
 
   //Update Put option greeks
-  putOptionGreekSnapshot = Entity.createOptionPriceAndGreeksSnapshot(putOption.id, period, timestamp)
+  putOptionGreekSnapshot = Entity.createOptionPriceAndGreeksSnapshot(putOption.id, period, timestamp, blockNumber)
   putOptionGreekSnapshot.optionPrice = allGreeks.putPrice
   putOptionGreekSnapshot.delta = allGreeks.putDelta
   putOptionGreekSnapshot.theta = allGreeks.putTheta
@@ -532,9 +533,11 @@ export function handleTradeSettle(
   let settle = new Settle(Entity.getTradeIDFromPositionID(positionId, txHash))
 
   settle.position = positionId
+  position.settle = settle.id
   settle.owner = position.owner
   settle.timestamp = timestamp
-  ;(settle.blockNumber = block), (settle.transactionHash = txHash)
+  settle.blockNumber = block
+  settle.transactionHash = txHash
   settle.size = amount
   settle.spotPriceAtExpiry = priceAtExpiry
 
@@ -549,6 +552,7 @@ export function handleTradeSettle(
   }
 
   settle.save()
+  position.save()
 }
 
 export function updateValuesAfterTrade(
