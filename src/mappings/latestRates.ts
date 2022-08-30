@@ -6,7 +6,7 @@ import { AnswerUpdated as AnswerUpdatedEvent } from '../../generated/templates/A
 import { AggregatorProxy, Aggregator } from '../../generated/templates'
 import { BigInt, DataSourceContext, dataSource, log, Address, Bytes } from '@graphprotocol/graph-ts'
 import { Market, Board, SpotPriceSnapshot } from '../../generated/schema'
-import { Entity, ZERO_ADDRESS, PERIODS, Snapshot, UNITDECIMAL, ZERO } from '../lib'
+import { Entity, ZERO_ADDRESS, HOURLY_PERIODS, Snapshot, UNITDECIMAL, ZERO } from '../lib'
 import { updateStrikeAndOptionGreeks } from '../market'
 
 ///////////////////////
@@ -37,11 +37,11 @@ export function addLatestRate(marketId: string, rate: BigInt, timestamp: i32, bl
   market.save()
 
   //Get the largest relevant period
-  let base_period = PERIODS[0]
+  let base_period = HOURLY_PERIODS[0]
   let period_timestamp = Snapshot.roundTimestamp(timestamp, base_period)
-  for (let p = 1; p < PERIODS.length; p++) {
-    if (Snapshot.roundTimestamp(timestamp, PERIODS[p]) == period_timestamp) {
-      base_period = PERIODS[p]
+  for (let p = 1; p < HOURLY_PERIODS.length; p++) {
+    if (Snapshot.roundTimestamp(timestamp, HOURLY_PERIODS[p]) == period_timestamp) {
+      base_period = HOURLY_PERIODS[p]
     }
   }
 

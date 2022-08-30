@@ -3,8 +3,8 @@
 ## General Notes:
 
 - Queries return the first 100 entities by default, but can return up to 1000 if you specify `first:1000`
-- Snapshots are stored for different aggregation levels using the `period` field, which is the number of seconds the snapshot represents. For example: `900` would represent a 15min period.
-- Cumulative (volume, fees, etc) snapshots store multiple snapshots for the same period, while non-cumulative snapshots (Prices, greeks, etc) do not. This means the sytax to get 15min snapshots is `period_gte:900` in some cases but `period:900` in others. Make sure to check the docs to be sure of which one to use.
+- Snapshots are stored for different aggregation levels using the `period` field, which is the number of seconds the snapshot represents. For example: `3600` would represent an hourly period.
+- Cumulative (volume, fees, etc) snapshots store multiple snapshots for the same period, while non-cumulative snapshots (Prices, greeks, etc) do not. This means the sytax to get hourly snapshots is `period_gte:3600` in some cases but `period:3600` in others. Make sure to check the docs to be sure of which one to use.
 
 ## List all Markets, Active Expiries, and Active Strikes
 
@@ -25,14 +25,14 @@
 }
 ```
 
-## Get the 15min spot price history for a market
+## Get the hourly spot price history for a market
 
 _Replace {MarketId} with the relevant ID_
 
 ```graphql
 {
   market(id: "{MarketId}") {
-    spotPriceHistory(where: { period_gte: 900 }, orderBy: timestamp, orderDirection: desc) {
+    spotPriceHistory(where: { period_gte: 3600 }, orderBy: timestamp, orderDirection: desc) {
       timestamp
       spotPrice
     }
@@ -66,7 +66,7 @@ _StrikeId is the graphql strike Id_
 }
 ```
 
-## Get the 15min option price history for a specific option
+## Get the hourly option price history for a specific option
 
 _OptionId is the graphql option Id_
 
@@ -74,7 +74,7 @@ _OptionId is the graphql option Id_
 {
   option(id: "{optionId}") {
     id
-    optionPriceAndGreeksHistory(first: 1000, where: { period_gte: 900 }, orderBy: timestamp, orderDirection: desc) {
+    optionPriceAndGreeksHistory(first: 1000, where: { period_gte: 3600 }, orderBy: timestamp, orderDirection: desc) {
       timestamp
       optionPrice
     }

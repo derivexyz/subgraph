@@ -18,7 +18,7 @@ import {
   StrikeIVAndGreeksSnapshot,
   Trade,
 } from '../generated/schema'
-import { Entity, UNIT, ZERO, BlackScholes, HOURLY_PERIODS, PERIODS, Snapshot, DAY_SECONDS, UNITDECIMAL } from './lib'
+import { Entity, UNIT, ZERO, BlackScholes, HOURLY_PERIODS, Snapshot, DAY_SECONDS, UNITDECIMAL } from './lib'
 
 export class optionPrices {
   callPrice: BigInt
@@ -76,8 +76,8 @@ export function updateMarketGreeks(
     dailyMarketGreeksSnapshot.optionNetDelta = optionNetDelta
     dailyMarketGreeksSnapshot.netDelta = globalNetDelta
     dailyMarketGreeksSnapshot.netStdVega = netStdVega
-    dailyMarketGreeksSnapshot.netGamma = market.netGamma //TODO: Can we get this?
-    dailyMarketGreeksSnapshot.netTheta = market.netTheta //TODO: Can we get this?
+    dailyMarketGreeksSnapshot.netGamma = market.netGamma 
+    dailyMarketGreeksSnapshot.netTheta = market.netTheta
     dailyMarketGreeksSnapshot.save()
   }
 
@@ -88,8 +88,8 @@ export function updateMarketGreeks(
   marketGreeksSnapshot.optionNetDelta = optionNetDelta
   marketGreeksSnapshot.netDelta = globalNetDelta
   marketGreeksSnapshot.netStdVega = netStdVega
-  marketGreeksSnapshot.netGamma = market.netGamma //TODO: Can we get this?
-  marketGreeksSnapshot.netTheta = market.netTheta //TODO: Can we get this?
+  marketGreeksSnapshot.netGamma = market.netGamma 
+  marketGreeksSnapshot.netTheta = market.netTheta 
   marketGreeksSnapshot.save()
 
   if (market.latestGreeks != marketGreeksSnapshot.id) {

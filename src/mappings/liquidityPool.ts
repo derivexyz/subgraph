@@ -11,7 +11,7 @@ import {
 } from '../../generated/templates/LiquidityPool/LiquidityPool'
 import { ShortPoolHedger as PoolHedgerTemplate } from '../../generated/templates'
 
-import { DAY_SECONDS, Entity, HOURLY_PERIODS, Snapshot, ZERO } from '../lib'
+import { Entity, ZERO } from '../lib'
 import {
   LPPendingAction,
   LPUserLiquidity,

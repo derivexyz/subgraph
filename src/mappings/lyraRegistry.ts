@@ -24,7 +24,7 @@ import {
   PoolHedger,
   Global,
 } from '../../generated/schema'
-import { Entity, ZERO, PERIODS, UNIT, HOUR_SECONDS, ZERO_ADDRESS, Snapshot } from '../lib'
+import { Entity, ZERO, HOURLY_PERIODS, UNIT, HOUR_SECONDS, ZERO_ADDRESS, Snapshot } from '../lib'
 import { log, Address, Bytes, BigInt, DataSourceContext, dataSource } from '@graphprotocol/graph-ts'
 import { addProxyAggregator } from './latestRates'
 
@@ -76,11 +76,11 @@ export function createPriceFeed(
     let r = er.rateForCurrency(baseKey)
 
     //Get the largest relevant period
-    let base_period = PERIODS[0]
+    let base_period = HOURLY_PERIODS[0]
     let period_timestamp = Snapshot.roundTimestamp(timestamp, base_period)
-    for (let p = 1; p < PERIODS.length; p++) {
-      if (Snapshot.roundTimestamp(timestamp, PERIODS[p]) == period_timestamp) {
-        base_period = PERIODS[p]
+    for (let p = 1; p < HOURLY_PERIODS.length; p++) {
+      if (Snapshot.roundTimestamp(timestamp, HOURLY_PERIODS[p]) == period_timestamp) {
+        base_period = HOURLY_PERIODS[p]
       }
     }
 
@@ -196,7 +196,7 @@ export function handleMarketUpdated(event: MarketUpdated): void {
     let quoteKey = synthetixAdapterContract.quoteKey(event.params.market.optionMarket)
     market.baseKey = baseKey
     market.quoteKey = quoteKey
-    market.name = baseKey.toString() //TODO: String leading "s"
+    market.name = baseKey.toString()
 
     market.save()
     marketVolumeAndFeesSnapshot.save()
@@ -271,7 +271,7 @@ export function handleMarketUpdated(event: MarketUpdated): void {
   if (latestSpotPrice != ZERO) {
     market.latestSpotPrice = latestSpotPrice as BigInt
   } else {
-    market.latestSpotPrice = BigInt.fromI32(2500).times(UNIT) //TODO: SET TO 0 FOR DEPLOYMENT
+    market.latestSpotPrice = BigInt.fromI32(2500).times(UNIT)
   }
   market.save()
 

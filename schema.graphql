@@ -708,7 +708,7 @@ type PoolHedgerExposureSnapshot @entity {
   " Market Reference"
   market: Market!
 
-  " Duration this snapshot captures in seconds (Options: 1hr: 3600, 1d: 86400). Example: 'period_gte:3600' gives hourly data "
+  " Duration this snapshot captures in seconds (Options: 1hr: 3600, 6hr: 21600, 1d: 86400). Example: 'period_gte:3600' gives hourly data "
   period: Int!
 
   " Snapshot timestamp "
@@ -725,7 +725,7 @@ type MarketTotalValueSnapshot @entity {
   " Market reference "
   market: Market!
 
-  " Duration this snapshot captures in seconds (Options: 1hr: 3600, 1d: 86400). Example: 'period:3600' gives hourly data "
+  " Duration this snapshot captures in seconds (Options: 1hr: 3600, 6hr: 21600 1d: 86400). Example: 'period:3600' gives hourly data "
   period: Int!
 
   " Snapshot timestamp "
@@ -772,7 +772,7 @@ type MarketSNXFeesSnapshot @entity {
   " Market reference "
   market: Market!
 
-  " Duration this snapshot captures in seconds (Options: 1hr: 3600, 1d: 86400). Example: 'period:3600' gives hourly data "
+  " Duration this snapshot captures in seconds (Options: 1hr: 3600, 6hr: 21600 1d: 86400). Example: 'period:3600' gives hourly data "
   period: Int!
 
   " Snapshot timestamp "
@@ -803,7 +803,7 @@ type MarketVolumeAndFeesSnapshot @entity {
   " Market reference "
   market: Market!
 
-  " Duration this snapshot captures in seconds (Options: 1hr: 3600, 1d: 86400). Example: 'period:3600' gives hourly data "
+  " Duration this snapshot captures in seconds (Options: 1hr: 3600, 6hr: 21600 1d: 86400). Example: 'period:3600' gives hourly data "
   period: Int!
 
   " Snapshot timestamp "
@@ -882,7 +882,7 @@ type MarketGreeksSnapshot @entity {
   " Market "
   market: Market!
 
-  " Duration this snapshot captures in seconds (Options: 1hr: 3600, 1d: 86400). Example: 'period:3600' gives hourly data  "
+  " Duration this snapshot captures in seconds (Options: 1hr: 3600, 6hr: 21600 1d: 86400). Example: 'period:3600' gives hourly data  "
   period: Int!
 
   " Snapshot timestamp "
@@ -925,7 +925,7 @@ type SpotPriceSnapshot @entity {
 
   blockNumber: Int!
 
-  " Duration this snapshot captures in seconds (Options: 15m: 900, 1hr: 3600, 1d: 86400). Example: 'period_gte:3600' gives hourly data  "
+  " Duration this snapshot captures in seconds (Options: 1hr: 3600, 6hr: 21600 1d: 86400). Example: 'period_gte:3600' gives hourly data  "
   period: Int!
 
   " Spot price of the asset "
@@ -939,7 +939,7 @@ type BoardBaseIVSnapshot @entity {
   " Board reference "
   board: Board!
 
-  " Duration this snapshot captures in seconds (Options: 1hr: 3600, 1d: 86400). Example: 'period_gte:3600' gives hourly data "
+  " Duration this snapshot captures in seconds (Options: 1hr: 3600, 6hr: 21600 1d: 86400). Example: 'period_gte:3600' gives hourly data "
   period: Int!
 
   " Snapshot timestamp "
@@ -962,7 +962,7 @@ type StrikeIVAndGreeksSnapshot @entity {
   " Board Reference "
   board: Board!
 
-  " Duration this snapshot captures in seconds (Options: 15m: 900, 1hr: 3600, 1d: 86400). Example: 'period_gte:3600' gives hourly data  "
+  " Duration this snapshot captures in seconds (Options: 1hr: 3600, 6hr: 21600 1d: 86400). Example: 'period_gte:3600' gives hourly data  "
   period: Int!
 
   " Snapshot timestamp "
@@ -991,7 +991,7 @@ type OptionVolumeSnapshot @entity {
   " Option reference "
   option: Option!
 
-  " Duration this snapshot captures in seconds (Options: 15m: 900, 1hr: 3600, 1d: 86400). Example: 'period:3600' gives hourly data "
+  " Duration this snapshot captures in seconds (Options: 1hr: 3600, 6hr: 21600 1d: 86400). Example: 'period:3600' gives hourly data "
   period: Int!
 
   " Snapshot timestamp "
@@ -1023,7 +1023,7 @@ type OptionPriceAndGreeksSnapshot @entity {
   " Option reference "
   option: Option!
 
-  " Duration this snapshot captures in seconds (Options: 15m: 900, 1hr: 3600, 1d: 86400). Example: 'period_gte:3600' gives hourly data "
+  " Duration this snapshot captures in seconds (Options: 1hr: 3600, 6hr: 21600 1d: 86400). Example: 'period_gte:3600' gives hourly data "
   period: Int!
 
   " Snapshot timestamp "

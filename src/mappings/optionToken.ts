@@ -142,6 +142,9 @@ export function handlePositionUpdated(event: PositionUpdated): void {
         position.owner,
       )
       position.collateral = event.params.position.collateral
+    } else if (position.state == Entity.PositionState.SETTLED) {
+      //Dont create collateral update on settlement
+      position.collateral = ZERO
     } else {
       updatePositionCollateralHistory(
         marketAddress,

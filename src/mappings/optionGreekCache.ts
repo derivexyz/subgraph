@@ -15,7 +15,7 @@ import {
 } from '../../generated/schema'
 import { updateMarketGreeks } from '../market'
 import { Address, Bytes, dataSource, log, BigInt } from '@graphprotocol/graph-ts'
-import { Entity, HOURLY_PERIODS, PERIODS, Snapshot, UNIT, ZERO } from '../lib'
+import { Entity, HOURLY_PERIODS, Snapshot, UNIT, ZERO } from '../lib'
 
 export function handleGlobalCacheUpdated(event: GlobalCacheUpdated): void {
   let context = dataSource.context()
@@ -104,11 +104,11 @@ export function handleStrikeCacheUpdated(event: StrikeCacheUpdated): void {
   let timestamp = event.block.timestamp.toI32()
 
   //Get the largest relevant period
-  let base_period = PERIODS[0]
+  let base_period = HOURLY_PERIODS[0]
   let period_timestamp = Snapshot.roundTimestamp(timestamp, base_period)
-  for (let p = 1; p < PERIODS.length; p++) {
-    if (Snapshot.roundTimestamp(timestamp, PERIODS[p]) == period_timestamp) {
-      base_period = PERIODS[p]
+  for (let p = 1; p < HOURLY_PERIODS.length; p++) {
+    if (Snapshot.roundTimestamp(timestamp, HOURLY_PERIODS[p]) == period_timestamp) {
+      base_period = HOURLY_PERIODS[p]
     }
   }
 

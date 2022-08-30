@@ -18,7 +18,7 @@ import {
   Strike,
   OptionPriceAndGreeksSnapshot,
 } from '../../generated/schema'
-import { Entity, HOURLY_PERIODS, HOUR_SECONDS, PERIODS, Snapshot, UNIT, UNITDECIMAL, ZERO } from '../lib'
+import { Entity, HOURLY_PERIODS, HOUR_SECONDS, Snapshot, UNIT, UNITDECIMAL, ZERO } from '../lib'
 import {
   handleTradeClose,
   handleTradeOpen,
@@ -149,11 +149,11 @@ export function createOption(
   let optionVolumeSnapshot: OptionVolumeSnapshot
 
   //Get the largest relevant period
-  let base_period = PERIODS[0]
+  let base_period = HOURLY_PERIODS[0]
   let period_timestamp = Snapshot.roundTimestamp(timestamp, base_period)
-  for (let p = 1; p < PERIODS.length; p++) {
-    if (Snapshot.roundTimestamp(timestamp, PERIODS[p]) == period_timestamp) {
-      base_period = PERIODS[p]
+  for (let p = 1; p < HOURLY_PERIODS.length; p++) {
+    if (Snapshot.roundTimestamp(timestamp, HOURLY_PERIODS[p]) == period_timestamp) {
+      base_period = HOURLY_PERIODS[p]
     }
   }
 
