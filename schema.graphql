@@ -708,11 +708,14 @@ type PoolHedgerExposureSnapshot @entity {
   " Market Reference"
   market: Market!
 
-  " Duration this snapshot captures in seconds (Options: 1hr: 3600, 6hr: 21600, 1d: 86400). Example: 'period_gte:3600' gives hourly data "
+  " Duration this snapshot captures in seconds (Options: 1hr: 3600, 6hr: 21600, 1d: 86400). Example: 'period:3600' gives hourly data "
   period: Int!
 
   " Snapshot timestamp "
   timestamp: Int!
+
+  " Timestamp of the last block this snapshot was updated at "
+  blockTimestamp: Int!
 
   " Current net delta of the pool hedger "
   currentNetDelta: BigInt!
@@ -730,6 +733,9 @@ type MarketTotalValueSnapshot @entity {
 
   " Snapshot timestamp "
   timestamp: Int!
+
+  " Timestamp of the last block this snapshot was updated at "
+  blockTimestamp: Int!
 
   " Current LP Token price. Starts at 1 "
   tokenPrice: BigInt!
@@ -778,6 +784,9 @@ type MarketSNXFeesSnapshot @entity {
   " Snapshot timestamp "
   timestamp: Int!
 
+  " Timestamp of the last block this snapshot was updated at "
+  blockTimestamp: Int!
+
   " SNX fees paid by the poolHedger contract "
   poolHedgerFees: BigInt!
 
@@ -808,6 +817,9 @@ type MarketVolumeAndFeesSnapshot @entity {
 
   " Snapshot timestamp "
   timestamp: Int!
+
+  " Timestamp of the last block this snapshot was updated at "
+  blockTimestamp: Int!
 
   " Per-Period total premium volume "
   premiumVolume: BigInt!
@@ -888,6 +900,9 @@ type MarketGreeksSnapshot @entity {
   " Snapshot timestamp "
   timestamp: Int!
 
+  " Timestamp of the last block this snapshot was updated at "
+  blockTimestamp: Int!
+
   " Net delta of options "
   optionNetDelta: BigInt!
 
@@ -923,6 +938,9 @@ type SpotPriceSnapshot @entity {
   " Snapshot timestamp "
   timestamp: Int!
 
+  " Timestamp of the last block this snapshot was updated at "
+  blockTimestamp: Int!
+
   blockNumber: Int!
 
   " Duration this snapshot captures in seconds (Options: 1hr: 3600, 6hr: 21600 1d: 86400). Example: 'period_gte:3600' gives hourly data  "
@@ -939,11 +957,14 @@ type BoardBaseIVSnapshot @entity {
   " Board reference "
   board: Board!
 
-  " Duration this snapshot captures in seconds (Options: 1hr: 3600, 6hr: 21600 1d: 86400). Example: 'period_gte:3600' gives hourly data "
+  " Duration this snapshot captures in seconds (Options: 1hr: 3600, 6hr: 21600 1d: 86400). Example: 'period:3600' gives hourly data "
   period: Int!
 
   " Snapshot timestamp "
   timestamp: Int!
+
+  " Timestamp of the last block this snapshot was updated at "
+  blockTimestamp: Int!
 
   " IV of the board "
   baseIv: BigInt!
@@ -962,11 +983,14 @@ type StrikeIVAndGreeksSnapshot @entity {
   " Board Reference "
   board: Board!
 
-  " Duration this snapshot captures in seconds (Options: 1hr: 3600, 6hr: 21600 1d: 86400). Example: 'period_gte:3600' gives hourly data  "
+  " Duration this snapshot captures in seconds (Options: 1hr: 3600, 6hr: 21600 1d: 86400). Example: 'period:3600' gives hourly data  "
   period: Int!
 
   " Snapshot timestamp "
   timestamp: Int!
+
+  " Timestamp of the last block this snapshot was updated at "
+  blockTimestamp: Int!
 
   " IV of the strike (skew * board iv) "
   iv: BigInt!
@@ -996,6 +1020,9 @@ type OptionVolumeSnapshot @entity {
 
   " Snapshot timestamp "
   timestamp: Int!
+
+  " Timestamp of the last block this snapshot was updated at "
+  blockTimestamp: Int!
 
   " Option long open interest "
   longOpenInterest: BigInt!
@@ -1028,6 +1055,9 @@ type OptionPriceAndGreeksSnapshot @entity {
 
   " Snapshot timestamp "
   timestamp: Int!
+
+  " Timestamp of the last block this snapshot was updated at "
+  blockTimestamp: Int!
 
   "Snapshot block number "
   blockNumber: Int!

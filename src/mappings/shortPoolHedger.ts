@@ -11,30 +11,13 @@ export function handlePositionUpdated(event: PositionUpdated): void {
   let context = dataSource.context()
   let market = context.getString('market')
 
-  //Get the largest relevant period
-  let base_period = HOURLY_PERIODS[0]
-  let period_timestamp = Snapshot.roundTimestamp(timestamp, base_period)
-  for (let p = 1; p < HOURLY_PERIODS.length; p++) {
-    if (Snapshot.roundTimestamp(timestamp, HOURLY_PERIODS[p]) == period_timestamp) {
-      base_period = HOURLY_PERIODS[p]
-    }
-  }
+  let poolHedgerSnapshot: PoolHedgerExposureSnapshot
 
-  //Force create daily snapshot if it doesnt exist
-  if (
-    base_period == 3600 &&
-    PoolHedgerExposureSnapshot.load(
-      Snapshot.getSnapshotID(Entity.getIDFromAddress(event.address), DAY_SECONDS, timestamp),
-    ) == null
-  ) {
-    let poolHedgerSnapshot = Entity.loadOrCreatePoolHedgerSnapshot(event.address, market,DAY_SECONDS, timestamp)
+  for (let p = 0; p < HOURLY_PERIODS.length; p++) {
+    poolHedgerSnapshot = Entity.loadOrCreatePoolHedgerSnapshot(event.address, market, HOURLY_PERIODS[p], timestamp)
     poolHedgerSnapshot.currentNetDelta = event.params.currentNetDelta
     poolHedgerSnapshot.save()
   }
-
-  let poolHedgerSnapshot = Entity.loadOrCreatePoolHedgerSnapshot(event.address, market, base_period, timestamp)
-  poolHedgerSnapshot.currentNetDelta = event.params.currentNetDelta
-  poolHedgerSnapshot.save()
 
   if (poolHedgerSnapshot.id != poolHedger.latestPoolHedgerExposure) {
     poolHedger.latestPoolHedgerExposure = poolHedgerSnapshot.id

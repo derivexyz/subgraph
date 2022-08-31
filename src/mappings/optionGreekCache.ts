@@ -100,38 +100,6 @@ export function handleStrikeCacheUpdated(event: StrikeCacheUpdated): void {
   strike.skew = event.params.strikeCache.skew
   strike.skewVariance = event.params.strikeCache.skewVariance
   strike.save()
-
-  let timestamp = event.block.timestamp.toI32()
-
-  //Get the largest relevant period
-  let base_period = HOURLY_PERIODS[0]
-  let period_timestamp = Snapshot.roundTimestamp(timestamp, base_period)
-  for (let p = 1; p < HOURLY_PERIODS.length; p++) {
-    if (Snapshot.roundTimestamp(timestamp, HOURLY_PERIODS[p]) == period_timestamp) {
-      base_period = HOURLY_PERIODS[p]
-    }
-  }
-
-  let snapshotId = Snapshot.getSnapshotID(strike.id, base_period, timestamp)
-  let strikeSnapshot = StrikeIVAndGreeksSnapshot.load(snapshotId)
-
-  if (strikeSnapshot == null) {
-    let latestSnapshot = StrikeIVAndGreeksSnapshot.load(
-      strike.latestStrikeIVAndGreeks as string,
-    ) as StrikeIVAndGreeksSnapshot
-
-    strikeSnapshot = Entity.createStrikeSnapshot(optionMarketId, strike.strikeId, base_period, timestamp)
-    strikeSnapshot.board = strike.board
-    strikeSnapshot.skew = strike.skew
-    strikeSnapshot.skewVariance = strike.skewVariance
-    strikeSnapshot.iv = latestSnapshot.iv
-    strikeSnapshot.gamma = latestSnapshot.gamma
-    strikeSnapshot.vega = latestSnapshot.vega
-  } else {
-    strikeSnapshot.skewVariance = strike.skewVariance
-  }
-
-  strikeSnapshot.save()
 }
 
 export function handleBoardCacheUpdated(event: BoardCacheUpdated): void {}

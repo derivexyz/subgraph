@@ -44,15 +44,6 @@ export function updateMarketGreeks(
 ): void {
   let market = Market.load(optionMarketId) as Market
 
-  //Get the largest relevant period
-  let base_period = HOURLY_PERIODS[0]
-  let period_timestamp = Snapshot.roundTimestamp(timestamp, base_period)
-  for (let p = 1; p < HOURLY_PERIODS.length; p++) {
-    if (Snapshot.roundTimestamp(timestamp, HOURLY_PERIODS[p]) == period_timestamp) {
-      base_period = HOURLY_PERIODS[p]
-    }
-  }
-
   //Global Net Delta = sum netDelta + pool base balance + hedger delta
   // Load pool
   // Load latest hedger delta
@@ -64,33 +55,20 @@ export function updateMarketGreeks(
   let poolNetDelta = poolBaseBalance.minus(optionNetDelta)
   let globalNetDelta = poolNetDelta.plus(hedgerDelta)
 
-  //Force create daily snapshot if it doesnt exist
-  if (
-    base_period == 3600 &&
-    MarketGreeksSnapshot.load(Snapshot.getSnapshotID(optionMarketId, DAY_SECONDS, timestamp)) == null
-  ) {
-    let dailyMarketGreeksSnapshot = Entity.createMarketGreeksSnapshot(optionMarketId, DAY_SECONDS, timestamp)
-    dailyMarketGreeksSnapshot.hedgerNetDelta = hedgerDelta
-    dailyMarketGreeksSnapshot.baseBalance = poolBaseBalance
-    dailyMarketGreeksSnapshot.poolNetDelta = poolNetDelta
-    dailyMarketGreeksSnapshot.optionNetDelta = optionNetDelta
-    dailyMarketGreeksSnapshot.netDelta = globalNetDelta
-    dailyMarketGreeksSnapshot.netStdVega = netStdVega
-    dailyMarketGreeksSnapshot.netGamma = market.netGamma 
-    dailyMarketGreeksSnapshot.netTheta = market.netTheta
-    dailyMarketGreeksSnapshot.save()
-  }
+  let marketGreeksSnapshot: MarketGreeksSnapshot
 
-  let marketGreeksSnapshot = Entity.createMarketGreeksSnapshot(optionMarketId, base_period, timestamp)
-  marketGreeksSnapshot.hedgerNetDelta = hedgerDelta
-  marketGreeksSnapshot.baseBalance = poolBaseBalance
-  marketGreeksSnapshot.poolNetDelta = poolNetDelta
-  marketGreeksSnapshot.optionNetDelta = optionNetDelta
-  marketGreeksSnapshot.netDelta = globalNetDelta
-  marketGreeksSnapshot.netStdVega = netStdVega
-  marketGreeksSnapshot.netGamma = market.netGamma 
-  marketGreeksSnapshot.netTheta = market.netTheta 
-  marketGreeksSnapshot.save()
+  for (let p = 0; p < HOURLY_PERIODS.length; p++) {
+    marketGreeksSnapshot = Entity.createMarketGreeksSnapshot(optionMarketId, HOURLY_PERIODS[p], timestamp)
+    marketGreeksSnapshot.hedgerNetDelta = hedgerDelta
+    marketGreeksSnapshot.baseBalance = poolBaseBalance
+    marketGreeksSnapshot.poolNetDelta = poolNetDelta
+    marketGreeksSnapshot.optionNetDelta = optionNetDelta
+    marketGreeksSnapshot.netDelta = globalNetDelta
+    marketGreeksSnapshot.netStdVega = netStdVega
+    marketGreeksSnapshot.netGamma = market.netGamma
+    marketGreeksSnapshot.netTheta = market.netTheta
+    marketGreeksSnapshot.save()
+  }
 
   if (market.latestGreeks != marketGreeksSnapshot.id) {
     market.latestGreeks = marketGreeksSnapshot.id
@@ -105,30 +83,12 @@ export function updateBoardIV(boardId: string, timestamp: i32, baseIv: BigInt, i
   board.baseIv = baseIv
   board.ivVariance = ivVariance
 
-  //Get the largest relevant period
-  let base_period = HOURLY_PERIODS[0]
-  let period_timestamp = Snapshot.roundTimestamp(timestamp, base_period)
-  for (let p = 1; p < HOURLY_PERIODS.length; p++) {
-    if (Snapshot.roundTimestamp(timestamp, HOURLY_PERIODS[p]) == period_timestamp) {
-      base_period = HOURLY_PERIODS[p]
-    }
+  for (let p = 0; p < HOURLY_PERIODS.length; p++) {
+    let boardBaseIVSnapshot = Entity.createBoardBaseIVSnapshot(board.id, HOURLY_PERIODS[p], timestamp)
+    boardBaseIVSnapshot.baseIv = baseIv
+    boardBaseIVSnapshot.ivVariance = ivVariance
+    boardBaseIVSnapshot.save()
   }
-
-  //Force create daily snapshot if it doesnt exist
-  if (
-    base_period == 3600 &&
-    BoardBaseIVSnapshot.load(Snapshot.getSnapshotID(board.market, DAY_SECONDS, timestamp)) == null
-  ) {
-    let dailyBoardBaseIVSnapshot = Entity.createBoardBaseIVSnapshot(board.id, DAY_SECONDS, timestamp)
-    dailyBoardBaseIVSnapshot.baseIv = baseIv
-    dailyBoardBaseIVSnapshot.ivVariance = ivVariance
-    dailyBoardBaseIVSnapshot.save()
-  }
-
-  let boardBaseIVSnapshot = Entity.createBoardBaseIVSnapshot(board.id, base_period, timestamp)
-  boardBaseIVSnapshot.baseIv = baseIv
-  boardBaseIVSnapshot.ivVariance = ivVariance
-  boardBaseIVSnapshot.save()
   board.save()
 }
 
@@ -204,6 +164,8 @@ export function updateStrikeAndOptionGreeks(
   //Load latest open interest snapshot
   let callOISnapshot = OptionVolumeSnapshot.load(callOption.latestOptionVolume) as OptionVolumeSnapshot
   let putOISnapshot = OptionVolumeSnapshot.load(putOption.latestOptionVolume) as OptionVolumeSnapshot
+  callOISnapshot.blockTimestamp = timestamp
+  putOISnapshot.blockTimestamp = timestamp
 
   let gamma = allGreeks.gamma
     .times(

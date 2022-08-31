@@ -246,6 +246,7 @@ export namespace Entity {
       snapshot.timestamp = Snapshot.roundTimestamp(timestamp, period)
       snapshot.currentNetDelta = ZERO
     }
+    snapshot.blockTimestamp = timestamp
 
     return snapshot as PoolHedgerExposureSnapshot
   }
@@ -262,6 +263,7 @@ export namespace Entity {
     snapshot.period = period
     snapshot.timestamp = Snapshot.roundTimestamp(timestamp, period)
     snapshot.blockNumber = blockNumber
+    snapshot.blockTimestamp = timestamp
 
     return snapshot as SpotPriceSnapshot
   }
@@ -280,6 +282,7 @@ export namespace Entity {
       snapshot.period = period
       snapshot.timestamp = Snapshot.roundTimestamp(timestamp, period)
     }
+    snapshot.blockTimestamp = timestamp
     return snapshot
   }
 
@@ -333,6 +336,7 @@ export namespace Entity {
         snapshot.totalNotionalVolume = lastSnapshot.totalNotionalVolume
       }
     }
+    snapshot.blockTimestamp = timestamp
 
     return snapshot as MarketVolumeAndFeesSnapshot
   }
@@ -360,6 +364,7 @@ export namespace Entity {
       snapshot.liquidityPoolVolume = ZERO
       snapshot.otherVolume = ZERO
     }
+    snapshot.blockTimestamp = timestamp
 
     return snapshot as MarketSNXFeesSnapshot
   }
@@ -375,6 +380,7 @@ export namespace Entity {
     snapshot.market = optionMarketId
     snapshot.period = period
     snapshot.timestamp = Snapshot.roundTimestamp(timestamp, period)
+    snapshot.blockTimestamp = timestamp
 
     return snapshot as MarketGreeksSnapshot
   }
@@ -387,6 +393,7 @@ export namespace Entity {
     snapshot.board = boardId
     snapshot.period = period
     snapshot.timestamp = Snapshot.roundTimestamp(timestamp, period)
+    snapshot.blockTimestamp = timestamp
 
     return snapshot as BoardBaseIVSnapshot
   }
@@ -405,6 +412,7 @@ export namespace Entity {
     snapshot.strike = strikeId
     snapshot.period = period
     snapshot.timestamp = Snapshot.roundTimestamp(timestamp, period)
+    snapshot.blockTimestamp = timestamp
 
     return snapshot as StrikeIVAndGreeksSnapshot
   }
@@ -422,6 +430,7 @@ export namespace Entity {
     snapshot.period = period
     snapshot.blockNumber = blockNumber
     snapshot.timestamp = Snapshot.roundTimestamp(timestamp, period)
+    snapshot.blockTimestamp = timestamp
 
     return snapshot as OptionPriceAndGreeksSnapshot
   }
@@ -461,6 +470,7 @@ export namespace Entity {
         snapshot.totalNotionalVolume = lastSnapshot.totalNotionalVolume
       }
     }
+    snapshot.blockTimestamp = timestamp
     return snapshot as OptionVolumeSnapshot
   }
 }
