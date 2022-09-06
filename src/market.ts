@@ -487,6 +487,8 @@ export function handleTradeSettle(
   timestamp: i32,
   amount: BigInt,
   priceAtExpiry: BigInt,
+  settleAmount: BigInt,
+  insolventAmount: BigInt,
 ): void {
   let positionId = Entity.getPositionID(optionMarketId, positionId_)
   let position = Position.load(positionId) as Position
@@ -502,6 +504,8 @@ export function handleTradeSettle(
   settle.transactionHash = txHash
   settle.size = amount
   settle.spotPriceAtExpiry = priceAtExpiry
+  settle.settleAmount = settleAmount
+  settle.insolventAmount = insolventAmount
 
   if (option.isCall && priceAtExpiry.gt(strike.strikePrice)) {
     let diff = priceAtExpiry.minus(strike.strikePrice).times(amount).div(UNIT)

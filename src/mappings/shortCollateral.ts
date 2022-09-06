@@ -15,6 +15,9 @@ export function handlePositionSettled(event: PositionSettled): void {
     event.block.timestamp.toI32(),
     event.params.amount,
     event.params.priceAtExpiry,
+    event.params.settlementAmount,
+    event.params.insolventAmount
+
   )
 }
 

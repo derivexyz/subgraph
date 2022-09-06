@@ -519,6 +519,10 @@ type Settle @entity {
 
   " Profit or Loss at settlement (Doesnt include premiums) "
   profit: BigInt!
+
+  settleAmount: BigInt!
+
+  insolventAmount: BigInt!
 }
 
 type OptionTransfer @entity {
@@ -583,6 +587,9 @@ type CollateralUpdate @entity {
 
   " The stablecoin address used for the swap "
   externalSwapAddress: Bytes
+
+  " Spot price at time of update "
+  spotPrice: BigInt
 }
 
 type CircuitBreaker @entity {

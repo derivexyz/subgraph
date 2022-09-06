@@ -1,5 +1,5 @@
 import { Address, Bytes, BigInt, dataSource, log } from '@graphprotocol/graph-ts'
-import { Global, Position, Trade, OptionTransfer, Option } from '../../generated/schema'
+import { Global, Position, Trade, OptionTransfer, Option, Market } from '../../generated/schema'
 import { PositionUpdated, Transfer } from '../../generated/templates/OptionToken/OptionToken'
 import { Entity, ZERO, ZERO_ADDRESS } from '../lib'
 
@@ -15,6 +15,7 @@ export function updatePositionCollateralHistory(
   blockNumber: i32,
   isBaseCollateral: boolean,
   owner: Bytes,
+  latestSpotPrice: BigInt
 ): void {
   let positionCollateralUpdate = Entity.loadOrCreatePositionCollateralUpdate(
     optionMarketId,
@@ -30,6 +31,7 @@ export function updatePositionCollateralHistory(
   positionCollateralUpdate.option = optionId
   positionCollateralUpdate.amount = newCollateral
   positionCollateralUpdate.trader = owner
+  positionCollateralUpdate.spotPrice = latestSpotPrice
   positionCollateralUpdate.save()
 }
 
@@ -112,6 +114,7 @@ export function handlePositionUpdated(event: PositionUpdated): void {
 
   //Update the position collateral history for shorts
   if (!position.isLong) {
+    let latestSpotPrice = (Market.load(marketAddress) as Market).latestSpotPrice
     if (position.state == Entity.PositionState.LIQUIDATED) {
       updatePositionCollateralHistory(
         marketAddress,
@@ -125,6 +128,7 @@ export function handlePositionUpdated(event: PositionUpdated): void {
         event.block.number.toI32(),
         position.isBaseCollateral,
         position.owner,
+        latestSpotPrice
       )
       position.collateral = ZERO
     } else if (position.state == Entity.PositionState.CLOSED) {
@@ -140,6 +144,7 @@ export function handlePositionUpdated(event: PositionUpdated): void {
         event.block.number.toI32(),
         position.isBaseCollateral,
         position.owner,
+        latestSpotPrice
       )
       position.collateral = event.params.position.collateral
     } else if (position.state == Entity.PositionState.SETTLED) {
@@ -158,6 +163,7 @@ export function handlePositionUpdated(event: PositionUpdated): void {
         event.block.number.toI32(),
         position.isBaseCollateral,
         event.params.owner,
+        latestSpotPrice
       )
       position.collateral = event.params.position.collateral
     }
