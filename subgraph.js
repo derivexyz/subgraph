@@ -61,7 +61,7 @@ const dataSources = [
       kind: 'ethereum/events',
       apiVersion: '0.0.5',
       language: 'wasm/assemblyscript',
-      file: './src/mappings/LyraRegistry.ts',
+      file: './src/mappings/lyraRegistry.ts',
       entities: ['Market'], //This value is currently not used by TheGraph at all, it just cant be empty
       abis: [
         {
@@ -124,7 +124,7 @@ const templates = [
       kind: 'ethereum/events',
       apiVersion: '0.0.5',
       language: 'wasm/assemblyscript',
-      file: './src/mappings/OptionMarketWrapper.ts',
+      file: './src/mappings/optionMarketWrapper.ts',
       entities: ['Market'], //This value is currently not used by TheGraph at all, it just cant be empty
       abis: [
         {
@@ -152,7 +152,7 @@ const templates = [
       kind: 'ethereum/events',
       apiVersion: '0.0.5',
       language: 'wasm/assemblyscript',
-      file: './src/mappings/SynthetixAdapter.ts',
+      file: './src/mappings/synthetixAdapter.ts',
       entities: ['Market'], //This value is currently not used by TheGraph at all, it just cant be empty
       abis: [
         {
@@ -255,7 +255,7 @@ const templates = [
       kind: 'ethereum/events',
       apiVersion: '0.0.5',
       language: 'wasm/assemblyscript',
-      file: './src/mappings/OptionMarketPricer.ts',
+      file: './src/mappings/optionMarketPricer.ts',
       entities: ['Market'],
       abis: [
         {
@@ -409,7 +409,7 @@ const templates = [
       kind: 'ethereum/events',
       apiVersion: '0.0.5',
       language: 'wasm/assemblyscript',
-      file: './src/mappings/OptionToken.ts',
+      file: './src/mappings/optionToken.ts',
       entities: ['Market'],
       abis: [
         {
@@ -440,7 +440,7 @@ const templates = [
       kind: 'ethereum/events',
       apiVersion: '0.0.5',
       language: 'wasm/assemblyscript',
-      file: './src/mappings/ShortCollateral.ts',
+      file: './src/mappings/shortCollateral.ts',
       entities: ['Market'],
       abis: [
         {
@@ -479,7 +479,7 @@ const templates = [
       kind: 'ethereum/events',
       apiVersion: '0.0.5',
       language: 'wasm/assemblyscript',
-      file: './src/mappings/ShortPoolHedger.ts',
+      file: './src/mappings/shortPoolHedger.ts',
       entities: ['Market'],
       abis: [
         {
