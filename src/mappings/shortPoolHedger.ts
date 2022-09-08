@@ -1,6 +1,6 @@
 import { dataSource } from '@graphprotocol/graph-ts'
 import { PoolHedger, PoolHedgerExposureSnapshot } from '../../generated/schema'
-import { PositionUpdated } from '../../generated/templates/PoolHedger/PoolHedger'
+import { PositionUpdated } from '../../generated/templates/ShortPoolHedger/ShortPoolHedger'
 import { DAY_SECONDS, Entity, HOURLY_PERIODS, Snapshot } from '../lib'
 
 export function handlePositionUpdated(event: PositionUpdated): void {
