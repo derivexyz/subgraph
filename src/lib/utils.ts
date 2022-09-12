@@ -201,6 +201,9 @@ export namespace Entity {
       position.size = ZERO
       position.collateral = ZERO
       position.averageCostPerOption = ZERO
+      position.closePNL = ZERO
+      position.collateralPNL = ZERO
+      position.averageCollateralSpotPrice = ZERO
     }
 
     return position as Position

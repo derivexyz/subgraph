@@ -507,6 +507,16 @@ export function handleTradeSettle(
   settle.settleAmount = settleAmount
   settle.insolventAmount = insolventAmount
 
+  if (position.isLong) {
+    settle.settlePNL = settleAmount.minus(position.averageCostPerOption.times(amount).div(UNIT))
+  } else {
+    if (position.isBaseCollateral) {
+      settle.settlePNL = amount.times(priceAtExpiry).div(UNIT).minus(position.averageCollateralSpotPrice.times(position.collateral).div(UNIT))
+    } else {
+      settle.settlePNL = settleAmount.minus(position.collateral)
+    }
+  }
+
   if (option.isCall && priceAtExpiry.gt(strike.strikePrice)) {
     let diff = priceAtExpiry.minus(strike.strikePrice).times(amount).div(UNIT)
     settle.profit = position.isLong ? diff : diff.neg()
@@ -619,6 +629,12 @@ export function createTrade(
       .plus(totalCost)
       .times(UNIT)
       .div(position.size)
+    position.save()
+  } else if (!isOpen && amount != ZERO) {
+    let closePNL = totalCost.minus(position.averageCostPerOption.times(amount).div(UNIT))
+    closePNL = position.isLong ? closePNL : closePNL.neg()
+    trade.closePNL = closePNL
+    position.closePNL = position.closePNL.plus(closePNL)
     position.save()
   }
 

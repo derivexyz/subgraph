@@ -371,9 +371,18 @@ type Position @entity {
 
   # size * avgCost = previousTotalCost
   # newPremium + previousTotalCost
-  #
-
+  " Average Cost "
   averageCostPerOption: BigInt!
+
+  " Profit/Losses from closing the position "
+  closePNL: BigInt!
+
+  " Average price base collateral was deposited at "
+  averageCollateralSpotPrice: BigInt!
+
+  " Profit/Losses of the position's Collateral "
+  collateralPNL: BigInt!
+
   # References
 
   " Settlement reference "
@@ -445,6 +454,9 @@ type Trade @entity {
 
   " Price Per Option "
   pricePerOption: BigInt!
+
+  " Profit/Loss for closes "
+  closePNL: BigInt
 
   " Vol traded "
   volTraded: BigInt!
@@ -523,6 +535,9 @@ type Settle @entity {
   settleAmount: BigInt!
 
   insolventAmount: BigInt!
+
+  " Profit/Loss realized at settlement "
+  settlePNL: BigInt!
 }
 
 type OptionTransfer @entity {
@@ -579,8 +594,14 @@ type CollateralUpdate @entity {
   " Transaction hash of the update "
   transactionHash: Bytes!
 
-  " Collateral update amount "
+  " Collateral amount after update "
   amount: BigInt!
+
+  " Change in collateral "
+  collateralAmountChange: BigInt!
+
+  " PNL from change in collateral (Only relevant for base collateralized options) "
+  collateralPNL: BigInt!
 
   " Paid external swap fees (Denominated in the external token's decimals) "
   externalSwapFees: BigInt

@@ -1,7 +1,7 @@
 import { Address, Bytes, BigInt, dataSource, log } from '@graphprotocol/graph-ts'
 import { Global, Position, Trade, OptionTransfer, Option, Market } from '../../generated/schema'
 import { PositionUpdated, Transfer } from '../../generated/templates/OptionToken/OptionToken'
-import { Entity, ZERO, ZERO_ADDRESS } from '../lib'
+import { Entity, UNIT, ZERO, ZERO_ADDRESS } from '../lib'
 
 export function updatePositionCollateralHistory(
   optionMarketId: string,
@@ -12,10 +12,12 @@ export function updatePositionCollateralHistory(
   txHash: Bytes,
   timestamp: i32,
   newCollateral: BigInt,
+  oldCollateral: BigInt,
   blockNumber: i32,
   isBaseCollateral: boolean,
   owner: Bytes,
-  latestSpotPrice: BigInt
+  latestSpotPrice: BigInt,
+  collateralPNL: BigInt,
 ): void {
   let positionCollateralUpdate = Entity.loadOrCreatePositionCollateralUpdate(
     optionMarketId,
@@ -24,6 +26,9 @@ export function updatePositionCollateralHistory(
     timestamp,
     blockNumber,
   )
+
+  let collateralAmountChange = newCollateral.minus(oldCollateral)
+
   positionCollateralUpdate.isBaseCollateral = isBaseCollateral
   positionCollateralUpdate.market = optionMarketId
   positionCollateralUpdate.board = boardId
@@ -32,6 +37,8 @@ export function updatePositionCollateralHistory(
   positionCollateralUpdate.amount = newCollateral
   positionCollateralUpdate.trader = owner
   positionCollateralUpdate.spotPrice = latestSpotPrice
+  positionCollateralUpdate.collateralAmountChange = collateralAmountChange
+  positionCollateralUpdate.collateralPNL = collateralPNL
   positionCollateralUpdate.save()
 }
 
@@ -115,7 +122,13 @@ export function handlePositionUpdated(event: PositionUpdated): void {
   //Update the position collateral history for shorts
   if (!position.isLong) {
     let latestSpotPrice = (Market.load(marketAddress) as Market).latestSpotPrice
+
     if (position.state == Entity.PositionState.LIQUIDATED) {
+      let collateralProfit = position.isBaseCollateral
+        ? position.averageCollateralSpotPrice.minus(latestSpotPrice).times(position.collateral).div(UNIT)
+        : ZERO
+      position.collateralPNL = position.collateralPNL.plus(collateralProfit)
+
       updatePositionCollateralHistory(
         marketAddress,
         option.board,
@@ -125,13 +138,19 @@ export function handlePositionUpdated(event: PositionUpdated): void {
         event.transaction.hash,
         event.block.timestamp.toI32(),
         ZERO,
+        position.collateral,
         event.block.number.toI32(),
         position.isBaseCollateral,
         position.owner,
-        latestSpotPrice
+        latestSpotPrice,
+        collateralProfit,
       )
       position.collateral = ZERO
     } else if (position.state == Entity.PositionState.CLOSED) {
+      let collateralProfit = position.isBaseCollateral
+        ? position.averageCollateralSpotPrice.minus(latestSpotPrice).times(position.collateral).div(UNIT)
+        : ZERO
+      position.collateralPNL = position.collateralPNL.plus(collateralProfit)
       updatePositionCollateralHistory(
         marketAddress,
         option.board,
@@ -141,16 +160,31 @@ export function handlePositionUpdated(event: PositionUpdated): void {
         event.transaction.hash,
         event.block.timestamp.toI32(),
         ZERO,
+        position.collateral,
         event.block.number.toI32(),
         position.isBaseCollateral,
         position.owner,
-        latestSpotPrice
+        latestSpotPrice,
+        collateralProfit,
       )
       position.collateral = event.params.position.collateral
     } else if (position.state == Entity.PositionState.SETTLED) {
-      //Dont create collateral update on settlement
-      position.collateral = ZERO
+      //Dont create collateral update on settlement, dont update position.collateral.  
+      //We want settled positions to still show the ending size/collateral
+      let collateralProfit = position.isBaseCollateral
+        ? position.averageCollateralSpotPrice.minus(latestSpotPrice).times(position.collateral).div(UNIT)
+        : ZERO
+      position.collateralPNL = position.collateralPNL.plus(collateralProfit)
+      //position.collateral = ZERO
     } else {
+      let collateralProfit =
+        position.isBaseCollateral && event.params.position.collateral < position.collateral
+          ? position.averageCollateralSpotPrice
+              .minus(latestSpotPrice)
+              .times(position.collateral.minus(event.params.position.collateral))
+              .div(UNIT)
+          : ZERO
+      position.collateralPNL = position.collateralPNL.plus(collateralProfit)
       updatePositionCollateralHistory(
         marketAddress,
         option.board,
@@ -160,11 +194,24 @@ export function handlePositionUpdated(event: PositionUpdated): void {
         event.transaction.hash,
         event.block.timestamp.toI32(),
         event.params.position.collateral,
+        position.collateral,
         event.block.number.toI32(),
         position.isBaseCollateral,
         event.params.owner,
-        latestSpotPrice
+        latestSpotPrice,
+        collateralProfit,
       )
+
+      //If base collateral is added, we need to adjust the avg cost
+      if (position.isBaseCollateral && event.params.position.collateral > position.collateral) {
+        // Average = ((Previous_Size_base * Prev_Avg_Cost) + (New_Collateral_Base * Current_Price)) / New_Collateral_Base
+        position.averageCollateralSpotPrice = position.collateral
+          .times(position.averageCollateralSpotPrice)
+          .div(UNIT)
+          .plus(event.params.position.collateral.minus(position.collateral).times(latestSpotPrice).div(UNIT))
+          .times(UNIT)
+          .div(event.params.position.collateral)
+      }
       position.collateral = event.params.position.collateral
     }
   }
