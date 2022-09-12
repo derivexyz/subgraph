@@ -17,7 +17,7 @@
     "create-local": "graph create lyra/lyra --node http://127.0.0.1:8020",
     "build-local": "yarn build local mockSnx",
     "deploy-local": "graph deploy lyra/lyra --debug --ipfs http://localhost:5001 --node http://127.0.0.1:8020 --network local --type mockSnx subgraph.js",
-    "deploy-local-optimism": "graph deploy lyra/lyra --debug --ipfs http://localhost:5001 --node http://127.0.0.1:8020 --network mainnet-ovm --type real subgraph.js",
+    "deploy-local-optimism": "graph deploy lyra/lyra --debug --ipfs http://127.0.0.1:5001 --node http://127.0.0.1:8020 --network mainnet-ovm --type real subgraph.js",
     "watch-local": "graph deploy lyra/lyra --watch --debug --ipfs http://localhost:5001 --node http://127.0.0.1:8020 --network local --type mockSnx subgraph.js"
   },
   "dependencies": {
