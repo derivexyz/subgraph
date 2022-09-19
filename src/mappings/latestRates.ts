@@ -77,6 +77,7 @@ export function addLatestRate(marketId: string, rate: BigInt, timestamp: i32, bl
           board.baseIv,
           tAnnualised,
           spotPrice,
+          rate,
           rateAndCarry,
           base_period,
           timestamp,

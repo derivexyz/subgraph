@@ -98,6 +98,7 @@ export function updateStrikeAndOptionGreeks(
   baseIv: BigInt,
   tAnnualised: number,
   latestSpotPrice: number,
+  latestSpotPriceBigInt: BigInt,
   rateAndCarry: number,
   period: i32,
   timestamp: i32,
@@ -135,6 +136,7 @@ export function updateStrikeAndOptionGreeks(
 
   //Update Call option greeks
   callOptionGreekSnapshot = Entity.createOptionPriceAndGreeksSnapshot(callOption.id, period, timestamp, blockNumber)
+  callOptionGreekSnapshot.optionPriceBase = allGreeks.callPrice.times(UNIT).div(latestSpotPriceBigInt)
   callOptionGreekSnapshot.optionPrice = allGreeks.callPrice
   callOptionGreekSnapshot.delta = allGreeks.callDelta
   callOptionGreekSnapshot.theta = allGreeks.callTheta
@@ -143,6 +145,7 @@ export function updateStrikeAndOptionGreeks(
 
   //Update Put option greeks
   putOptionGreekSnapshot = Entity.createOptionPriceAndGreeksSnapshot(putOption.id, period, timestamp, blockNumber)
+  putOptionGreekSnapshot.optionPriceBase = allGreeks.putPrice.times(UNIT).div(latestSpotPriceBigInt)
   putOptionGreekSnapshot.optionPrice = allGreeks.putPrice
   putOptionGreekSnapshot.delta = allGreeks.putDelta
   putOptionGreekSnapshot.theta = allGreeks.putTheta
@@ -258,6 +261,11 @@ export function updateMarketVolumeAndFees(
       marketSnapshot.totalShortCallOpenInterest.plus(shortCallOpenInterestChange)
     marketSnapshot.totalLongPutOpenInterest = marketSnapshot.totalLongPutOpenInterest.plus(longPutOpenInterestChange)
     marketSnapshot.totalShortPutOpenInterest = marketSnapshot.totalShortPutOpenInterest.plus(shortPutOpenInterestChange)
+
+    marketSnapshot.totalLongCallOpenInterestUSD = marketSnapshot.totalLongCallOpenInterest.times(market.latestSpotPrice).div(UNIT)
+    marketSnapshot.totalShortCallOpenInterestUSD = marketSnapshot.totalShortCallOpenInterest.times(market.latestSpotPrice).div(UNIT)
+    marketSnapshot.totalLongPutOpenInterestUSD = marketSnapshot.totalLongPutOpenInterest.times(market.latestSpotPrice).div(UNIT)
+    marketSnapshot.totalShortPutOpenInterestUSD = marketSnapshot.totalShortPutOpenInterest.times(market.latestSpotPrice).div(UNIT)
     //Fees
     marketSnapshot.spotPriceFees = marketSnapshot.spotPriceFees.plus(spotFees)
     marketSnapshot.optionPriceFees = marketSnapshot.optionPriceFees.plus(optionFees)

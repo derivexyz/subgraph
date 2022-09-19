@@ -327,6 +327,10 @@ export namespace Entity {
         snapshot.totalShortCallOpenInterest = ZERO
         snapshot.totalLongPutOpenInterest = ZERO
         snapshot.totalShortPutOpenInterest = ZERO
+        snapshot.totalLongCallOpenInterestUSD = ZERO
+        snapshot.totalShortCallOpenInterestUSD = ZERO
+        snapshot.totalLongPutOpenInterestUSD = ZERO
+        snapshot.totalShortPutOpenInterestUSD = ZERO
         snapshot.totalPremiumVolume = ZERO
         snapshot.totalNotionalVolume = ZERO
       } else {
@@ -335,6 +339,10 @@ export namespace Entity {
         snapshot.totalShortCallOpenInterest = lastSnapshot.totalShortCallOpenInterest
         snapshot.totalLongPutOpenInterest = lastSnapshot.totalLongPutOpenInterest
         snapshot.totalShortPutOpenInterest = lastSnapshot.totalShortPutOpenInterest
+        snapshot.totalLongCallOpenInterestUSD = lastSnapshot.totalLongCallOpenInterestUSD
+        snapshot.totalShortCallOpenInterestUSD = lastSnapshot.totalShortCallOpenInterestUSD
+        snapshot.totalLongPutOpenInterestUSD = lastSnapshot.totalLongPutOpenInterestUSD
+        snapshot.totalShortPutOpenInterestUSD = lastSnapshot.totalShortPutOpenInterestUSD
         snapshot.totalPremiumVolume = lastSnapshot.totalPremiumVolume
         snapshot.totalNotionalVolume = lastSnapshot.totalNotionalVolume
       }

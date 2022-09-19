@@ -873,6 +873,18 @@ type MarketVolumeAndFeesSnapshot @entity {
   " Total short open interest for puts "
   totalShortPutOpenInterest: BigInt!
 
+    " Total long open interest for calls USD "
+  totalLongCallOpenInterestUSD: BigInt!
+
+  " Total short open interest for calls USD "
+  totalShortCallOpenInterestUSD: BigInt!
+
+  " Total long open interest for puts USD "
+  totalLongPutOpenInterestUSD: BigInt!
+
+  " Total short open interest for puts USD "
+  totalShortPutOpenInterestUSD: BigInt!
+
   # FEES
 
   " Total spot price fees  "
@@ -1101,4 +1113,7 @@ type OptionPriceAndGreeksSnapshot @entity {
 
   " Option Black Scholes price "
   optionPrice: BigInt!
+
+  " Option Black Scholes price in the base currenct (ETH/BTC/etc) "
+  optionPriceBase: BigInt!
 }

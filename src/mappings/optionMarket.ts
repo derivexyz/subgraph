@@ -119,10 +119,11 @@ export function handleStrikeAdded(event: StrikeAdded): void {
       board.baseIv,
       tAnnualised,
       spotPrice,
+      market.latestSpotPrice,
       rateAndCarry,
       HOUR_SECONDS,
       timestamp,
-      blockNumber
+      blockNumber,
     )
   }
 
@@ -162,6 +163,7 @@ export function createOption(
   optionGreekSnapshot.theta = ZERO
   optionGreekSnapshot.rho = ZERO
   optionGreekSnapshot.optionPrice = ZERO
+  optionGreekSnapshot.optionPriceBase = ZERO
   optionGreekSnapshot.save()
   optionVolumeSnapshot = Entity.loadOrCreateOptionVolumeSnapshot(optionId, base_period, timestamp)
   optionVolumeSnapshot.save()
@@ -350,6 +352,20 @@ export function handleBoardSettled(event: BoardSettled): void {
       latestMarketSnapshot.totalLongPutOpenInterest.minus(expiredLongPutOI)
     latestMarketSnapshot.totalShortPutOpenInterest =
       latestMarketSnapshot.totalShortPutOpenInterest.minus(expiredShortPutOI)
+
+    latestMarketSnapshot.totalLongCallOpenInterestUSD = latestMarketSnapshot.totalLongCallOpenInterest
+      .times(market.latestSpotPrice)
+      .div(UNIT)
+    latestMarketSnapshot.totalShortCallOpenInterestUSD = latestMarketSnapshot.totalShortCallOpenInterest
+      .times(market.latestSpotPrice)
+      .div(UNIT)
+    latestMarketSnapshot.totalLongPutOpenInterestUSD = latestMarketSnapshot.totalLongPutOpenInterest
+      .times(market.latestSpotPrice)
+      .div(UNIT)
+    latestMarketSnapshot.totalShortPutOpenInterestUSD = latestMarketSnapshot.totalShortPutOpenInterest
+      .times(market.latestSpotPrice)
+      .div(UNIT)
+
     latestMarketSnapshot.save()
   }
 
@@ -392,10 +408,11 @@ export function handleBoardBaseIvSet(event: BoardBaseIvSet): void {
         event.params.baseIv,
         tAnnualised,
         spotPrice,
+        market.latestSpotPrice,
         rateAndCarry,
         HOUR_SECONDS,
         timestamp,
-        event.block.number.toI32()
+        event.block.number.toI32(),
       )
     }
   }
