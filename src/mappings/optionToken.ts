@@ -71,7 +71,7 @@ export function handlePositionTransfered(event: Transfer): void {
       trade.save()
     }
 
-    if (event.params.from != changetype<Address>(globals.wrapperAddress)) {
+    if (event.params.from != changetype<Address>(globals.wrapperAddress) && trade == null) {
       let transferId = Entity.getTransferID(
         context.getString('market'),
         event.params.tokenId.toI32(),

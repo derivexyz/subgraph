@@ -31,6 +31,7 @@ export class optionPrices {
 export class gammaAndTheta {
   gamma: BigInt
   theta: BigInt
+  //netOptionValue: BigInt
 }
 /////////////////////////////
 ////// MARKET FUNCTIONS //////
@@ -67,6 +68,7 @@ export function updateMarketGreeks(
     marketGreeksSnapshot.netStdVega = netStdVega
     marketGreeksSnapshot.netGamma = market.netGamma
     marketGreeksSnapshot.netTheta = market.netTheta
+    //marketGreeksSnapshot.netOptionValue = market.netOptionValue
     marketGreeksSnapshot.save()
   }
 
@@ -185,7 +187,18 @@ export function updateStrikeAndOptionGreeks(
     .times(putOISnapshot.longOpenInterest.minus(putOISnapshot.shortOpenInterest))
     .div(UNIT)
   let theta = callTheta.plus(putTheta)
-  return { gamma, theta }
+
+  // let callOptionValue = allGreeks.callPrice
+  //   .times(callOISnapshot.longOpenInterest.minus(callOISnapshot.shortOpenInterest))
+  //   .div(UNIT)
+
+  // let putOptionValue = allGreeks.putPrice
+  //   .times(putOISnapshot.longOpenInterest.minus(putOISnapshot.shortOpenInterest))
+  //   .div(UNIT)
+
+  // let netOptionValue = callOptionValue.plus(putOptionValue).neg() //reverse sign to get AMM exposure
+
+  return { gamma, theta /*netOptionValue*/ }
 }
 
 export function updateOptionOpenInterest(
@@ -262,10 +275,18 @@ export function updateMarketVolumeAndFees(
     marketSnapshot.totalLongPutOpenInterest = marketSnapshot.totalLongPutOpenInterest.plus(longPutOpenInterestChange)
     marketSnapshot.totalShortPutOpenInterest = marketSnapshot.totalShortPutOpenInterest.plus(shortPutOpenInterestChange)
 
-    marketSnapshot.totalLongCallOpenInterestUSD = marketSnapshot.totalLongCallOpenInterest.times(market.latestSpotPrice).div(UNIT)
-    marketSnapshot.totalShortCallOpenInterestUSD = marketSnapshot.totalShortCallOpenInterest.times(market.latestSpotPrice).div(UNIT)
-    marketSnapshot.totalLongPutOpenInterestUSD = marketSnapshot.totalLongPutOpenInterest.times(market.latestSpotPrice).div(UNIT)
-    marketSnapshot.totalShortPutOpenInterestUSD = marketSnapshot.totalShortPutOpenInterest.times(market.latestSpotPrice).div(UNIT)
+    marketSnapshot.totalLongCallOpenInterestUSD = marketSnapshot.totalLongCallOpenInterest
+      .times(market.latestSpotPrice)
+      .div(UNIT)
+    marketSnapshot.totalShortCallOpenInterestUSD = marketSnapshot.totalShortCallOpenInterest
+      .times(market.latestSpotPrice)
+      .div(UNIT)
+    marketSnapshot.totalLongPutOpenInterestUSD = marketSnapshot.totalLongPutOpenInterest
+      .times(market.latestSpotPrice)
+      .div(UNIT)
+    marketSnapshot.totalShortPutOpenInterestUSD = marketSnapshot.totalShortPutOpenInterest
+      .times(market.latestSpotPrice)
+      .div(UNIT)
     //Fees
     marketSnapshot.spotPriceFees = marketSnapshot.spotPriceFees.plus(spotFees)
     marketSnapshot.optionPriceFees = marketSnapshot.optionPriceFees.plus(optionFees)
@@ -519,7 +540,10 @@ export function handleTradeSettle(
     settle.settlePNL = settleAmount.minus(position.averageCostPerOption.times(amount).div(UNIT))
   } else {
     if (position.isBaseCollateral) {
-      settle.settlePNL = amount.times(priceAtExpiry).div(UNIT).minus(position.averageCollateralSpotPrice.times(position.collateral).div(UNIT))
+      settle.settlePNL = amount
+        .times(priceAtExpiry)
+        .div(UNIT)
+        .minus(position.averageCollateralSpotPrice.times(position.collateral).div(UNIT))
     } else {
       settle.settlePNL = settleAmount.minus(position.collateral)
     }

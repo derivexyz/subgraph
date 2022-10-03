@@ -63,6 +63,7 @@ export function addLatestRate(marketId: string, rate: BigInt, timestamp: i32, bl
   let spotPrice = parseFloat(rate.toBigDecimal().div(UNITDECIMAL).toString())
   let netGamma = ZERO
   let netTheta = ZERO
+  //let netOptionValue = ZERO
   for (let i = 0; i < numBoards; i++) {
     let board = Board.load(boardIds.pop()) as Board
     let strikeIds = board.strikeIds
@@ -85,11 +86,13 @@ export function addLatestRate(marketId: string, rate: BigInt, timestamp: i32, bl
         )
         netGamma = netGamma.plus(gammaAndTheta.gamma)
         netTheta = netTheta.plus(gammaAndTheta.theta)
+        //netOptionValue = netOptionValue.plus(gammaAndTheta.netOptionValue)
       }
     }
   }
   market.netGamma = netGamma
   market.netTheta = netTheta
+ // market.netOptionValue = netOptionValue
   market.save()
 }
 

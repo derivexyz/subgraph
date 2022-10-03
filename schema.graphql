@@ -83,6 +83,8 @@ type Market @entity {
 
   netTheta: BigInt!
 
+  # netOptionValue: BigInt!
+
   " Chainlink price history for this market "
   spotPriceHistory: [SpotPriceSnapshot!]! @derivedFrom(field: "market")
 
@@ -966,6 +968,8 @@ type MarketGreeksSnapshot @entity {
 
   " Market net theta "
   netTheta: BigInt!
+
+  # netOptionValue: BigInt!
 }
 
 type SpotPriceSnapshot @entity {
