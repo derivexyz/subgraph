@@ -21,6 +21,23 @@ type Global @entity {
   markets: [Market!]! @derivedFrom(field: "global")
 }
 
+# type User @entity {
+#   " User address "
+#   id: ID!
+
+#   firstTradeTimestamp: Int!
+
+#   firstTradeBlock: Int!
+
+#   premiumVolume: BigInt!
+
+#   notionalVolume: BigInt!
+
+#   tradeCount: Int!
+
+#   profitAndLoss: BigInt!
+# }
+
 type Market @entity {
   " OptionMarket address "
   id: ID!

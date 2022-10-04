@@ -23,6 +23,7 @@ import {
   Strike,
   MarketTotalValueSnapshot,
   MarketSNXFeesSnapshot,
+  //User
 } from '../../generated/schema'
 
 export let ZERO = BigInt.fromI32(0)
@@ -181,6 +182,26 @@ export namespace Entity {
   export function getTransferID(optionMarketId: string, positionId: i32, txHash: Bytes): string {
     return optionMarketId + '-' + positionId.toString() + '-' + txHash.toHex()
   }
+
+  // export function loadOrCreateUser(
+  //   userId: string,
+  //   timestamp: i32,
+  //   blockNumber: i32
+  // ): User {
+  //   let user = User.load(userId) //as Position
+
+  //   if (user == null) {
+  //     user = new User(userId)
+  //     user.firstTradeTimestamp = timestamp
+  //     user.firstTradeBlock = blockNumber
+  //     user.notionalVolume = ZERO
+  //     user.premiumVolume = ZERO
+  //     user.profitAndLoss = ZERO
+  //     user.tradeCount = 0
+  //   }
+
+  //   return user as User
+  // }
 
   export function loadOrCreatePosition(
     optionMarketId: string,

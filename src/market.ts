@@ -348,6 +348,8 @@ export function handleTradeOpen(
     newBaseIV = strike.iv.times(UNIT).div(strike.skew)
   }
 
+  let spotPrice = (Market.load(optionMarketId) as Market).latestSpotPrice
+
   createTrade(
     optionMarketId,
     block,
@@ -359,6 +361,7 @@ export function handleTradeOpen(
     false, //isLiquidation
     false, //isForceClose
     amount,
+    spotPrice,
     volTraded,
     newBaseIV,
     newSkew,
@@ -380,9 +383,9 @@ export function handleTradeOpen(
     optionMarketId,
     timestamp,
     strike.id,
-    strike.strikePrice,
     positionType,
     amount,
+    spotPrice,
     totalCost,
     optionFees,
     spotFees,
@@ -424,13 +427,14 @@ export function handleTradeClose(
   let positionId = Entity.getPositionID(optionMarketId, positionId_)
   let strike = Entity.loadStrike(optionMarketId, strikeId) as Strike
 
+  let market = Market.load(optionMarketId) as Market
+
   let deltaCutoffFees = ZERO
   if (isForceClose) {
     let position = Position.load(positionId) as Position
     let option = Option.load(position.option as string) as Option
     let board = Board.load(strike.board) as Board
     let timeToExpiry = board.expiryTimestamp - timestamp
-    let market = Market.load(optionMarketId) as Market
 
     let optionPrice = BlackScholes.getBlackScholesPrice(
       timeToExpiry,
@@ -472,6 +476,7 @@ export function handleTradeClose(
     isLiquidation,
     isForceClose,
     amount,
+    market.latestSpotPrice,
     volTraded,
     newBaseIV,
     newSkew,
@@ -493,9 +498,9 @@ export function handleTradeClose(
     optionMarketId,
     timestamp,
     strike.id,
-    strike.strikePrice,
     positionType,
     amount.neg(),
+    market.latestSpotPrice,
     totalCost,
     optionFees,
     spotFees,
@@ -567,9 +572,9 @@ export function updateValuesAfterTrade(
   optionMarketId: string,
   timestamp: i32,
   strikeId: string,
-  strikeValue: BigInt,
   positionType: i32,
   amount: BigInt,
+  spotPrice: BigInt,
   premiumVolume: BigInt,
   optionFees: BigInt,
   spotFees: BigInt,
@@ -588,7 +593,7 @@ export function updateValuesAfterTrade(
   let longPutOIChange = !isCall && isLong ? amount : ZERO
   let shortPutOIChange = !isCall && !isLong ? amount : ZERO
 
-  let notionalVol = amount.times(strikeValue).div(UNIT).abs()
+  let notionalVol = amount.times(spotPrice).div(UNIT).abs()
   updateOptionOpenInterest(
     strikeId,
     isCall,
@@ -630,6 +635,7 @@ export function createTrade(
   isLiquidation: boolean,
   isForceClose: boolean,
   amount: BigInt,
+  spotPrice: BigInt,
   volTraded: BigInt,
   newBaseIV: BigInt,
   newSkew: BigInt,
@@ -648,8 +654,6 @@ export function createTrade(
   let tradeId = Entity.getTradeIDFromPositionID(positionId, txHash)
   let trade = new Trade(tradeId)
   let position = Position.load(positionId) as Position
-
-  let spotPrice = (Market.load(optionMarketId) as Market).latestSpotPrice
 
   //Position.size is updated prior to this
   // Average Cost = ((Previous_Size * Prev_Avg_Cost) + New_Premium) / New_Position_Size
@@ -685,6 +689,13 @@ export function createTrade(
       collateralUpdate.save()
     }
   }
+
+  ////USER UPDATE
+  // let trader = Entity.loadOrCreateUser(position.owner.toHex(), timestamp, block)
+  // trader.tradeCount += 1
+  // trader.premiumVolume = trader.premiumVolume.plus(premium)
+  // trader.notionalVolume = trader.notionalVolume.plus(spotPrice.times(amount).div(UNIT))
+  // trader.profitAndLoss = isBuy ? trader.profitAndLoss.minus(premium) : trader.profitAndLoss.plus(premium)
 
   trade.position = positionId
   trade.blockNumber = block

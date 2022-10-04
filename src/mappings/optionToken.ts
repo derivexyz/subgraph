@@ -1,5 +1,5 @@
 import { Address, Bytes, BigInt, dataSource, log } from '@graphprotocol/graph-ts'
-import { Global, Position, Trade, OptionTransfer, Option, Market } from '../../generated/schema'
+import { Global, Position, Trade, OptionTransfer, Option, Market, Strike } from '../../generated/schema'
 import { PositionUpdated, Transfer } from '../../generated/templates/OptionToken/OptionToken'
 import { Entity, UNIT, ZERO, ZERO_ADDRESS } from '../lib'
 
@@ -67,6 +67,35 @@ export function handlePositionTransfered(event: Transfer): void {
 
     let trade = Trade.load(Entity.getTradeIDFromPositionID(positionId, event.transaction.hash))
     if (trade != null) {
+      //When option is transferred from the wrapper to the real owner, we need to adjust the user data for the wrapper and real owner
+
+      // let initialTrader = Entity.loadOrCreateUser(
+      //   trade.trader.toHex(),
+      //   event.block.timestamp.toI32(),
+      //   event.block.number.toI32(),
+      // )
+
+      // let newTrader = Entity.loadOrCreateUser(
+      //   event.params.to.toHex(),
+      //   event.block.timestamp.toI32(),
+      //   event.block.number.toI32(),
+      // )
+
+      // initialTrader.premiumVolume = initialTrader.premiumVolume.minus(trade.premium)
+      // newTrader.premiumVolume = newTrader.premiumVolume.plus(trade.premium)
+
+      // const notionalVolume = trade.spotPrice.times(trade.size).div(UNIT)
+      // initialTrader.notionalVolume = initialTrader.notionalVolume.minus(notionalVolume)
+      // newTrader.premiumVolume = newTrader.notionalVolume.plus(notionalVolume)
+
+      // initialTrader.tradeCount -= 1
+      // newTrader.tradeCount += 1
+
+      // const pnl = trade.isBuy ? trade.premium.neg() : trade.premium
+      // initialTrader.profitAndLoss = initialTrader.profitAndLoss.minus(pnl)
+      // newTrader.profitAndLoss = newTrader.profitAndLoss.plus(pnl)
+
+
       trade.trader = event.params.to
       trade.save()
     }
@@ -169,7 +198,7 @@ export function handlePositionUpdated(event: PositionUpdated): void {
       )
       position.collateral = event.params.position.collateral
     } else if (position.state == Entity.PositionState.SETTLED) {
-      //Dont create collateral update on settlement, dont update position.collateral.  
+      //Dont create collateral update on settlement, dont update position.collateral.
       //We want settled positions to still show the ending size/collateral
       let collateralProfit = position.isBaseCollateral
         ? position.averageCollateralSpotPrice.minus(latestSpotPrice).times(position.collateral).div(UNIT)
