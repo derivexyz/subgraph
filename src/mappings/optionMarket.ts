@@ -42,6 +42,8 @@ export function handleBoardCreated(event: BoardCreated): void {
 
   let boardBaseIVSnapshot = Entity.createBoardBaseIVSnapshot(boardId, HOUR_SECONDS, event.block.timestamp.toI32())
   boardBaseIVSnapshot.baseIv = event.params.baseIv
+  boardBaseIVSnapshot.netGamma = ZERO
+  boardBaseIVSnapshot.netTheta = ZERO
   boardBaseIVSnapshot.save()
 
   let tempArray = market.activeBoardIds

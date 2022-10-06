@@ -252,6 +252,12 @@ type Board @entity {
   " Current base IV "
   baseIv: BigInt!
 
+  " Current net gamma for this board "
+  netGamma: BigInt!
+
+  " Current net theta for this board "
+  netTheta: BigInt!
+
   " Current iv variance from gwav "
   ivVariance: BigInt!
 
@@ -1032,6 +1038,12 @@ type BoardBaseIVSnapshot @entity {
 
   " iv variance from gwav "
   ivVariance: BigInt!
+
+  " Net gamma for this board "
+  netGamma: BigInt!
+
+  " Net Theta for this board"
+  netTheta: BigInt!
 }
 
 type StrikeIVAndGreeksSnapshot @entity {

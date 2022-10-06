@@ -68,6 +68,10 @@ export function addLatestRate(marketId: string, rate: BigInt, timestamp: i32, bl
     let board = Board.load(boardIds.pop()) as Board
     let strikeIds = board.strikeIds
     let numStrikes = strikeIds.length
+
+    let boardNetGamma = ZERO
+    let boardNetTheta = ZERO
+    
     if (board.expiryTimestamp > timestamp) {
       let tAnnualised = f64(board.expiryTimestamp - timestamp) / f64(31536000)
       for (let j = 0; j < numStrikes; j++) {
@@ -86,8 +90,14 @@ export function addLatestRate(marketId: string, rate: BigInt, timestamp: i32, bl
         )
         netGamma = netGamma.plus(gammaAndTheta.gamma)
         netTheta = netTheta.plus(gammaAndTheta.theta)
+        boardNetGamma = boardNetGamma.plus(gammaAndTheta.gamma)
+        boardNetTheta = boardNetTheta.plus(gammaAndTheta.theta)
         //netOptionValue = netOptionValue.plus(gammaAndTheta.netOptionValue)
       }
+
+      board.netGamma = boardNetGamma
+      board.netTheta = boardNetTheta
+      board.save()
     }
   }
   market.netGamma = netGamma

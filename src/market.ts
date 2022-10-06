@@ -89,6 +89,8 @@ export function updateBoardIV(boardId: string, timestamp: i32, baseIv: BigInt, i
     let boardBaseIVSnapshot = Entity.createBoardBaseIVSnapshot(board.id, HOURLY_PERIODS[p], timestamp)
     boardBaseIVSnapshot.baseIv = baseIv
     boardBaseIVSnapshot.ivVariance = ivVariance
+    boardBaseIVSnapshot.netGamma = board.netGamma
+    boardBaseIVSnapshot.netTheta = board.netTheta
     boardBaseIVSnapshot.save()
   }
   board.save()
