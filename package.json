@@ -11,6 +11,7 @@
     "sync": "ts-node scripts/sync.ts",
     "build": "env-cmd -f .env.local ./build.sh",
     "deploy": "env-cmd -f .env.local ./deploy.sh",
+    "deploy-satsuma": "env-cmd -f .env.local ./deploy-satsuma.sh",
     "graph-node": "./run-graph-node.sh",
     "gen-types": "typechain --target ethers-v5 --out-dir typechain './abis/**/*.json'",
     "sync-local": "yarn sync --network local --type mockSnx",

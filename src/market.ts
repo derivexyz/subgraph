@@ -547,12 +547,15 @@ export function handleTradeSettle(
     settle.settlePNL = settleAmount.minus(position.averageCostPerOption.times(amount).div(UNIT))
   } else {
     if (position.isBaseCollateral) {
-      settle.settlePNL = amount
+      settle.settlePNL = settleAmount
+        .minus(position.collateral)
         .times(priceAtExpiry)
         .div(UNIT)
-        .minus(position.averageCollateralSpotPrice.times(position.collateral).div(UNIT))
+        .plus(position.averageCostPerOption.times(amount).div(UNIT))
     } else {
-      settle.settlePNL = settleAmount.minus(position.collateral)
+      settle.settlePNL = settleAmount
+        .minus(position.collateral)
+        .plus(position.averageCostPerOption.times(amount).div(UNIT))
     }
   }
 
