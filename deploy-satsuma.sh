@@ -2,6 +2,7 @@
 network=$1
 type=$2
 version=$3
+name=$4
 GRAPH=${GRAPH:-graph}
 
 graphNetwork=$network
@@ -14,4 +15,4 @@ elif [ $network = 'mainnet-ovm' ]; then
   graphNetwork='optimism'
 fi
 
-NETWORK=$graphNetwork $GRAPH deploy optimism-mainnet --version-label $version --node https://app.satsuma.xyz/api/subgraphs/deploy --deploy-key $SATSUMA_KEY --network $network --type $type subgraph.js
+NETWORK=$graphNetwork $GRAPH deploy $name --version-label $version --node https://app.satsuma.xyz/api/subgraphs/deploy --deploy-key $SATSUMA_KEY --network $network --type $type subgraph.js
