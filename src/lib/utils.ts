@@ -41,6 +41,14 @@ export let DAY_SECONDS: i32 = 86400
 //LARGER PERIODS MUST BE A MULTIPLE OF SMALLER PERIODS
 //export let PERIODS: i32[] = [FIFTEEN_MINUTE_SECONDS, HOUR_SECONDS, DAY_SECONDS]
 export let HOURLY_PERIODS: i32[] = [HOUR_SECONDS, SIX_HOUR_SECONDS, DAY_SECONDS]
+export let CANDLE_PERIODS: i32[] = [
+  DAY_SECONDS * 7, //7d
+  DAY_SECONDS, //1d
+  HOUR_SECONDS * 8, //8h
+  HOUR_SECONDS * 4, //4h
+  HOUR_SECONDS, //1h
+  FIFTEEN_MINUTE_SECONDS, //15m
+]
 
 export namespace Entity {
   export function loadOrCreateGlobal(): Global {
