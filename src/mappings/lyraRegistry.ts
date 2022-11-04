@@ -67,6 +67,9 @@ export function createPriceFeed(
   if (dataSource.network() == 'optimism-kovan' && aggregatorAddress.reverted) {
     er = ExchangeRates.bind(changetype<Address>(Bytes.fromHexString('0xF62Da62b5Af8B0cae27B1D9D8bB0Adb94EB4c1e2'))) //Kovan ExchangeRates Address
     aggregatorAddress = er.try_aggregators(baseKey)
+  } else if (dataSource.network() == 'optimism-goerli' && aggregatorAddress.reverted) {
+    er = ExchangeRates.bind(changetype<Address>(Bytes.fromHexString('0x280E5dFaA78CE685a846830bAe5F2FD21d6A3D89'))) //Goerli ExchangeRates Address
+    aggregatorAddress = er.try_aggregators(baseKey)
   }
 
   if (!aggregatorAddress.reverted) {
@@ -268,7 +271,12 @@ export function handleMarketUpdated(event: MarketUpdated): void {
   poolHedger.save()
 
   //Market needs to be created before this
-  let latestSpotPrice = createPriceFeed(event.params.market.optionMarket, market.baseKey, event.block.timestamp.toI32(), event.block.number.toI32())
+  let latestSpotPrice = createPriceFeed(
+    event.params.market.optionMarket,
+    market.baseKey,
+    event.block.timestamp.toI32(),
+    event.block.number.toI32(),
+  )
   if (latestSpotPrice != ZERO) {
     market.latestSpotPrice = latestSpotPrice as BigInt
   } else {

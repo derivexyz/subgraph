@@ -71,7 +71,7 @@ export function addLatestRate(marketId: string, rate: BigInt, timestamp: i32, bl
 
     let boardNetGamma = ZERO
     let boardNetTheta = ZERO
-    
+
     if (board.expiryTimestamp > timestamp) {
       let tAnnualised = f64(board.expiryTimestamp - timestamp) / f64(31536000)
       for (let j = 0; j < numStrikes; j++) {
@@ -86,7 +86,7 @@ export function addLatestRate(marketId: string, rate: BigInt, timestamp: i32, bl
           rateAndCarry,
           base_period,
           timestamp,
-          blockNumber
+          blockNumber,
         )
         netGamma = netGamma.plus(gammaAndTheta.gamma)
         netTheta = netTheta.plus(gammaAndTheta.theta)
@@ -102,7 +102,7 @@ export function addLatestRate(marketId: string, rate: BigInt, timestamp: i32, bl
   }
   market.netGamma = netGamma
   market.netTheta = netTheta
- // market.netOptionValue = netOptionValue
+  // market.netOptionValue = netOptionValue
   market.save()
 }
 
@@ -118,6 +118,7 @@ export function addProxyAggregator(aggregatorProxyAddress: Address, optionMarket
 
     addAggregator(underlyingAggregator.value, optionMarketId)
   } else {
+    log.error('Failed to fetch aggregator address from: {}', [aggregatorProxyAddress.toHex()])
     addAggregator(aggregatorProxyAddress, optionMarketId)
   }
 }
