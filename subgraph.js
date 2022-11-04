@@ -40,7 +40,7 @@ const getABIPath = (contractName) => path.join('./abis', networkForPath, contrac
 ////// ////// ////// //////
 ////// DATA SOURCES  //////
 ////// ////// ////// //////
-let registryStart = lyraData['LyraRegistry'].blockNumber - 20000
+let registryStart = lyraData['LyraRegistry'].blockNumber - 10
 registryStart = registryStart < 0 ? 0 : registryStart
 console.log(type)
 console.log(network)
@@ -217,7 +217,8 @@ const templates = [
           handler: 'handleWithdrawQueued',
         },
         {
-          event: 'WithdrawProcessed(indexed address,indexed address,indexed uint256,uint256,uint256,uint256,uint256,uint256)',
+          event:
+            'WithdrawProcessed(indexed address,indexed address,indexed uint256,uint256,uint256,uint256,uint256,uint256)',
           handler: 'handleWithdrawProcessed',
         },
         {
@@ -419,7 +420,8 @@ const templates = [
       ],
       eventHandlers: [
         {
-          event: 'PositionUpdated(indexed uint256,indexed address,indexed uint8,(uint256,uint256,uint8,uint256,uint256,uint8),uint256)',
+          event:
+            'PositionUpdated(indexed uint256,indexed address,indexed uint8,(uint256,uint256,uint8,uint256,uint256,uint8),uint256)',
           handler: 'handlePositionUpdated',
         },
         {
@@ -450,7 +452,8 @@ const templates = [
       ],
       eventHandlers: [
         {
-          event: 'PositionSettled(indexed uint256,indexed address,indexed address,uint256,uint256,uint8,uint256,uint256,uint256)',
+          event:
+            'PositionSettled(indexed uint256,indexed address,indexed address,uint256,uint256,uint8,uint256,uint256,uint256)',
           handler: 'handlePositionSettled',
         },
         // {
