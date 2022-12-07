@@ -1,7 +1,16 @@
-import { Address, Bytes, BigInt, dataSource, log } from '@graphprotocol/graph-ts'
-import { Global, Position, Trade, OptionTransfer, Option, Market, Strike } from '../../generated/schema'
+import { Address, Bytes, BigInt, dataSource, log, store } from '@graphprotocol/graph-ts'
+import {
+  Global,
+  Position,
+  Trade,
+  OptionTransfer,
+  Option,
+  Market,
+  Strike,
+  CollateralUpdate,
+} from '../../generated/schema'
 import { PositionUpdated, Transfer } from '../../generated/templates/OptionToken/OptionToken'
-import { Entity, UNIT, ZERO, ZERO_ADDRESS } from '../lib'
+import { Entity, UNIT, ZERO, ZERO_ADDRESS as ZERO_ADDRESS_ } from '../lib'
 
 export function updatePositionCollateralHistory(
   optionMarketId: string,
@@ -45,9 +54,16 @@ export function updatePositionCollateralHistory(
 //Handles transfers from the wrapper to end user so we have the correct trader address
 export function handlePositionTransfered(event: Transfer): void {
   let globals = Global.load('1') as Global
+  const ZERO_ADDRESS = Bytes.fromHexString(ZERO_ADDRESS_)
+
+  //On closes, user -> wrapper -> burn - trade
+  //On opens, trade - burn -> wrapper -> user
+
+  const isMint = event.params.from == ZERO_ADDRESS
+  const isBurn = event.params.to == ZERO_ADDRESS
 
   //Transfer happens before we have any data about the position in those cases
-  if (event.params.from == Bytes.fromHexString(ZERO_ADDRESS)) {
+  if (isMint) {
     let context = dataSource.context()
 
     let position = Entity.loadOrCreatePosition(
@@ -56,51 +72,64 @@ export function handlePositionTransfered(event: Transfer): void {
       event.block.timestamp.toI32(),
       event.params.to,
     )
+    position.__latestFromAddress = ZERO_ADDRESS
+    position.__latestTransactionHash = event.transaction.hash
     position.save()
-  } else if (
-    event.params.to != Bytes.fromHexString(ZERO_ADDRESS) &&
-    event.params.to != changetype<Address>(globals.wrapperAddress)
-  ) {
+  } else if (isBurn) {
+    // If the latest address != zero address and != from address, owner is the latest address
+    // If the latest address is zero address or from address, owner is from
+    let context = dataSource.context()
+    let positionId = Entity.getPositionID(context.getString('market'), event.params.tokenId.toI32())
+    let position = Position.load(positionId) as Position
+
+    const isTransferFromWrapper = position.__latestTransactionHash == event.transaction.hash
+
+    if (isTransferFromWrapper) {
+      //delete transfer, update owner
+      store.remove(
+        'OptionTransfer',
+        Entity.getTransferID(context.getString('market'), event.params.tokenId.toI32(), event.transaction.hash),
+      )
+      position.owner = position.__latestFromAddress
+      position.save()
+    }
+
+    let trade = Trade.load(Entity.getTradeIDFromPositionID(positionId, event.transaction.hash))
+    if (trade != null) {
+      trade.trader = position.owner
+      trade.save()
+    }
+
+    let collateralUpdate = CollateralUpdate.load(
+      Entity.getCollateralUpdateID(context.getString('market'), position.positionId, event.transaction.hash),
+    )
+    if (collateralUpdate != null) {
+      collateralUpdate.trader = position.owner
+      collateralUpdate.save()
+    }
+  } else {
     let context = dataSource.context()
     let positionId = Entity.getPositionID(context.getString('market'), event.params.tokenId.toI32())
     let position = Position.load(positionId) as Position
 
     let trade = Trade.load(Entity.getTradeIDFromPositionID(positionId, event.transaction.hash))
     if (trade != null) {
-      //When option is transferred from the wrapper to the real owner, we need to adjust the user data for the wrapper and real owner
-
-      // let initialTrader = Entity.loadOrCreateUser(
-      //   trade.trader.toHex(),
-      //   event.block.timestamp.toI32(),
-      //   event.block.number.toI32(),
-      // )
-
-      // let newTrader = Entity.loadOrCreateUser(
-      //   event.params.to.toHex(),
-      //   event.block.timestamp.toI32(),
-      //   event.block.number.toI32(),
-      // )
-
-      // initialTrader.premiumVolume = initialTrader.premiumVolume.minus(trade.premium)
-      // newTrader.premiumVolume = newTrader.premiumVolume.plus(trade.premium)
-
-      // const notionalVolume = trade.spotPrice.times(trade.size).div(UNIT)
-      // initialTrader.notionalVolume = initialTrader.notionalVolume.minus(notionalVolume)
-      // newTrader.premiumVolume = newTrader.notionalVolume.plus(notionalVolume)
-
-      // initialTrader.tradeCount -= 1
-      // newTrader.tradeCount += 1
-
-      // const pnl = trade.isBuy ? trade.premium.neg() : trade.premium
-      // initialTrader.profitAndLoss = initialTrader.profitAndLoss.minus(pnl)
-      // newTrader.profitAndLoss = newTrader.profitAndLoss.plus(pnl)
-
-
       trade.trader = event.params.to
       trade.save()
     }
 
-    if (event.params.from != changetype<Address>(globals.wrapperAddress) && trade == null) {
+    let collateralUpdate = CollateralUpdate.load(
+      Entity.getCollateralUpdateID(context.getString('market'), position.positionId, event.transaction.hash),
+    )
+    if (collateralUpdate != null) {
+      collateralUpdate.trader = event.params.to
+      collateralUpdate.save()
+    }
+
+    const isTransferFromWrapper = position.__latestTransactionHash == event.transaction.hash
+
+    if (!isTransferFromWrapper) {
+      // Actual transfer,
       let transferId = Entity.getTransferID(
         context.getString('market'),
         event.params.tokenId.toI32(),
@@ -115,6 +144,14 @@ export function handlePositionTransfered(event: Transfer): void {
       transfer.oldOwner = position.owner
       transfer.newOwner = event.params.to
       transfer.save()
+
+      position.__latestFromAddress = event.params.from
+      position.__latestTransactionHash = event.transaction.hash
+    } else {
+      store.remove(
+        'OptionTransfer',
+        Entity.getTransferID(context.getString('market'), event.params.tokenId.toI32(), event.transaction.hash),
+      )
     }
 
     position.owner = event.params.to

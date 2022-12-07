@@ -421,6 +421,12 @@ type Position @entity {
 
   " Collateral Updates reference "
   collateralUpdates: [CollateralUpdate!]! @derivedFrom(field: "position")
+
+  " Internal field storing the last address to transfer the position"
+  __latestFromAddress: Bytes!
+
+  " Internal field storing the last transaction hash for this position"
+  __latestTransactionHash: Bytes!
 }
 
 type Trade @entity {
@@ -898,7 +904,7 @@ type MarketVolumeAndFeesSnapshot @entity {
   " Total short open interest for puts "
   totalShortPutOpenInterest: BigInt!
 
-    " Total long open interest for calls USD "
+  " Total long open interest for calls USD "
   totalLongCallOpenInterestUSD: BigInt!
 
   " Total short open interest for calls USD "
