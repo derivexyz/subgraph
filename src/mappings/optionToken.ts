@@ -72,8 +72,8 @@ export function handlePositionTransfered(event: Transfer): void {
       event.block.timestamp.toI32(),
       event.params.to,
     )
-    position.__latestFromAddress = ZERO_ADDRESS
-    position.__latestTransactionHash = event.transaction.hash
+    position.latestFromAddress__ = ZERO_ADDRESS
+    position.latestTransactionHash__ = event.transaction.hash
     position.save()
   } else if (isBurn) {
     // If the latest address != zero address and != from address, owner is the latest address
@@ -82,7 +82,7 @@ export function handlePositionTransfered(event: Transfer): void {
     let positionId = Entity.getPositionID(context.getString('market'), event.params.tokenId.toI32())
     let position = Position.load(positionId) as Position
 
-    const isTransferFromWrapper = position.__latestTransactionHash == event.transaction.hash
+    const isTransferFromWrapper = position.latestTransactionHash__ == event.transaction.hash
 
     if (isTransferFromWrapper) {
       //delete transfer, update owner
@@ -90,7 +90,7 @@ export function handlePositionTransfered(event: Transfer): void {
         'OptionTransfer',
         Entity.getTransferID(context.getString('market'), event.params.tokenId.toI32(), event.transaction.hash),
       )
-      position.owner = position.__latestFromAddress
+      position.owner = position.latestFromAddress__
       position.save()
     }
 
@@ -126,7 +126,7 @@ export function handlePositionTransfered(event: Transfer): void {
       collateralUpdate.save()
     }
 
-    const isTransferFromWrapper = position.__latestTransactionHash == event.transaction.hash
+    const isTransferFromWrapper = position.latestTransactionHash__ == event.transaction.hash
 
     if (!isTransferFromWrapper) {
       // Actual transfer,
@@ -145,8 +145,8 @@ export function handlePositionTransfered(event: Transfer): void {
       transfer.newOwner = event.params.to
       transfer.save()
 
-      position.__latestFromAddress = event.params.from
-      position.__latestTransactionHash = event.transaction.hash
+      position.latestFromAddress__ = event.params.from
+      position.latestTransactionHash__ = event.transaction.hash
     } else {
       store.remove(
         'OptionTransfer',

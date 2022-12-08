@@ -423,10 +423,10 @@ type Position @entity {
   collateralUpdates: [CollateralUpdate!]! @derivedFrom(field: "position")
 
   " Internal field storing the last address to transfer the position"
-  __latestFromAddress: Bytes!
+  latestFromAddress__: Bytes!
 
   " Internal field storing the last transaction hash for this position"
-  __latestTransactionHash: Bytes!
+  latestTransactionHash__: Bytes!
 }
 
 type Trade @entity {
