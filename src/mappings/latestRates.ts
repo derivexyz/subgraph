@@ -111,6 +111,7 @@ export function addCandles(
       priceSnapshot.high = rate
     }
     priceSnapshot.close = rate
+    priceSnapshot.spotPrice = rate
 
     priceSnapshot.save()
   }

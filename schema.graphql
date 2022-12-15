@@ -1025,6 +1025,8 @@ type SpotPriceSnapshot @entity {
   " Duration this snapshot captures in seconds (Options: 1hr: 3600, 6hr: 21600 1d: 86400). Example: 'period_gte:3600' gives hourly data  "
   period: Int!
 
+  " Spot Price of the asset for backwards compatibility.  Same as close"
+  spotPrice: BigInt!
   open: BigInt!
   high: BigInt!
   low: BigInt!
