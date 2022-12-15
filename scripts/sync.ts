@@ -25,7 +25,7 @@ const getSynthetixFile = (type: string) => {
   }
 }
 
-const NETWORKS = ['local', 'local-ovm', 'kovan-ovm', 'mainnet-ovm']
+const NETWORKS = ['local', 'local-ovm', 'kovan-ovm', 'mainnet-ovm', 'goerli-ovm']
 const TYPES = ['real', 'mockSnx', 'realPricing']
 
 async function run() {

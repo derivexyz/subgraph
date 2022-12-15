@@ -26,7 +26,7 @@ import {
 } from '../../generated/schema'
 import { Entity, ZERO, HOURLY_PERIODS, UNIT, HOUR_SECONDS, ZERO_ADDRESS, Snapshot } from '../lib'
 import { log, Address, Bytes, BigInt, DataSourceContext, dataSource } from '@graphprotocol/graph-ts'
-import { addProxyAggregator } from './latestRates'
+import { addCandles, addProxyAggregator } from './latestRates'
 
 export function createPoolHedger(poolHedgerAddress: Address, timestamp: i32, optionMarketId: string): PoolHedger {
   let poolHedgerId = Entity.getIDFromAddress(poolHedgerAddress)
@@ -78,18 +78,7 @@ export function createPriceFeed(
 
     let r = er.rateForCurrency(baseKey)
 
-    //Get the largest relevant period
-    let base_period = HOURLY_PERIODS[0]
-    let period_timestamp = Snapshot.roundTimestamp(timestamp, base_period)
-    for (let p = 1; p < HOURLY_PERIODS.length; p++) {
-      if (Snapshot.roundTimestamp(timestamp, HOURLY_PERIODS[p]) == period_timestamp) {
-        base_period = HOURLY_PERIODS[p]
-      }
-    }
-
-    let spotPriceSnapshot = Entity.createSpotPriceSnapshot(optionMarketId, base_period, timestamp, blockNumber)
-    spotPriceSnapshot.spotPrice = r
-    spotPriceSnapshot.save()
+    addCandles(optionMarketId, timestamp, 0, r, blockNumber)
 
     return r
   } else {
@@ -193,6 +182,8 @@ export function handleMarketUpdated(event: MarketUpdated): void {
     market.activeBoardIds = []
     market.chainlinkAggregator = Bytes.fromHexString(ZERO_ADDRESS)
     market.latestSpotPrice = ZERO
+    market.latestRateUpdateTimestamp = 0
+    market.lastGreekSnapshotPeriodId = 0
 
     //Get and Set baseKey and quoteKey
     let synthetixAdapterContract = SynthetixAdapter.bind(changetype<Address>(global.synthetixAdapter))

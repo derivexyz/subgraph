@@ -96,6 +96,12 @@ type Market @entity {
   " Latest chainlink price for this market "
   latestSpotPrice: BigInt!
 
+  " Last time the spot price was updated "
+  latestRateUpdateTimestamp: Int!
+
+  " Last period ID for greek snapshots, to prevent multiple hourly snapshots "
+  lastGreekSnapshotPeriodId: Int!
+
   netGamma: BigInt!
 
   netTheta: BigInt!
@@ -1019,8 +1025,10 @@ type SpotPriceSnapshot @entity {
   " Duration this snapshot captures in seconds (Options: 1hr: 3600, 6hr: 21600 1d: 86400). Example: 'period_gte:3600' gives hourly data  "
   period: Int!
 
-  " Spot price of the asset "
-  spotPrice: BigInt!
+  open: BigInt!
+  high: BigInt!
+  low: BigInt!
+  close: BigInt!
 }
 
 type BoardBaseIVSnapshot @entity {

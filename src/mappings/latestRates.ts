@@ -6,7 +6,7 @@ import { AnswerUpdated as AnswerUpdatedEvent } from '../../generated/templates/A
 import { AggregatorProxy, Aggregator } from '../../generated/templates'
 import { BigInt, DataSourceContext, dataSource, log, Address, Bytes } from '@graphprotocol/graph-ts'
 import { Market, Board, SpotPriceSnapshot } from '../../generated/schema'
-import { Entity, ZERO_ADDRESS, HOURLY_PERIODS, Snapshot, UNITDECIMAL, ZERO } from '../lib'
+import { Entity, ZERO_ADDRESS, HOURLY_PERIODS, CANDLE_PERIODS, Snapshot, UNITDECIMAL, ZERO } from '../lib'
 import { updateStrikeAndOptionGreeks } from '../market'
 
 ///////////////////////
@@ -29,12 +29,110 @@ export function handleAggregatorAnswerUpdated(event: AnswerUpdatedEvent): void {
 ////// SUPPORT FUNCTIONS //////
 //////////////////////////////
 
+export function addCandles(
+  marketId: string,
+  timestamp: i32,
+  lastUpdateTimestamp: i32,
+  rate: BigInt,
+  blockNumber: i32,
+): void {
+  for (let p = 0; p < CANDLE_PERIODS.length; p++) {
+    let period = CANDLE_PERIODS[p]
+
+    let snapshotID = Snapshot.getSnapshotID(marketId, period, timestamp)
+    let lastPeriodId = (timestamp - period) / period
+    let lastSnapshotId = Snapshot.getSnapshotIDFromPeriodID(marketId, period, lastPeriodId)
+
+    let priceSnapshot = SpotPriceSnapshot.load(snapshotID)
+    let lastPriceSnapshot = SpotPriceSnapshot.load(lastSnapshotId)
+
+    if (lastPriceSnapshot == null && lastUpdateTimestamp !== 0 && lastUpdateTimestamp !== timestamp) {
+      // get the candle from the last rate update
+      let prevPeriodId = lastUpdateTimestamp / period
+      let prevSnapshot = SpotPriceSnapshot.load(
+        Snapshot.getSnapshotIDFromPeriodID(marketId, period, prevPeriodId),
+      ) as SpotPriceSnapshot
+
+      let numPeriods = (timestamp - lastUpdateTimestamp) / period
+      let blockEstimatePerPeriod = numPeriods > 0 ? (blockNumber - prevSnapshot.blockNumber) / numPeriods : 0
+
+      // make new candles between that update and now
+      for (let newPeriodId = prevPeriodId + 1; newPeriodId <= lastPeriodId; newPeriodId = newPeriodId + 1) {
+        // create the new candle
+        if (prevSnapshot) {
+          let newSnapshot = new SpotPriceSnapshot(Snapshot.getSnapshotIDFromPeriodID(marketId, period, newPeriodId))
+          newSnapshot.high = prevSnapshot.close
+          newSnapshot.low = prevSnapshot.close
+          newSnapshot.close = prevSnapshot.close
+          newSnapshot.period = period
+          newSnapshot.timestamp = (newPeriodId + 1) * period
+          newSnapshot.blockTimestamp = (newPeriodId + 1) * period
+          newSnapshot.blockNumber = prevSnapshot.blockNumber + blockEstimatePerPeriod
+
+          newSnapshot.open = prevSnapshot.close
+          newSnapshot.market = marketId
+          newSnapshot.save()
+
+          // set previous candle to this one
+          prevSnapshot = newSnapshot
+        }
+      }
+
+      // now reset the last candle
+      lastPriceSnapshot = SpotPriceSnapshot.load(lastSnapshotId)
+    }
+
+    if (priceSnapshot == null) {
+      priceSnapshot = new SpotPriceSnapshot(snapshotID)
+      priceSnapshot.high = rate
+      priceSnapshot.low = rate
+      priceSnapshot.close = rate
+      priceSnapshot.period = period
+      priceSnapshot.market = marketId
+      priceSnapshot.timestamp = Snapshot.roundTimestamp(timestamp, period) // store the beginning of this period, rather than the timestamp of the first rate update.
+
+      if (lastPriceSnapshot !== null) {
+        priceSnapshot.open = lastPriceSnapshot.close
+        if (lastPriceSnapshot.close < priceSnapshot.low) {
+          priceSnapshot.low = lastPriceSnapshot.close
+        }
+        if (lastPriceSnapshot.close > priceSnapshot.high) {
+          priceSnapshot.high = lastPriceSnapshot.close
+        }
+      } else {
+        priceSnapshot.open = rate
+      }
+    }
+
+    if (priceSnapshot.low > rate) {
+      priceSnapshot.low = rate
+    }
+    if (priceSnapshot.high < rate) {
+      priceSnapshot.high = rate
+    }
+    priceSnapshot.close = rate
+
+    priceSnapshot.save()
+  }
+}
+
 export function addLatestRate(marketId: string, rate: BigInt, timestamp: i32, blockNumber: i32): void {
   let market = Market.load(marketId) as Market
 
+  addCandles(market.id, timestamp, market.latestRateUpdateTimestamp, rate, blockNumber)
+
   //Update Rates
   market.latestSpotPrice = rate
+  market.latestRateUpdateTimestamp = timestamp
   market.save()
+
+  //We only want to run the rest of this once per hourly period
+  //Too expensive to do every price update
+  let currentGreekSnapshotPeriodId = timestamp / HOURLY_PERIODS[0]
+  if (currentGreekSnapshotPeriodId == market.lastGreekSnapshotPeriodId) {
+    return
+  }
+  market.lastGreekSnapshotPeriodId = currentGreekSnapshotPeriodId
 
   //Get the largest relevant period
   let base_period = HOURLY_PERIODS[0]
@@ -44,18 +142,6 @@ export function addLatestRate(marketId: string, rate: BigInt, timestamp: i32, bl
       base_period = HOURLY_PERIODS[p]
     }
   }
-
-  let existingSnapshotId = Snapshot.getSnapshotID(market.id, base_period, timestamp)
-  let existingSnapshot = SpotPriceSnapshot.load(existingSnapshotId)
-
-  //Dont fill same snapshot twice
-  if (existingSnapshot != null) {
-    return
-  }
-
-  let spotPriceSnapshot = Entity.createSpotPriceSnapshot(market.id, base_period, timestamp, blockNumber)
-  spotPriceSnapshot.spotPrice = rate
-  spotPriceSnapshot.save()
 
   let boardIds = market.activeBoardIds
   let numBoards = boardIds.length

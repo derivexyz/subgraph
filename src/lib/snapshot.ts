@@ -16,6 +16,11 @@ export namespace Snapshot {
     return snapshotId
   }
 
+  export function getSnapshotIDFromPeriodID(prefix: string, period: i32, periodId: i32): string {
+    let snapshotId = prefix + '-' + period.toString() + '-' + periodId.toString()
+    return snapshotId
+  }
+
   //Get timestamp at end of the period
   //Todo: Is this the best way to do this?
   export function roundTimestamp(timestamp: i32, period: i32): i32 {
